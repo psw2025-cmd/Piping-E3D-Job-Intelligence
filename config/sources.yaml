@@ -1,67 +1,133 @@
-# Public-source registry. Keep every source disabled until its public identifier is verified.
-# Never place credentials, private portals, cookies, CV data or recruiter lists in this file.
+# Production public-source registry.
+# Contains only public employer pages verified for this project.
+# Never place credentials, cookies, CV data, recruiter lists or application data here.
+
 sources:
-  - id: example_greenhouse
-    name: Example Greenhouse board
-    type: greenhouse
-    company: Example EPC
-    board_token: replace-with-public-board-token
-    enabled: false
-    timeout_seconds: 30
-    rate_limit_per_minute: 20
-    max_items: 500
-
-  - id: example_lever
-    name: Example Lever site
-    type: lever
-    company: Example EPC
-    site: replace-with-public-site-name
-    region: global
-    enabled: false
-    timeout_seconds: 30
-    rate_limit_per_minute: 20
-    max_items: 500
-    page_size: 100
-
-  - id: example_smartrecruiters
-    name: Example SmartRecruiters company
-    type: smartrecruiters
-    company: Example EPC
-    company_identifier: replace-with-public-company-identifier
-    enabled: false
-    fetch_details: true
-    timeout_seconds: 30
-    rate_limit_per_minute: 20
-    max_items: 300
-    page_size: 100
-
-  - id: example_rss
-    name: Example public jobs RSS feed
-    type: rss
-    company: Example EPC
-    url: https://example.com/jobs.rss
-    location: ""
-    enabled: false
-    timeout_seconds: 30
-    rate_limit_per_minute: 10
-    max_items: 500
-
-  - id: example_sitemap
-    name: Example public careers sitemap
-    type: sitemap
-    company: Example EPC
-    url: https://example.com/jobs-sitemap.xml
+  - id: mcdermott_chennai
+    name: McDermott Chennai careers
+    type: public_html
+    company: McDermott
+    url: "https://www.mcdermott.com/careers/search-apply?location=Chennai%2C+Tamil+Nadu%2C+India&page=0"
+    page_url_template: "https://www.mcdermott.com/careers/search-apply?location=Chennai%2C+Tamil+Nadu%2C+India&page={page}"
+    page_start: 0
+    page_step: 1
+    max_pages: 5
     allowed_domains:
-      - example.com
-    job_url_patterns:
-      - /careers/
-      - /jobs/
-    enabled: false
-    timeout_seconds: 30
-    rate_limit_per_minute: 10
-    max_items: 300
-    max_sitemaps: 20
+      - www.mcdermott.com
+      - edsv.fa.us2.oraclecloud.com
+    job_link_patterns:
+      - /hcmUI/CandidateExperience/en/sites/CX_1/job/
+    anchor_text_patterns:
+      - Piping
+      - Pipeline
+      - Layout
+      - Plant Design
+      - E3D
+      - PDMS
+      - Mechanical
+      - Field Engineer
+      - Construction Support
+      - Hook Up
+      - Commissioning
+      - Package Management
+      - Riser
+    required_anchor_text_patterns:
+      - Chennai
+      - India
+    exclude_anchor_text_patterns:
+      - Hot Job
+    enabled: true
+    fetch_details: true
     deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 6
+    max_items: 80
+    max_response_bytes: 15000000
+    max_redirects: 5
+
+  - id: mcdermott_dubai
+    name: McDermott Dubai careers
+    type: public_html
+    company: McDermott
+    url: "https://www.mcdermott.com/careers/search-apply?keyword=&location=Dubai%2C+Dubai%2C+United+Arab+Emirates&page=0"
+    page_url_template: "https://www.mcdermott.com/careers/search-apply?keyword=&location=Dubai%2C+Dubai%2C+United+Arab+Emirates&page={page}"
+    page_start: 0
+    page_step: 1
+    max_pages: 17
+    allowed_domains:
+      - www.mcdermott.com
+      - edsv.fa.us2.oraclecloud.com
+    job_link_patterns:
+      - /hcmUI/CandidateExperience/en/sites/CX_1/job/
+    anchor_text_patterns:
+      - Piping
+      - Pipeline
+      - Layout
+      - Plant Design
+      - E3D
+      - PDMS
+      - Mechanical
+      - Field Engineer
+      - Construction Support
+      - Hook Up
+      - Commissioning
+      - Package Management
+      - Riser
+    required_anchor_text_patterns:
+      - Dubai
+      - United Arab Emirates
+    exclude_anchor_text_patterns:
+      - Hot Job
+    enabled: true
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 6
+    max_items: 120
+    max_response_bytes: 15000000
+    max_redirects: 5
+
+  - id: mcdermott_doha
+    name: McDermott Doha careers
+    type: public_html
+    company: McDermott
+    url: "https://www.mcdermott.com/careers/search-apply?keyword=&location=Doha%2C+West+Bay%2C+Qatar&page=0"
+    page_url_template: "https://www.mcdermott.com/careers/search-apply?keyword=&location=Doha%2C+West+Bay%2C+Qatar&page={page}"
+    page_start: 0
+    page_step: 1
+    max_pages: 3
+    allowed_domains:
+      - www.mcdermott.com
+      - edsv.fa.us2.oraclecloud.com
+    job_link_patterns:
+      - /hcmUI/CandidateExperience/en/sites/CX_1/job/
+    anchor_text_patterns:
+      - Piping
+      - Pipeline
+      - Layout
+      - Plant Design
+      - E3D
+      - PDMS
+      - Mechanical
+      - Field Engineer
+      - Construction Support
+      - Hook Up
+      - Commissioning
+      - Package Management
+      - Riser
+    required_anchor_text_patterns:
+      - Doha
+      - Qatar
+    exclude_anchor_text_patterns:
+      - Hot Job
+    enabled: true
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 6
+    max_items: 60
+    max_response_bytes: 15000000
+    max_redirects: 5
 
 policy:
   respect_robots_txt: true
