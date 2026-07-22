@@ -9,14 +9,9 @@ from typing import Callable
 from .collectors import COLLECTORS, collect_sitemap
 from .collectors.common import EvidenceArtifact
 from .collectors.http_client import HttpClient, SafeHttpClient
-from .database import (
-    finish_run,
-    record_evidence,
-    record_source_health,
-    start_run,
-    upsert_jobs,
-)
+from .database import record_source_health, upsert_jobs
 from .models import JobRecord
+from .proof import finish_run, record_evidence, start_run
 from .scoring import score_job
 from .source_config import SourceSpec, load_source_config
 
