@@ -9,8 +9,16 @@ from urllib.parse import urlsplit
 
 import yaml
 
-_SUPPORTED_TYPES = {"greenhouse", "lever", "smartrecruiters", "rss", "sitemap"}
+_SUPPORTED_TYPES = {
+    "greenhouse",
+    "lever",
+    "smartrecruiters",
+    "rss",
+    "sitemap",
+    "public_html",
+}
 _SOURCE_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9_-]{1,63}$")
+_DOMAIN_PATTERN = re.compile(r"^[a-z0-9.-]+$", re.IGNORECASE)
 _POLICY_DEFAULTS = {
     "respect_robots_txt": True,
     "bypass_captcha": False,
@@ -89,6 +97,69 @@ def _validate_public_url(value: str, source_id: str, field: str = "url") -> None
         raise ValueError(f"source {source_id!r} must use a public URL")
 
 
+def _require_text_list(spec: SourceSpec, key: str) -> list[str]:
+    value = spec.options.get(key)
+    if not isinstance(value, list):
+        raise ValueError(f"source {spec.source_id!r} option {key!r} must be a list")
+    result = [str(item).strip() for item in value if str(item).strip()]
+    if not result:
+        raise ValueError(
+            f"source {spec.source_id!r} option {key!r} must not be empty"
+        )
+    return result
+
+
+def _validate_optional_text_list(spec: SourceSpec, key: str) -> None:
+    if key not in spec.options:
+        return
+    value = spec.options[key]
+    if not isinstance(value, list):
+        raise ValueError(f"source {spec.source_id!r} option {key!r} must be a list")
+    for item in value:
+        if not isinstance(item, str):
+            raise ValueError(
+                f"source {spec.source_id!r} option {key!r} must contain only text"
+            )
+
+
+def _validate_public_html(spec: SourceSpec) -> None:
+    base_url = spec.require_text("url")
+    _validate_public_url(base_url, spec.source_id)
+    domains = _require_text_list(spec, "allowed_domains")
+    for domain in domains:
+        if (
+            not _DOMAIN_PATTERN.fullmatch(domain)
+            or domain.startswith(".")
+            or domain.endswith(".")
+            or ".." in domain
+        ):
+            raise ValueError(
+                f"source {spec.source_id!r} has invalid allowed domain {domain!r}"
+            )
+    _require_text_list(spec, "job_link_patterns")
+    _validate_optional_text_list(spec, "anchor_text_patterns")
+    _validate_optional_text_list(spec, "required_anchor_text_patterns")
+    _validate_optional_text_list(spec, "exclude_anchor_text_patterns")
+    template = str(spec.options.get("page_url_template", "")).strip()
+    if template:
+        if "{page}" not in template:
+            raise ValueError(
+                f"source {spec.source_id!r} page_url_template must contain '{{page}}'"
+            )
+        try:
+            rendered = template.format(page=0)
+        except (KeyError, ValueError) as exc:
+            raise ValueError(
+                f"source {spec.source_id!r} has invalid page_url_template"
+            ) from exc
+        _validate_public_url(rendered, spec.source_id, "page_url_template")
+    spec.int_option("page_start", 0, minimum=0)
+    spec.int_option("page_step", 1)
+    spec.int_option("max_pages", 1)
+    spec.bool_option("fetch_details", True)
+    spec.bool_option("deny_on_robots_error", True)
+
+
 def _validate_source(spec: SourceSpec) -> None:
     if not _SOURCE_ID_PATTERN.fullmatch(spec.source_id):
         raise ValueError(
@@ -110,6 +181,8 @@ def _validate_source(spec: SourceSpec) -> None:
     elif spec.source_type == "smartrecruiters":
         spec.require_text("company_identifier")
         spec.bool_option("fetch_details", True)
+    elif spec.source_type == "public_html":
+        _validate_public_html(spec)
     else:
         _validate_public_url(spec.require_text("url"), spec.source_id)
         if spec.source_type == "sitemap":
@@ -121,6 +194,8 @@ def _validate_source(spec: SourceSpec) -> None:
     spec.int_option("rate_limit_per_minute", 30)
     spec.int_option("max_items", 500)
     spec.int_option("max_pages", 100)
+    spec.int_option("max_response_bytes", 15_000_000)
+    spec.int_option("max_redirects", 5, minimum=0)
 
 
 def load_source_config(path: str | Path) -> SourceConfig:
