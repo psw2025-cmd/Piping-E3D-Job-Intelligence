@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import hashlib
+import re
+import shutil
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -9,11 +11,13 @@ from typing import Callable
 from .collectors import COLLECTORS, collect_sitemap
 from .collectors.common import EvidenceArtifact
 from .collectors.http_client import HttpClient, SafeHttpClient
-from .database import record_source_health, upsert_jobs
+from .database import connect, record_source_health, upsert_jobs
 from .models import JobRecord
 from .proof import finish_run, record_evidence, start_run
 from .scoring import score_job
 from .source_config import SourceSpec, load_source_config
+
+_SAFE_SUFFIX = re.compile(r"^\.[a-z0-9]{1,10}$")
 
 
 @dataclass(frozen=True, slots=True)
@@ -39,6 +43,11 @@ class CollectionRunSummary:
     source_results: list[SourceRunResult] = field(default_factory=list)
 
 
+def _evidence_suffix(value: str) -> str:
+    suffix = value.lower() if value.startswith(".") else f".{value.lower()}"
+    return suffix if _SAFE_SUFFIX.fullmatch(suffix) else ".bin"
+
+
 def _save_evidence(
     db_path: str | Path,
     evidence_root: str | Path,
@@ -48,28 +57,37 @@ def _save_evidence(
 ) -> None:
     destination = Path(evidence_root) / source_id / run_id
     destination.mkdir(parents=True, exist_ok=True)
-    for index, artifact in enumerate(artifacts, start=1):
-        digest = hashlib.sha256(artifact.body).hexdigest()
-        suffix = artifact.suffix if artifact.suffix.startswith(".") else f".{artifact.suffix}"
-        path = destination / f"{index:04d}_{digest[:16]}{suffix}"
-        temporary = path.with_suffix(path.suffix + ".tmp")
-        temporary.write_bytes(artifact.body)
-        temporary.replace(path)
-        evidence_id = hashlib.sha256(
-            f"{run_id}|{source_id}|{index}|{artifact.source_url}|{digest}".encode()
-        ).hexdigest()
-        record_evidence(
-            db_path,
-            evidence_id=evidence_id,
-            run_id=run_id,
-            source_id=source_id,
-            source_url=artifact.source_url,
-            file_path=str(path),
-            sha256=digest,
-            content_type=artifact.content_type,
-            status_code=artifact.status_code,
-            size_bytes=len(artifact.body),
-        )
+    try:
+        for index, artifact in enumerate(artifacts, start=1):
+            digest = hashlib.sha256(artifact.body).hexdigest()
+            suffix = _evidence_suffix(artifact.suffix)
+            path = destination / f"{index:04d}_{digest[:16]}{suffix}"
+            temporary = path.with_suffix(path.suffix + ".tmp")
+            temporary.write_bytes(artifact.body)
+            temporary.replace(path)
+            evidence_id = hashlib.sha256(
+                f"{run_id}|{source_id}|{index}|{artifact.source_url}|{digest}".encode()
+            ).hexdigest()
+            record_evidence(
+                db_path,
+                evidence_id=evidence_id,
+                run_id=run_id,
+                source_id=source_id,
+                source_url=artifact.source_url,
+                file_path=str(path),
+                sha256=digest,
+                content_type=artifact.content_type,
+                status_code=artifact.status_code,
+                size_bytes=len(artifact.body),
+            )
+    except Exception:
+        shutil.rmtree(destination, ignore_errors=True)
+        with connect(db_path) as connection:
+            connection.execute(
+                "DELETE FROM source_evidence WHERE run_id=? AND source_id=?",
+                (run_id, source_id),
+            )
+        raise
 
 
 def _prepare_jobs(spec: SourceSpec, jobs: list[JobRecord], config_dir: Path) -> None:
@@ -82,6 +100,27 @@ def _prepare_jobs(spec: SourceSpec, jobs: list[JobRecord], config_dir: Path) -> 
         job.gaps = "; ".join(result.gaps)
 
 
+def _select_sources(source_config, only_source_ids: set[str] | None):
+    if only_source_ids is not None:
+        configured_ids = {source.source_id for source in source_config.sources}
+        unknown = sorted(only_source_ids - configured_ids)
+        if unknown:
+            raise ValueError(f"unknown source ids requested: {', '.join(unknown)}")
+        enabled_ids = {
+            source.source_id for source in source_config.sources if source.enabled
+        }
+        disabled = sorted(only_source_ids - enabled_ids)
+        if disabled:
+            raise ValueError(f"requested source ids are disabled: {', '.join(disabled)}")
+
+    return [
+        source
+        for source in source_config.sources
+        if source.enabled
+        and (only_source_ids is None or source.source_id in only_source_ids)
+    ]
+
+
 def collect_sources(
     db_path: str | Path,
     source_config_path: str | Path,
@@ -92,12 +131,7 @@ def collect_sources(
 ) -> CollectionRunSummary:
     config_path = Path(source_config_path)
     source_config = load_source_config(config_path)
-    selected = [
-        source
-        for source in source_config.sources
-        if source.enabled
-        and (only_source_ids is None or source.source_id in only_source_ids)
-    ]
+    selected = _select_sources(source_config, only_source_ids)
     run_id = uuid.uuid4().hex
     summary = CollectionRunSummary(run_id=run_id, status="running")
     start_run(db_path, run_id)
@@ -108,9 +142,13 @@ def collect_sources(
         factory = client_factory or (
             lambda source: SafeHttpClient(
                 timeout_seconds=source.int_option("timeout_seconds", 30),
+                max_response_bytes=source.int_option(
+                    "max_response_bytes", 15_000_000
+                ),
                 rate_limit_per_minute=source.int_option(
                     "rate_limit_per_minute", 30
                 ),
+                max_redirects=source.int_option("max_redirects", 5, minimum=0),
             )
         )
         try:
@@ -119,16 +157,13 @@ def collect_sources(
                 result = collect_sitemap(
                     spec,
                     client,
-                    respect_robots_txt=bool(
-                        source_config.policy.get("respect_robots_txt", True)
-                    ),
+                    respect_robots_txt=source_config.policy["respect_robots_txt"],
                 )
             else:
                 collector = COLLECTORS[spec.source_type]
                 result = collector(spec, client)
             _prepare_jobs(spec, result.jobs, config_path.parent)
-            new_jobs, updated_jobs = upsert_jobs(db_path, result.jobs)
-            if bool(source_config.policy.get("retain_source_evidence", True)):
+            if source_config.policy["retain_source_evidence"]:
                 _save_evidence(
                     db_path,
                     evidence_root,
@@ -136,6 +171,7 @@ def collect_sources(
                     spec.source_id,
                     result.evidence,
                 )
+            new_jobs, updated_jobs = upsert_jobs(db_path, result.jobs)
             record_source_health(
                 db_path,
                 spec.source_id,
