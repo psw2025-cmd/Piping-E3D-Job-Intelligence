@@ -138,6 +138,7 @@ def _validate_public_html(spec: SourceSpec) -> None:
             )
     _require_text_list(spec, "job_link_patterns")
     _validate_optional_text_list(spec, "anchor_text_patterns")
+    _validate_optional_text_list(spec, "required_anchor_text_patterns")
     _validate_optional_text_list(spec, "exclude_anchor_text_patterns")
     template = str(spec.options.get("page_url_template", "")).strip()
     if template:
