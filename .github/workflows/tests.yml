@@ -27,7 +27,7 @@ jobs:
         run: python -m pip install --upgrade pip && pip install -e ".[dev]"
 
       - name: Ruff
-        run: ruff check src tests
+        run: ruff check src tests scripts
 
       - name: Pytest
         run: pytest -q
@@ -45,3 +45,28 @@ jobs:
             --output tmp/Piping_E3D_Jobs.xlsx
           job-intel --db tmp/jobs.db verify \
             --output tmp/Piping_E3D_Jobs.xlsx
+
+      - name: Cloud daily runner offline proof
+        shell: bash
+        run: |
+          python scripts/run_cloud_daily.py \
+            --sources config/sources.ci.yaml \
+            --output tmp/cloud-daily \
+            --allow-no-sources
+          test -f tmp/cloud-daily/SUMMARY.md
+          test -f tmp/cloud-daily/status.json
+          test -f tmp/cloud-daily/run.log
+          test -f tmp/cloud-daily/Piping_E3D_Jobs.xlsx
+          test -f tmp/cloud-daily/jobs.db
+          test -f tmp/cloud-daily/Piping_E3D_Daily_Bundle.zip
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          status = json.loads(
+              Path("tmp/cloud-daily/status.json").read_text(encoding="utf-8")
+          )
+          assert status["exit_code"] == 0
+          assert status["verified"] is True
+          assert status["collection_status"] == "no_sources"
+          PY
