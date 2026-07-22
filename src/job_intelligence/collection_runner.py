@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
 
-from .collectors import COLLECTORS, collect_sitemap
+from .collectors import COLLECTORS, collect_public_html, collect_sitemap
 from .collectors.common import EvidenceArtifact
 from .collectors.http_client import HttpClient, SafeHttpClient
 from .database import connect, record_source_health, upsert_jobs
@@ -155,6 +155,12 @@ def collect_sources(
             client = factory(spec)
             if spec.source_type == "sitemap":
                 result = collect_sitemap(
+                    spec,
+                    client,
+                    respect_robots_txt=source_config.policy["respect_robots_txt"],
+                )
+            elif spec.source_type == "public_html":
+                result = collect_public_html(
                     spec,
                     client,
                     respect_robots_txt=source_config.policy["respect_robots_txt"],
