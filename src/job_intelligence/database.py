@@ -324,8 +324,7 @@ def _job_values(
     return values
 
 
-def upsert_job(db_path: str | Path, job: JobRecord) -> bool:
-    init_database(db_path)
+def _upsert_job(connection: sqlite3.Connection, job: JobRecord) -> bool:
     if not job.title.strip() or not job.company.strip():
         raise ValueError("title and company are required")
 
@@ -338,81 +337,88 @@ def upsert_job(db_path: str | Path, job: JobRecord) -> bool:
         for column in _STRING_REFRESH_COLUMNS
     )
 
-    with connect(db_path) as connection:
-        existing_key = _find_existing_job_key(
-            connection,
-            job.job_key,
-            identity_fingerprint,
-            canonical_url,
+    existing_key = _find_existing_job_key(
+        connection,
+        job.job_key,
+        identity_fingerprint,
+        canonical_url,
+    )
+    job.job_key = existing_key or _allocate_job_key(
+        connection,
+        job,
+        canonical_url,
+    )
+    existed = existing_key is not None
+    if not existed:
+        existed = (
+            connection.execute(
+                "SELECT 1 FROM jobs WHERE job_key = ?",
+                (job.job_key,),
+            ).fetchone()
+            is not None
         )
-        job.job_key = existing_key or _allocate_job_key(
-            connection,
-            job,
-            canonical_url,
-        )
-        existed = existing_key is not None
-        if not existed:
-            existed = (
-                connection.execute(
-                    "SELECT 1 FROM jobs WHERE job_key = ?",
-                    (job.job_key,),
-                ).fetchone()
-                is not None
-            )
-        values = _job_values(job, identity_fingerprint, canonical_url)
-        connection.execute(
-            f"""
-            INSERT INTO jobs ({columns}) VALUES ({placeholders})
-            ON CONFLICT(job_key) DO UPDATE SET
-                identity_fingerprint=excluded.identity_fingerprint,
-                canonical_url=COALESCE(
-                    NULLIF(excluded.canonical_url, ''), jobs.canonical_url
-                ),
-                {string_updates},
-                last_seen_at=excluded.last_seen_at,
-                recruiter_name=COALESCE(
-                    NULLIF(excluded.recruiter_name, ''), jobs.recruiter_name
-                ),
-                recruiter_email=COALESCE(
-                    NULLIF(excluded.recruiter_email, ''), jobs.recruiter_email
-                ),
-                contact_confidence=COALESCE(
-                    NULLIF(excluded.contact_confidence, ''), jobs.contact_confidence
-                ),
-                match_score=CASE
-                    WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''
-                    THEN excluded.match_score ELSE jobs.match_score END,
-                match_reasons=CASE
-                    WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''
-                    THEN excluded.match_reasons ELSE jobs.match_reasons END,
-                gaps=CASE
-                    WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''
-                    THEN excluded.gaps ELSE jobs.gaps END,
-                priority=CASE
-                    WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''
-                    THEN excluded.priority ELSE jobs.priority END,
-                application_status=jobs.application_status
-            """,
-            values,
-        )
-        _register_identity_aliases(
-            connection,
-            job.job_key,
-            identity_fingerprint,
-            canonical_url,
-            job.found_at,
-        )
+    values = _job_values(job, identity_fingerprint, canonical_url)
+    connection.execute(
+        f"""
+        INSERT INTO jobs ({columns}) VALUES ({placeholders})
+        ON CONFLICT(job_key) DO UPDATE SET
+            identity_fingerprint=excluded.identity_fingerprint,
+            canonical_url=COALESCE(
+                NULLIF(excluded.canonical_url, ''), jobs.canonical_url
+            ),
+            {string_updates},
+            last_seen_at=excluded.last_seen_at,
+            recruiter_name=COALESCE(
+                NULLIF(excluded.recruiter_name, ''), jobs.recruiter_name
+            ),
+            recruiter_email=COALESCE(
+                NULLIF(excluded.recruiter_email, ''), jobs.recruiter_email
+            ),
+            contact_confidence=COALESCE(
+                NULLIF(excluded.contact_confidence, ''), jobs.contact_confidence
+            ),
+            match_score=CASE
+                WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''
+                THEN excluded.match_score ELSE jobs.match_score END,
+            match_reasons=CASE
+                WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''
+                THEN excluded.match_reasons ELSE jobs.match_reasons END,
+            gaps=CASE
+                WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''
+                THEN excluded.gaps ELSE jobs.gaps END,
+            priority=CASE
+                WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''
+                THEN excluded.priority ELSE jobs.priority END,
+            application_status=jobs.application_status
+        """,
+        values,
+    )
+    _register_identity_aliases(
+        connection,
+        job.job_key,
+        identity_fingerprint,
+        canonical_url,
+        job.found_at,
+    )
     return not existed
 
 
+def upsert_job(db_path: str | Path, job: JobRecord) -> bool:
+    init_database(db_path)
+    with connect(db_path) as connection:
+        return _upsert_job(connection, job)
+
+
 def upsert_jobs(db_path: str | Path, jobs: Iterable[JobRecord]) -> tuple[int, int]:
+    init_database(db_path)
     new_count = 0
     updated_count = 0
-    for job in jobs:
-        if upsert_job(db_path, job):
-            new_count += 1
-        else:
-            updated_count += 1
+    with connect(db_path) as connection:
+        for job in jobs:
+            if _upsert_job(connection, job):
+                new_count += 1
+            else:
+                updated_count += 1
     return new_count, updated_count
 
 

@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from typing import Mapping
 
+import pytest
+
 from job_intelligence.collectors.http_client import FetchedResponse
 from job_intelligence.collectors.lever import collect_lever
 from job_intelligence.collectors.sitemap import collect_sitemap
@@ -194,3 +196,48 @@ Allow: /
 
     assert result.jobs == []
     assert page_url not in [call[0] for call in client.calls]
+
+
+def test_lever_rejects_repeated_full_pages() -> None:
+    url = "https://api.lever.co/v0/postings/example"
+    repeated = [{"id": "invalid", "text": ""}]
+    client = FakeClient(
+        {url: [response(url, repeated), response(url, repeated)]}
+    )
+
+    with pytest.raises(ValueError, match="repeated a pagination page"):
+        collect_lever(
+            source(
+                "lever",
+                site="example",
+                max_items=1,
+                page_size=1,
+                max_pages=4,
+            ),
+            client,
+        )
+
+    assert len(client.calls) == 2
+
+
+def test_smartrecruiters_rejects_repeated_full_pages() -> None:
+    url = "https://api.smartrecruiters.com/v1/companies/example/postings"
+    repeated = {"content": [{"id": "invalid", "name": ""}]}
+    client = FakeClient(
+        {url: [response(url, repeated), response(url, repeated)]}
+    )
+
+    with pytest.raises(ValueError, match="repeated a pagination page"):
+        collect_smartrecruiters(
+            source(
+                "smartrecruiters",
+                company_identifier="example",
+                fetch_details=False,
+                max_items=1,
+                page_size=1,
+                max_pages=4,
+            ),
+            client,
+        )
+
+    assert len(client.calls) == 2

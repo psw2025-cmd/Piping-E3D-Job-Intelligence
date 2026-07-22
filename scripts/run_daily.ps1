@@ -32,6 +32,12 @@ if ($LASTEXITCODE -ne 0) {
     --output $xlsx *>&1 |
     Tee-Object -FilePath $proof -Append
 $collectExit = $LASTEXITCODE
+if ($collectExit -eq 2) {
+    throw "Collection failed; verification was not run against a possibly stale workbook. Review Source_Health and $proof"
+}
+if ($collectExit -notin @(0, 1)) {
+    throw "Collection returned unexpected exit code $collectExit. See $proof"
+}
 
 & $Python -m job_intelligence.cli --db $db verify --output $xlsx *>&1 |
     Tee-Object -FilePath $proof -Append
@@ -40,14 +46,8 @@ if ($verifyExit -ne 0) {
     throw "Verification failed. See $proof"
 }
 
-if ($collectExit -eq 2) {
-    throw "Collection failed after verification. Review Source_Health and $proof"
-}
 if ($collectExit -eq 1) {
     throw "Collection was partial but verification completed. Review Source_Health and $proof"
-}
-if ($collectExit -ne 0) {
-    throw "Collection returned unexpected exit code $collectExit. See $proof"
 }
 
 Write-Host "PASS: daily collection, export and verification completed. Proof: $proof"
