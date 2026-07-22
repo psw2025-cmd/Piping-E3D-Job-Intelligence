@@ -90,6 +90,21 @@ def _save_evidence(
         raise
 
 
+def _delete_evidence(
+    db_path: str | Path,
+    evidence_root: str | Path,
+    run_id: str,
+    source_id: str,
+) -> None:
+    destination = Path(evidence_root) / source_id / run_id
+    shutil.rmtree(destination, ignore_errors=True)
+    with connect(db_path) as connection:
+        connection.execute(
+            "DELETE FROM source_evidence WHERE run_id=? AND source_id=?",
+            (run_id, source_id),
+        )
+
+
 def _prepare_jobs(spec: SourceSpec, jobs: list[JobRecord], config_dir: Path) -> None:
     for job in jobs:
         job.source_name = job.source_name or spec.name
@@ -151,6 +166,9 @@ def collect_sources(
                 max_redirects=source.int_option("max_redirects", 5, minimum=0),
             )
         )
+        result = None
+        evidence_saved = False
+        stage = "collect"
         try:
             client = factory(spec)
             if spec.source_type == "sitemap":
@@ -168,7 +186,6 @@ def collect_sources(
             else:
                 collector = COLLECTORS[spec.source_type]
                 result = collector(spec, client)
-            _prepare_jobs(spec, result.jobs, config_path.parent)
             if source_config.policy["retain_source_evidence"]:
                 _save_evidence(
                     db_path,
@@ -177,7 +194,12 @@ def collect_sources(
                     spec.source_id,
                     result.evidence,
                 )
+                evidence_saved = True
+            stage = "score"
+            _prepare_jobs(spec, result.jobs, config_path.parent)
+            stage = "upsert"
             new_jobs, updated_jobs = upsert_jobs(db_path, result.jobs)
+            stage = "health"
             record_source_health(
                 db_path,
                 spec.source_id,
@@ -200,12 +222,27 @@ def collect_sources(
             )
         except Exception as exc:
             message = f"{type(exc).__name__}: {exc}"
+            if evidence_saved and stage == "upsert":
+                try:
+                    _delete_evidence(
+                        db_path,
+                        evidence_root,
+                        run_id,
+                        spec.source_id,
+                    )
+                except Exception as cleanup_exc:
+                    message += (
+                        " | evidence cleanup failed: "
+                        f"{type(cleanup_exc).__name__}: {cleanup_exc}"
+                    )
+            fetched_count = len(result.jobs) if result is not None else 0
             errors.append(f"{spec.source_id}: {message}")
             record_source_health(
                 db_path,
                 spec.source_id,
                 spec.name,
                 "fail",
+                records_found=fetched_count,
                 error_message=message,
             )
             summary.sources_failed += 1
@@ -213,7 +250,7 @@ def collect_sources(
                 SourceRunResult(
                     source_id=spec.source_id,
                     status="fail",
-                    jobs_collected=0,
+                    jobs_collected=fetched_count,
                     new_jobs=0,
                     updated_jobs=0,
                     error_message=message,
