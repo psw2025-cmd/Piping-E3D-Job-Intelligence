@@ -8,7 +8,7 @@ from defusedxml import ElementTree
 
 from ..source_config import SourceSpec
 from .common import CollectionResult, EvidenceArtifact
-from .http_client import HttpClient
+from .http_client import DEFAULT_USER_AGENT, HttpClient
 from .schema_org import parse_job_postings
 
 
@@ -102,7 +102,7 @@ def collect_sitemap(
     robots = _RobotsCache(
         client,
         enabled=respect_robots_txt,
-        user_agent="Piping-E3D-Job-Intelligence",
+        user_agent=getattr(client, "user_agent", DEFAULT_USER_AGENT),
         deny_on_error=bool(spec.options.get("deny_on_robots_error", True)),
     )
 
@@ -157,6 +157,8 @@ def collect_sitemap(
 
     jobs = []
     for page_url in page_urls[:max_items]:
+        if len(jobs) >= max_items:
+            break
         if not robots.can_fetch(page_url):
             continue
         response = client.get(page_url)
@@ -169,6 +171,8 @@ def collect_sitemap(
                 suffix=".html",
             )
         )
-        jobs.extend(parse_job_postings(response.text, response.url, spec))
+        remaining = max_items - len(jobs)
+        parsed_jobs = parse_job_postings(response.text, response.url, spec)
+        jobs.extend(parsed_jobs[:remaining])
 
     return CollectionResult(jobs=jobs, evidence=evidence)
