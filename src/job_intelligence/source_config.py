@@ -193,6 +193,7 @@ def _validate_source(spec: SourceSpec) -> None:
     spec.int_option("timeout_seconds", 30)
     spec.int_option("rate_limit_per_minute", 30)
     spec.int_option("max_items", 500)
+    spec.int_option("max_pages", 100)
     spec.int_option("max_response_bytes", 15_000_000)
     spec.int_option("max_redirects", 5, minimum=0)
 
