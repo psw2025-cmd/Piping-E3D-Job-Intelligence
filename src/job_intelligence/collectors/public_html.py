@@ -117,12 +117,20 @@ def _matches_any(value: str, patterns: list[str]) -> bool:
     return any(pattern.lower() in lowered for pattern in patterns)
 
 
+def _matches_all(value: str, patterns: list[str]) -> bool:
+    lowered = value.lower()
+    return all(pattern.lower() in lowered for pattern in patterns)
+
+
 def _matches_anchor_filters(
     anchor_text: str,
     include_patterns: list[str],
+    required_patterns: list[str],
     exclude_patterns: list[str],
 ) -> bool:
     if include_patterns and not _matches_any(anchor_text, include_patterns):
+        return False
+    if required_patterns and not _matches_all(anchor_text, required_patterns):
         return False
     return not (exclude_patterns and _matches_any(anchor_text, exclude_patterns))
 
@@ -148,6 +156,7 @@ def _extract_listing_links(
     domains: set[str],
     link_patterns: list[str],
     anchor_include_patterns: list[str],
+    anchor_required_patterns: list[str],
     anchor_exclude_patterns: list[str],
 ) -> list[_ListingLink]:
     soup = BeautifulSoup(html_text, "html.parser")
@@ -164,6 +173,7 @@ def _extract_listing_links(
             or not _matches_anchor_filters(
                 anchor_text,
                 anchor_include_patterns,
+                anchor_required_patterns,
                 anchor_exclude_patterns,
             )
         ):
@@ -289,6 +299,11 @@ def collect_public_html(
         "anchor_text_patterns",
         spec.source_id,
     )
+    anchor_required_patterns = _optional_text_list(
+        spec.options.get("required_anchor_text_patterns"),
+        "required_anchor_text_patterns",
+        spec.source_id,
+    )
     anchor_exclude_patterns = _optional_text_list(
         spec.options.get("exclude_anchor_text_patterns"),
         "exclude_anchor_text_patterns",
@@ -328,6 +343,7 @@ def collect_public_html(
             domains,
             link_patterns,
             anchor_include_patterns,
+            anchor_required_patterns,
             anchor_exclude_patterns,
         )
         for link in page_links:
