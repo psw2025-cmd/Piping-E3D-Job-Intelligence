@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.styles import Font
 
-from .database import JOB_COLUMNS, connect, fetch_jobs, init_database
+from .database import JOB_COLUMNS, connect, fetch_jobs
+from .proof import init_proof_tables
 
 REQUIRED_SHEETS = (
     "New_Today",
@@ -19,12 +21,30 @@ REQUIRED_SHEETS = (
     "Expired",
     "Recruiter_Contacts",
     "Source_Health",
+    "Source_Evidence",
     "Run_Proof",
 )
+_FORMULA_PREFIXES = ("=", "+", "-", "@")
 
 
 def _empty_jobs_frame() -> pd.DataFrame:
     return pd.DataFrame(columns=JOB_COLUMNS)
+
+
+def _safe_excel_value(value: Any) -> Any:
+    if not isinstance(value, str):
+        return value
+    inspected = value.lstrip(" \t\r\n")
+    if inspected.startswith(_FORMULA_PREFIXES):
+        return "'" + value
+    return value
+
+
+def _safe_excel_frame(frame: pd.DataFrame) -> pd.DataFrame:
+    safe = frame.copy()
+    for column in safe.columns:
+        safe[column] = safe[column].map(_safe_excel_value)
+    return safe
 
 
 def _format_workbook(path: Path) -> None:
@@ -36,13 +56,14 @@ def _format_workbook(path: Path) -> None:
             cell.font = Font(bold=True)
         for column_cells in sheet.columns:
             values = [str(cell.value or "") for cell in list(column_cells)[:200]]
-            width = min(max(max((len(value) for value in values), default=0) + 2, 10), 55)
+            maximum = max((len(value) for value in values), default=0)
+            width = min(max(maximum + 2, 10), 55)
             sheet.column_dimensions[column_cells[0].column_letter].width = width
     workbook.save(path)
 
 
 def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
-    init_database(db_path)
+    init_proof_tables(db_path)
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
 
@@ -53,35 +74,54 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
     today = datetime.now(UTC).date().isoformat()
     found_dates = jobs.get("found_at", pd.Series(dtype="string")).astype(str)
     new_today = jobs[found_dates.str.startswith(today, na=False)]
-    high_priority = jobs[jobs.get("priority", pd.Series(dtype="string")).isin(["critical", "high"])]
-    active = jobs[~jobs.get("application_status", pd.Series(dtype="string")).isin(["expired", "rejected"])]
+    priorities = jobs.get("priority", pd.Series(dtype="string"))
+    high_priority = jobs[priorities.isin(["critical", "high"])]
+    statuses = jobs.get("application_status", pd.Series(dtype="string"))
+    active = jobs[~statuses.isin(["expired", "rejected"])]
+    confidence = jobs.get("contact_confidence", pd.Series(dtype="string"))
     manual_review = jobs[
-        jobs.get("contact_confidence", pd.Series(dtype="string")).isin(["PUBLIC_UNVERIFIED", "PATTERN_SUGGESTION"])
+        confidence.isin(["PUBLIC_UNVERIFIED", "PATTERN_SUGGESTION"])
     ]
-    applied = jobs[jobs.get("application_status", pd.Series(dtype="string")).eq("applied")]
-    follow_up = jobs[jobs.get("application_status", pd.Series(dtype="string")).eq("follow_up")]
-    expired = jobs[jobs.get("application_status", pd.Series(dtype="string")).eq("expired")]
-    contacts = jobs[
-        jobs.get("recruiter_email", pd.Series(dtype="string")).fillna("").astype(str).str.len() > 0
-    ]
+    applied = jobs[statuses.eq("applied")]
+    follow_up = jobs[statuses.eq("follow_up")]
+    expired = jobs[statuses.eq("expired")]
+    emails = jobs.get("recruiter_email", pd.Series(dtype="string"))
+    contacts = jobs[emails.fillna("").astype(str).str.len() > 0]
 
     with connect(db_path) as connection:
         source_health = pd.read_sql_query(
-            "SELECT * FROM source_health ORDER BY last_attempt_at DESC", connection
+            "SELECT * FROM source_health ORDER BY last_attempt_at DESC",
+            connection,
         )
-        run_proof = pd.read_sql_query("SELECT * FROM runs ORDER BY started_at DESC", connection)
+        source_evidence = pd.read_sql_query(
+            "SELECT * FROM source_evidence ORDER BY fetched_at DESC",
+            connection,
+        )
+        run_proof = pd.read_sql_query(
+            "SELECT * FROM runs ORDER BY started_at DESC",
+            connection,
+        )
 
+    sheets = {
+        "New_Today": new_today,
+        "High_Priority": high_priority,
+        "All_Active": active,
+        "Manual_Review": manual_review,
+        "Applied": applied,
+        "Follow_Up": follow_up,
+        "Expired": expired,
+        "Recruiter_Contacts": contacts,
+        "Source_Health": source_health,
+        "Source_Evidence": source_evidence,
+        "Run_Proof": run_proof,
+    }
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
-        new_today.to_excel(writer, sheet_name="New_Today", index=False)
-        high_priority.to_excel(writer, sheet_name="High_Priority", index=False)
-        active.to_excel(writer, sheet_name="All_Active", index=False)
-        manual_review.to_excel(writer, sheet_name="Manual_Review", index=False)
-        applied.to_excel(writer, sheet_name="Applied", index=False)
-        follow_up.to_excel(writer, sheet_name="Follow_Up", index=False)
-        expired.to_excel(writer, sheet_name="Expired", index=False)
-        contacts.to_excel(writer, sheet_name="Recruiter_Contacts", index=False)
-        source_health.to_excel(writer, sheet_name="Source_Health", index=False)
-        run_proof.to_excel(writer, sheet_name="Run_Proof", index=False)
+        for sheet_name, frame in sheets.items():
+            _safe_excel_frame(frame).to_excel(
+                writer,
+                sheet_name=sheet_name,
+                index=False,
+            )
 
     _format_workbook(output)
     return output

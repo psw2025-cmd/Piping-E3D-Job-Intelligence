@@ -13,18 +13,41 @@ if (-not (Test-Path $Python)) {
 
 $db = "data\database\jobs.db"
 $xlsx = "data\exports\Piping_E3D_Jobs.xlsx"
+$sources = "config\sources.yaml"
+$evidence = "data\raw"
 $proofDir = "data\logs"
 New-Item -ItemType Directory -Force -Path $proofDir | Out-Null
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $proof = Join-Path $proofDir "daily_run_$timestamp.log"
 
-& $Python -m job_intelligence.cli --db $db init-db *>&1 | Tee-Object -FilePath $proof
-if ($LASTEXITCODE -ne 0) { throw "Database initialization failed. See $proof" }
+& $Python -m job_intelligence.cli validate-sources --sources $sources *>&1 |
+    Tee-Object -FilePath $proof
+if ($LASTEXITCODE -ne 0) {
+    throw "Source configuration validation failed. See $proof"
+}
 
-& $Python -m job_intelligence.cli --db $db export --output $xlsx *>&1 | Tee-Object -FilePath $proof -Append
-if ($LASTEXITCODE -ne 0) { throw "Excel export failed. See $proof" }
+& $Python -m job_intelligence.cli --db $db collect `
+    --sources $sources `
+    --evidence-dir $evidence `
+    --output $xlsx *>&1 |
+    Tee-Object -FilePath $proof -Append
+$collectExit = $LASTEXITCODE
 
-& $Python -m job_intelligence.cli --db $db verify --output $xlsx *>&1 | Tee-Object -FilePath $proof -Append
-if ($LASTEXITCODE -ne 0) { throw "Verification failed. See $proof" }
+& $Python -m job_intelligence.cli --db $db verify --output $xlsx *>&1 |
+    Tee-Object -FilePath $proof -Append
+$verifyExit = $LASTEXITCODE
+if ($verifyExit -ne 0) {
+    throw "Verification failed. See $proof"
+}
 
-Write-Host "PASS: daily local run completed. Proof: $proof"
+if ($collectExit -eq 2) {
+    throw "Collection failed after verification. Review Source_Health and $proof"
+}
+if ($collectExit -eq 1) {
+    throw "Collection was partial but verification completed. Review Source_Health and $proof"
+}
+if ($collectExit -ne 0) {
+    throw "Collection returned unexpected exit code $collectExit. See $proof"
+}
+
+Write-Host "PASS: daily collection, export and verification completed. Proof: $proof"

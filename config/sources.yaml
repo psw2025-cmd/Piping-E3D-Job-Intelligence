@@ -1,20 +1,67 @@
-# Only public, permitted sources belong here. Do not add credentials or private URLs.
+# Public-source registry. Keep every source disabled until its public identifier is verified.
+# Never place credentials, private portals, cookies, CV data or recruiter lists in this file.
 sources:
-  - id: example_rss
-    name: Example RSS source
-    type: rss
-    url: https://example.com/jobs.rss
+  - id: example_greenhouse
+    name: Example Greenhouse board
+    type: greenhouse
+    company: Example EPC
+    board_token: replace-with-public-board-token
     enabled: false
-    interval_minutes: 60
-    rate_limit_per_minute: 2
+    timeout_seconds: 30
+    rate_limit_per_minute: 20
+    max_items: 500
+
+  - id: example_lever
+    name: Example Lever site
+    type: lever
+    company: Example EPC
+    site: replace-with-public-site-name
+    region: global
+    enabled: false
+    timeout_seconds: 30
+    rate_limit_per_minute: 20
+    max_items: 500
+    page_size: 100
+
+  - id: example_smartrecruiters
+    name: Example SmartRecruiters company
+    type: smartrecruiters
+    company: Example EPC
+    company_identifier: replace-with-public-company-identifier
+    enabled: false
+    fetch_details: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 20
+    max_items: 300
+    page_size: 100
+
+  - id: example_rss
+    name: Example public jobs RSS feed
+    type: rss
+    company: Example EPC
+    url: https://example.com/jobs.rss
+    location: ""
+    enabled: false
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_items: 500
 
   - id: example_sitemap
-    name: Example company careers sitemap
+    name: Example public careers sitemap
     type: sitemap
+    company: Example EPC
     url: https://example.com/jobs-sitemap.xml
+    allowed_domains:
+      - example.com
+    job_url_patterns:
+      - /careers/
+      - /jobs/
     enabled: false
-    interval_minutes: 360
-    rate_limit_per_minute: 2
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_items: 300
+    max_sitemaps: 20
+    deny_on_robots_error: true
 
 policy:
   respect_robots_txt: true

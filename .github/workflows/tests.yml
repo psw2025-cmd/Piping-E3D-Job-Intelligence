@@ -34,6 +34,13 @@ jobs:
 
       - name: CLI smoke test
         run: |
+          job-intel validate-sources --sources config/sources.yaml
           job-intel --db tmp/jobs.db init-db
-          job-intel --db tmp/jobs.db export --output tmp/Piping_E3D_Jobs.xlsx
-          job-intel --db tmp/jobs.db verify --output tmp/Piping_E3D_Jobs.xlsx
+          job-intel --db tmp/jobs.db collect \
+            --sources config/sources.yaml \
+            --evidence-dir tmp/raw \
+            --no-export
+          job-intel --db tmp/jobs.db export \
+            --output tmp/Piping_E3D_Jobs.xlsx
+          job-intel --db tmp/jobs.db verify \
+            --output tmp/Piping_E3D_Jobs.xlsx
