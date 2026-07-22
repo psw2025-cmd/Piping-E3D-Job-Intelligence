@@ -119,17 +119,15 @@ def _require_text_list(spec: SourceSpec, key: str) -> list[str]:
     value = spec.options.get(key)
     if not isinstance(value, list):
         raise ValueError(
-  f"source {spec.source_id!r} option {key!r} must be a list"
+            f"source {spec.source_id!r} option {key!r} must be a list"
         )
     result = [
-        item.strip()
-        for item in value
-        if isinstance(item, str) and item.strip()
+        item.strip() for item in value if isinstance(item, str) and item.strip()
     ]
     if len(result) != len(value) or not result:
         raise ValueError(
-  f"source {spec.source_id!r} option {key!r} "
-  "must contain non-empty text"
+            f"source {spec.source_id!r} option {key!r} "
+            "must contain non-empty text"
         )
     return result
 
@@ -142,8 +140,8 @@ def _validate_optional_text_list(spec: SourceSpec, key: str) -> None:
         not isinstance(item, str) or not item.strip() for item in value
     ):
         raise ValueError(
-  f"source {spec.source_id!r} option {key!r} "
-  "must contain only non-empty text"
+            f"source {spec.source_id!r} option {key!r} "
+            "must contain only non-empty text"
         )
 
 
@@ -155,20 +153,19 @@ def _validate_public_html(spec: SourceSpec) -> None:
     normalized_domains = {domain.lower() for domain in domains}
     if root_host not in normalized_domains:
         raise ValueError(
-  f"source {spec.source_id!r} allowed_domains must include "
-  "the listing host"
+            f"source {spec.source_id!r} allowed_domains must include "
+            "the listing host"
         )
     for domain in normalized_domains:
         if (
-  not _DOMAIN_PATTERN.fullmatch(domain)
-  or domain.startswith(".")
-  or domain.endswith(".")
-  or ".." in domain
+            not _DOMAIN_PATTERN.fullmatch(domain)
+            or domain.startswith(".")
+            or domain.endswith(".")
+            or ".." in domain
         ):
-  raise ValueError(
-      f"source {spec.source_id!r} has invalid allowed domain "
-      f"{domain!r}"
-  )
+            raise ValueError(
+                f"source {spec.source_id!r} has invalid allowed domain {domain!r}"
+            )
     _require_text_list(spec, "job_link_patterns")
     _validate_optional_text_list(spec, "anchor_text_patterns")
     _validate_optional_text_list(spec, "required_anchor_text_patterns")
@@ -176,25 +173,23 @@ def _validate_public_html(spec: SourceSpec) -> None:
     template = str(spec.options.get("page_url_template", "")).strip()
     if template:
         if "{page}" not in template:
-  raise ValueError(
-      f"source {spec.source_id!r} page_url_template must contain "
-      "'{page}'"
-  )
+            raise ValueError(
+                f"source {spec.source_id!r} page_url_template must contain "
+                "'{page}'"
+            )
         try:
-  rendered = template.format(page=0)
+            rendered = template.format(page=0)
         except (KeyError, ValueError) as exc:
-  raise ValueError(
-      f"source {spec.source_id!r} has invalid page_url_template"
-  ) from exc
-        _validate_public_url(
-  rendered, spec.source_id, "page_url_template"
-        )
+            raise ValueError(
+                f"source {spec.source_id!r} has invalid page_url_template"
+            ) from exc
+        _validate_public_url(rendered, spec.source_id, "page_url_template")
         rendered_host = (urlsplit(rendered).hostname or "").lower()
         if rendered_host not in normalized_domains:
-  raise ValueError(
-      f"source {spec.source_id!r} page_url_template is outside "
-      "allowed_domains"
-  )
+            raise ValueError(
+                f"source {spec.source_id!r} page_url_template is outside "
+                "allowed_domains"
+            )
     spec.int_option("page_start", 0, minimum=0)
     spec.int_option("page_step", 1)
     spec.bool_option("fetch_details", True)
