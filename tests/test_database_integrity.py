@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from job_intelligence.database import connect, fetch_jobs, upsert_job
+from job_intelligence.database import connect, fetch_jobs, init_database, upsert_job
 from job_intelligence.models import JobRecord
 
 
@@ -75,3 +75,81 @@ def test_same_canonical_url_matches_existing_record(tmp_path: Path) -> None:
     assert upsert_job(db_path, first) is True
     assert upsert_job(db_path, second) is False
     assert len(fetch_jobs(db_path)) == 1
+
+
+def test_identical_fields_with_distinct_urls_stay_separate(tmp_path: Path) -> None:
+    db_path = tmp_path / "jobs.db"
+    first = JobRecord(
+        title="Piping Engineer",
+        company="Example EPC",
+        description="Same public description",
+        apply_url="https://example.com/jobs/one",
+    )
+    second = JobRecord(
+        title=first.title,
+        company=first.company,
+        description=first.description,
+        apply_url="https://example.com/jobs/two",
+    )
+
+    assert upsert_job(db_path, first) is True
+    assert upsert_job(db_path, second) is True
+    assert len(fetch_jobs(db_path)) == 2
+
+
+def test_existing_phase1_database_is_migrated(tmp_path: Path) -> None:
+    db_path = tmp_path / "jobs.db"
+    with connect(db_path) as connection:
+        connection.executescript(
+            """
+            CREATE TABLE jobs (
+                job_key TEXT PRIMARY KEY,
+                title TEXT NOT NULL,
+                company TEXT NOT NULL,
+                location TEXT NOT NULL DEFAULT '',
+                description TEXT NOT NULL DEFAULT '',
+                apply_url TEXT NOT NULL DEFAULT '',
+                source_url TEXT NOT NULL DEFAULT '',
+                source_name TEXT NOT NULL DEFAULT '',
+                published_at TEXT NOT NULL DEFAULT '',
+                found_at TEXT NOT NULL,
+                last_seen_at TEXT NOT NULL,
+                job_type TEXT NOT NULL DEFAULT '',
+                salary_text TEXT NOT NULL DEFAULT '',
+                experience_text TEXT NOT NULL DEFAULT '',
+                skills_text TEXT NOT NULL DEFAULT '',
+                recruiter_name TEXT NOT NULL DEFAULT '',
+                recruiter_email TEXT NOT NULL DEFAULT '',
+                contact_confidence TEXT NOT NULL DEFAULT '',
+                match_score INTEGER NOT NULL DEFAULT 0,
+                match_reasons TEXT NOT NULL DEFAULT '',
+                gaps TEXT NOT NULL DEFAULT '',
+                priority TEXT NOT NULL DEFAULT 'normal',
+                application_status TEXT NOT NULL DEFAULT 'new'
+            );
+            """
+        )
+        connection.execute(
+            """
+            INSERT INTO jobs (
+                job_key, title, company, location, description, apply_url,
+                found_at, last_seen_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                "legacy-key",
+                "Senior Piping Engineer",
+                "Example EPC",
+                "Mumbai",
+                "E3D refinery role",
+                "https://example.com/jobs/123?utm_source=mail",
+                "2026-01-01T00:00:00+00:00",
+                "2026-01-01T00:00:00+00:00",
+            ),
+        )
+
+    init_database(db_path)
+    row = fetch_jobs(db_path)[0]
+    assert row["identity_fingerprint"]
+    assert row["canonical_url"] == "https://example.com/jobs/123"
+    assert row["job_key"] == "legacy-key"
