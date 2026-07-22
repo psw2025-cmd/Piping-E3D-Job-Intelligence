@@ -4,7 +4,7 @@ from pathlib import Path
 import yaml
 
 from job_intelligence.models import JobRecord
-from job_intelligence.scoring import score_job
+from job_intelligence.scoring import load_scoring_profile, score_job
 
 
 def test_strong_profile_match_is_high_priority() -> None:
@@ -83,3 +83,54 @@ def test_scoring_reads_yaml_configuration(tmp_path: Path) -> None:
     result = score_job(job, config_dir=tmp_path)
     assert result.score == 80
     assert result.priority == "high"
+
+
+def test_scoring_uses_defaults_for_null_yaml_values(tmp_path: Path) -> None:
+    (tmp_path / "roles.yaml").write_text("{}\n", encoding="utf-8")
+    (tmp_path / "locations.yaml").write_text("{}\n", encoding="utf-8")
+    (tmp_path / "scoring.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "weights": None,
+                "thresholds": None,
+                "terms": None,
+                "recent_days": None,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    profile = load_scoring_profile(tmp_path)
+    assert profile.weights["target_role"] == 20
+    assert profile.thresholds["critical"] == 85
+    assert profile.recent_days == 7
+
+    result = score_job(
+        JobRecord(
+            title="Senior Piping Engineer",
+            company="Example EPC",
+            description="AVEVA E3D refinery role",
+        ),
+        profile=profile,
+    )
+    assert result.score > 0
+
+
+def test_scoring_uses_defaults_for_invalid_numeric_overrides(tmp_path: Path) -> None:
+    (tmp_path / "roles.yaml").write_text("{}\n", encoding="utf-8")
+    (tmp_path / "locations.yaml").write_text("{}\n", encoding="utf-8")
+    (tmp_path / "scoring.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "weights": {"target_role": None},
+                "thresholds": {"critical": "not-a-number"},
+                "recent_days": "invalid",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    profile = load_scoring_profile(tmp_path)
+    assert profile.weights["target_role"] == 20
+    assert profile.thresholds["critical"] == 85
+    assert profile.recent_days == 7
