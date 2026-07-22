@@ -35,9 +35,10 @@ jobs:
       - name: CLI smoke test
         run: |
           job-intel validate-sources --sources config/sources.yaml
+          job-intel validate-sources --sources config/sources.ci.yaml
           job-intel --db tmp/jobs.db init-db
           job-intel --db tmp/jobs.db collect \
-            --sources config/sources.yaml \
+            --sources config/sources.ci.yaml \
             --evidence-dir tmp/raw \
             --no-export
           job-intel --db tmp/jobs.db export \
