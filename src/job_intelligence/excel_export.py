@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 from openpyxl import load_workbook
@@ -23,10 +24,27 @@ REQUIRED_SHEETS = (
     "Source_Evidence",
     "Run_Proof",
 )
+_FORMULA_PREFIXES = ("=", "+", "-", "@")
 
 
 def _empty_jobs_frame() -> pd.DataFrame:
     return pd.DataFrame(columns=JOB_COLUMNS)
+
+
+def _safe_excel_value(value: Any) -> Any:
+    if not isinstance(value, str):
+        return value
+    inspected = value.lstrip(" \t\r\n")
+    if inspected.startswith(_FORMULA_PREFIXES):
+        return "'" + value
+    return value
+
+
+def _safe_excel_frame(frame: pd.DataFrame) -> pd.DataFrame:
+    safe = frame.copy()
+    for column in safe.columns:
+        safe[column] = safe[column].map(_safe_excel_value)
+    return safe
 
 
 def _format_workbook(path: Path) -> None:
@@ -84,18 +102,26 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
             connection,
         )
 
+    sheets = {
+        "New_Today": new_today,
+        "High_Priority": high_priority,
+        "All_Active": active,
+        "Manual_Review": manual_review,
+        "Applied": applied,
+        "Follow_Up": follow_up,
+        "Expired": expired,
+        "Recruiter_Contacts": contacts,
+        "Source_Health": source_health,
+        "Source_Evidence": source_evidence,
+        "Run_Proof": run_proof,
+    }
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
-        new_today.to_excel(writer, sheet_name="New_Today", index=False)
-        high_priority.to_excel(writer, sheet_name="High_Priority", index=False)
-        active.to_excel(writer, sheet_name="All_Active", index=False)
-        manual_review.to_excel(writer, sheet_name="Manual_Review", index=False)
-        applied.to_excel(writer, sheet_name="Applied", index=False)
-        follow_up.to_excel(writer, sheet_name="Follow_Up", index=False)
-        expired.to_excel(writer, sheet_name="Expired", index=False)
-        contacts.to_excel(writer, sheet_name="Recruiter_Contacts", index=False)
-        source_health.to_excel(writer, sheet_name="Source_Health", index=False)
-        source_evidence.to_excel(writer, sheet_name="Source_Evidence", index=False)
-        run_proof.to_excel(writer, sheet_name="Run_Proof", index=False)
+        for sheet_name, frame in sheets.items():
+            _safe_excel_frame(frame).to_excel(
+                writer,
+                sheet_name=sheet_name,
+                index=False,
+            )
 
     _format_workbook(output)
     return output
