@@ -1,0 +1,100 @@
+# Copy a verified public source into config/sources.yaml only after confirming
+# employer ownership, public accessibility and conservative request limits.
+
+sources:
+  - id: example_greenhouse
+    name: Example Greenhouse board
+    type: greenhouse
+    company: Example EPC
+    board_token: replace-with-public-board-token
+    enabled: false
+    timeout_seconds: 30
+    rate_limit_per_minute: 20
+    max_items: 500
+
+  - id: example_lever
+    name: Example Lever site
+    type: lever
+    company: Example EPC
+    site: replace-with-public-site-name
+    region: global
+    enabled: false
+    timeout_seconds: 30
+    rate_limit_per_minute: 20
+    max_items: 500
+    page_size: 100
+
+  - id: example_smartrecruiters
+    name: Example SmartRecruiters company
+    type: smartrecruiters
+    company: Example EPC
+    company_identifier: replace-with-public-company-identifier
+    enabled: false
+    fetch_details: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 20
+    max_items: 300
+    page_size: 100
+
+  - id: example_rss
+    name: Example public jobs RSS feed
+    type: rss
+    company: Example EPC
+    url: https://example.com/jobs.rss
+    enabled: false
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_items: 500
+
+  - id: example_sitemap
+    name: Example public careers sitemap
+    type: sitemap
+    company: Example EPC
+    url: https://example.com/jobs-sitemap.xml
+    allowed_domains:
+      - example.com
+    job_url_patterns:
+      - /careers/
+      - /jobs/
+    enabled: false
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_items: 300
+    max_sitemaps: 20
+    deny_on_robots_error: true
+
+  - id: example_public_html
+    name: Example public employer search
+    type: public_html
+    company: Example EPC
+    url: https://example.com/careers?page=0
+    page_url_template: https://example.com/careers?page={page}
+    page_start: 0
+    page_step: 1
+    max_pages: 3
+    allowed_domains:
+      - example.com
+      - jobs.example-ats.com
+    job_link_patterns:
+      - /job/
+    anchor_text_patterns:
+      - Piping
+      - E3D
+      - PDMS
+    required_anchor_text_patterns:
+      - India
+    exclude_anchor_text_patterns:
+      - Hot Job
+    enabled: false
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 6
+    max_items: 100
+
+policy:
+  respect_robots_txt: true
+  skip_login_required_pages: true
+  bypass_captcha: false
+  use_rotating_proxies: false
+  retain_source_evidence: true
