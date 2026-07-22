@@ -56,12 +56,15 @@ class _RobotsCache:
         self.deny_on_error = deny_on_error
         self.user_agent = getattr(client, "user_agent", DEFAULT_USER_AGENT)
         self.cache: dict[str, RobotFileParser | None] = {}
+        self.denied_origins: set[str] = set()
 
     def can_fetch(self, url: str) -> bool:
         if not self.enabled:
             return True
         parsed = urlsplit(url)
         origin = urlunsplit((parsed.scheme, parsed.netloc, "", "", ""))
+        if origin in self.denied_origins:
+            return False
         if origin not in self.cache:
             robots_url = f"{origin}/robots.txt"
             try:
@@ -75,6 +78,7 @@ class _RobotsCache:
                     self.cache[origin] = parser
             except Exception:
                 if self.deny_on_error:
+                    self.denied_origins.add(origin)
                     return False
                 self.cache[origin] = None
         parser = self.cache[origin]

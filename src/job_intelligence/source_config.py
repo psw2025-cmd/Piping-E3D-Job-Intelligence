@@ -13,12 +13,14 @@ _SUPPORTED_TYPES = {
     "greenhouse",
     "lever",
     "oracle_hcm",
+    "public_html",
     "smartrecruiters",
     "rss",
     "sitemap",
 }
 _SOURCE_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9_-]{1,63}$")
 _SITE_NUMBER_PATTERN = re.compile(r"^[A-Za-z0-9_-]{1,80}$")
+_DOMAIN_PATTERN = re.compile(r"^[a-z0-9.-]+$", re.IGNORECASE)
 _POLICY_DEFAULTS = {
     "respect_robots_txt": True,
     "bypass_captcha": False,
@@ -113,6 +115,92 @@ def _validate_public_url(value: str, source_id: str, field: str = "url") -> None
         raise ValueError(f"source {source_id!r} must use a public URL")
 
 
+def _require_text_list(spec: SourceSpec, key: str) -> list[str]:
+    value = spec.options.get(key)
+    if not isinstance(value, list):
+        raise ValueError(
+  f"source {spec.source_id!r} option {key!r} must be a list"
+        )
+    result = [
+        item.strip()
+        for item in value
+        if isinstance(item, str) and item.strip()
+    ]
+    if len(result) != len(value) or not result:
+        raise ValueError(
+  f"source {spec.source_id!r} option {key!r} "
+  "must contain non-empty text"
+        )
+    return result
+
+
+def _validate_optional_text_list(spec: SourceSpec, key: str) -> None:
+    if key not in spec.options:
+        return
+    value = spec.options[key]
+    if not isinstance(value, list) or any(
+        not isinstance(item, str) or not item.strip() for item in value
+    ):
+        raise ValueError(
+  f"source {spec.source_id!r} option {key!r} "
+  "must contain only non-empty text"
+        )
+
+
+def _validate_public_html(spec: SourceSpec) -> None:
+    base_url = spec.require_text("url")
+    _validate_public_url(base_url, spec.source_id)
+    root_host = (urlsplit(base_url).hostname or "").lower()
+    domains = _require_text_list(spec, "allowed_domains")
+    normalized_domains = {domain.lower() for domain in domains}
+    if root_host not in normalized_domains:
+        raise ValueError(
+  f"source {spec.source_id!r} allowed_domains must include "
+  "the listing host"
+        )
+    for domain in normalized_domains:
+        if (
+  not _DOMAIN_PATTERN.fullmatch(domain)
+  or domain.startswith(".")
+  or domain.endswith(".")
+  or ".." in domain
+        ):
+  raise ValueError(
+      f"source {spec.source_id!r} has invalid allowed domain "
+      f"{domain!r}"
+  )
+    _require_text_list(spec, "job_link_patterns")
+    _validate_optional_text_list(spec, "anchor_text_patterns")
+    _validate_optional_text_list(spec, "required_anchor_text_patterns")
+    _validate_optional_text_list(spec, "exclude_anchor_text_patterns")
+    template = str(spec.options.get("page_url_template", "")).strip()
+    if template:
+        if "{page}" not in template:
+  raise ValueError(
+      f"source {spec.source_id!r} page_url_template must contain "
+      "'{page}'"
+  )
+        try:
+  rendered = template.format(page=0)
+        except (KeyError, ValueError) as exc:
+  raise ValueError(
+      f"source {spec.source_id!r} has invalid page_url_template"
+  ) from exc
+        _validate_public_url(
+  rendered, spec.source_id, "page_url_template"
+        )
+        rendered_host = (urlsplit(rendered).hostname or "").lower()
+        if rendered_host not in normalized_domains:
+  raise ValueError(
+      f"source {spec.source_id!r} page_url_template is outside "
+      "allowed_domains"
+  )
+    spec.int_option("page_start", 0, minimum=0)
+    spec.int_option("page_step", 1)
+    spec.bool_option("fetch_details", True)
+    spec.bool_option("deny_on_robots_error", True)
+
+
 def _validate_oracle_source(spec: SourceSpec) -> None:
     base_url = spec.require_text("base_url")
     _validate_public_url(base_url, spec.source_id, "base_url")
@@ -151,6 +239,8 @@ def _validate_source(spec: SourceSpec) -> None:
             )
     elif spec.source_type == "oracle_hcm":
         _validate_oracle_source(spec)
+    elif spec.source_type == "public_html":
+        _validate_public_html(spec)
     elif spec.source_type == "smartrecruiters":
         spec.require_text("company_identifier")
         spec.bool_option("fetch_details", True)
@@ -165,6 +255,8 @@ def _validate_source(spec: SourceSpec) -> None:
     spec.int_option("rate_limit_per_minute", 30)
     spec.int_option("max_items", 500)
     spec.int_option("max_pages", 100)
+    spec.int_option("max_response_bytes", 15_000_000)
+    spec.int_option("max_redirects", 5, minimum=0)
 
 
 def load_source_config(path: str | Path) -> SourceConfig:

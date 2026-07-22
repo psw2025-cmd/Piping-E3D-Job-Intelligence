@@ -441,7 +441,8 @@ def record_source_health(
 ) -> None:
     init_database(db_path)
     now = utc_now_iso()
-    success_at = now if status == "pass" else ""
+    successful = status in {"pass", "pass_with_warnings"}
+    success_at = now if successful else ""
     with connect(db_path) as connection:
         connection.execute(
             """
@@ -453,7 +454,9 @@ def record_source_health(
                 source_name=excluded.source_name,
                 last_attempt_at=excluded.last_attempt_at,
                 last_success_at=CASE
-                    WHEN excluded.status='pass' THEN excluded.last_success_at
+                    WHEN excluded.status IN (
+                        'pass', 'pass_with_warnings'
+                    ) THEN excluded.last_success_at
                     ELSE source_health.last_success_at
                 END,
                 status=excluded.status,

@@ -8,7 +8,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
 
-from .collectors import COLLECTORS, collect_sitemap
+from .collectors import (
+    COLLECTORS,
+    collect_public_html,
+    collect_sitemap,
+)
 from .collectors.common import EvidenceArtifact
 from .collectors.http_client import HttpClient, SafeHttpClient
 from .database import connect, record_source_health, upsert_jobs
@@ -177,6 +181,12 @@ def collect_sources(
                     client,
                     respect_robots_txt=source_config.policy["respect_robots_txt"],
                 )
+            elif spec.source_type == "public_html":
+                result = collect_public_html(
+                    spec,
+                    client,
+                    respect_robots_txt=source_config.policy["respect_robots_txt"],
+                )
             else:
                 collector = COLLECTORS[spec.source_type]
                 result = collector(spec, client)
@@ -194,12 +204,17 @@ def collect_sources(
             stage = "upsert"
             new_jobs, updated_jobs = upsert_jobs(db_path, result.jobs)
             stage = "health"
+            warning_message = " | ".join(result.warnings)
+            source_status = (
+                "pass_with_warnings" if warning_message else "pass"
+            )
             record_source_health(
                 db_path,
                 spec.source_id,
                 spec.name,
-                "pass",
+                source_status,
                 records_found=len(result.jobs),
+                error_message=warning_message,
             )
             summary.sources_passed += 1
             summary.jobs_collected += len(result.jobs)
@@ -208,10 +223,11 @@ def collect_sources(
             summary.source_results.append(
                 SourceRunResult(
                     source_id=spec.source_id,
-                    status="pass",
+                    status=source_status,
                     jobs_collected=len(result.jobs),
                     new_jobs=new_jobs,
                     updated_jobs=updated_jobs,
+                    error_message=warning_message,
                 )
             )
         except Exception as exc:
