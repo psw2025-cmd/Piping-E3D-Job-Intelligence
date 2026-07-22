@@ -1,0 +1,162 @@
+name: live-oracle-source-proof
+
+on:
+  push:
+    branches:
+      - agent/verify-official-epc-sources
+
+permissions:
+  contents: write
+
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/verify-official-epc-sources
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install
+        run: python -m pip install --upgrade pip && pip install -e ".[dev]"
+
+      - name: Run controlled live collection and verification
+        shell: bash
+        run: |
+          rm -rf tmp/live
+          mkdir -p tmp/live
+          job-intel validate-sources --sources config/sources.yaml
+          job-intel --db tmp/live/jobs.db collect \
+            --sources config/sources.yaml \
+            --evidence-dir tmp/live/raw \
+            --output tmp/live/Piping_E3D_Jobs.xlsx
+          job-intel --db tmp/live/jobs.db verify \
+            --output tmp/live/Piping_E3D_Jobs.xlsx
+
+      - name: Build public proof summary
+        shell: bash
+        run: |
+          python - <<'PY'
+          from datetime import UTC, datetime
+          from pathlib import Path
+          import sqlite3
+
+          db_path = Path("tmp/live/jobs.db")
+          connection = sqlite3.connect(db_path)
+          connection.row_factory = sqlite3.Row
+          latest_run = connection.execute(
+              "SELECT * FROM collection_runs ORDER BY started_at DESC LIMIT 1"
+          ).fetchone()
+          health = connection.execute(
+              "SELECT source_id, source_name, status, records_found, error_message "
+              "FROM source_health ORDER BY source_id"
+          ).fetchall()
+          jobs = connection.execute(
+              "SELECT company, title, location, published_at, match_score, priority "
+              "FROM jobs ORDER BY match_score DESC, published_at DESC, company, title"
+          ).fetchall()
+          evidence = connection.execute(
+              "SELECT source_id, COUNT(*) AS files, SUM(size_bytes) AS bytes "
+              "FROM source_evidence GROUP BY source_id ORDER BY source_id"
+          ).fetchall()
+          connection.close()
+
+          if latest_run is None or latest_run["status"] != "pass":
+              raise SystemExit("latest collection run did not pass")
+          if not jobs:
+              raise SystemExit("live collection returned no filtered target jobs")
+
+          lines = [
+              "# Live Official Source Proof — 2026-07-23",
+              "",
+              f"Generated: {datetime.now(UTC).replace(microsecond=0).isoformat()}",
+              "",
+              "Controlled live run against the two verified official Oracle career sources. Raw responses, SQLite, Excel, and evidence files were verified in temporary storage and are not committed.",
+              "",
+              "## Run",
+              "",
+              f"- Status: **{latest_run['status'].upper()}**",
+              f"- Sources attempted/passed/failed: `{latest_run['sources_attempted']}/{latest_run['sources_passed']}/{latest_run['sources_failed']}`",
+              f"- Filtered jobs collected: `{latest_run['jobs_collected']}`",
+              f"- New jobs: `{latest_run['new_jobs']}`",
+              "",
+              "## Source health",
+              "",
+              "| Source | Status | Filtered records | Error |",
+              "|---|---:|---:|---|",
+          ]
+          for row in health:
+              error = str(row["error_message"] or "").replace("|", "\\|")
+              lines.append(
+                  f"| {row['source_name']} (`{row['source_id']}`) | "
+                  f"{row['status']} | {row['records_found']} | {error} |"
+              )
+
+          lines.extend(
+              [
+                  "",
+                  "## Evidence verification",
+                  "",
+                  "| Source | Files | Bytes |",
+                  "|---|---:|---:|",
+              ]
+          )
+          for row in evidence:
+              lines.append(
+                  f"| `{row['source_id']}` | {row['files']} | {row['bytes'] or 0} |"
+              )
+
+          lines.extend(
+              [
+                  "",
+                  "## Filtered target jobs",
+                  "",
+                  "| Company | Title | Location | Posted | Score | Priority |",
+                  "|---|---|---|---|---:|---|",
+              ]
+          )
+          for row in jobs[:100]:
+              values = [
+                  str(row["company"] or ""),
+                  str(row["title"] or ""),
+                  str(row["location"] or ""),
+                  str(row["published_at"] or ""),
+                  str(row["match_score"] or 0),
+                  str(row["priority"] or ""),
+              ]
+              values = [value.replace("|", "\\|").replace("\n", " ") for value in values]
+              lines.append("| " + " | ".join(values) + " |")
+
+          lines.extend(
+              [
+                  "",
+                  "## Verification gates",
+                  "",
+                  "- Source configuration validation: **PASS**",
+                  "- Live collection: **PASS**",
+                  "- SQLite integrity and identity checks: **PASS**",
+                  "- Evidence file existence and SHA-256 checks: **PASS**",
+                  "- Excel export and workbook verification: **PASS**",
+                  "",
+              ]
+          )
+          Path("docs/LIVE_OFFICIAL_SOURCE_PROOF_20260723.md").write_text(
+              "\n".join(lines), encoding="utf-8"
+          )
+          Path(".github/workflows/live-oracle-source-proof.yml").unlink()
+          PY
+
+      - name: Commit proof and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/LIVE_OFFICIAL_SOURCE_PROOF_20260723.md .github/workflows/live-oracle-source-proof.yml
+          git commit -m "Prove live McDermott and Wood source collection"
+          git push origin HEAD:agent/verify-official-epc-sources
