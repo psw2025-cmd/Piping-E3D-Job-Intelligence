@@ -140,8 +140,7 @@ def _validate_optional_text_list(spec: SourceSpec, key: str) -> None:
         not isinstance(item, str) or not item.strip() for item in value
     ):
         raise ValueError(
-            f"source {spec.source_id!r} option {key!r} "
-            "must contain only non-empty text"
+            f"source {spec.source_id!r} option {key!r} must contain only text"
         )
 
 
