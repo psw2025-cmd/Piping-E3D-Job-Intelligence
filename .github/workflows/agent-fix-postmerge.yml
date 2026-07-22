@@ -1,0 +1,133 @@
+name: agent-fix-postmerge-review-findings
+
+on:
+  push:
+    branches:
+      - agent/fix-postmerge-review-findings
+
+permissions:
+  contents: write
+
+jobs:
+  patch-test-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/fix-postmerge-review-findings
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Apply exact reviewed fixes and regression tests
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              target = Path(path)
+              text = target.read_text(encoding="utf-8")
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"Expected exactly one match in {path}, found {count}: {old[:80]!r}")
+              target.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          replace_once(
+              "src/job_intelligence/database.py",
+              '''def _canonical_urls_compatible(existing_url: str, incoming_url: str) -> bool:\n    return not existing_url or not incoming_url or existing_url == incoming_url\n''',
+              '''def _requested_key_urls_compatible(existing_url: str, incoming_url: str) -> bool:\n    """Allow an explicit stable key to enrich a record that previously lacked a URL."""\n    return not existing_url or not incoming_url or existing_url == incoming_url\n\n\ndef _alias_urls_compatible(existing_url: str, incoming_url: str) -> bool:\n    """Do not use a field alias to attach a new URL to a URL-less record."""\n    return not incoming_url or existing_url == incoming_url\n''',
+          )
+          replace_once(
+              "src/job_intelligence/database.py",
+              'if _canonical_urls_compatible(str(row["canonical_url"]), incoming_url)',
+              'if _alias_urls_compatible(str(row["canonical_url"]), incoming_url)',
+          )
+          replace_once(
+              "src/job_intelligence/database.py",
+              'if row and _canonical_urls_compatible(str(row["canonical_url"]), canonical_url):',
+              'if row and _requested_key_urls_compatible(str(row["canonical_url"]), canonical_url):',
+          )
+          replace_once(
+              "src/job_intelligence/database.py",
+              '''    if not row or _canonical_urls_compatible(str(row["canonical_url"]), canonical_url):\n        return base_key\n''',
+              '''    if not row or str(row["canonical_url"]) == canonical_url:\n        return base_key\n''',
+          )
+          replace_once(
+              "src/job_intelligence/database.py",
+              '''        existed = existing_key is not None\n        job.job_key = existing_key or _allocate_job_key(\n            connection,\n            job,\n            canonical_url,\n        )\n        values = _job_values(job, identity_fingerprint, canonical_url)\n''',
+              '''        job.job_key = existing_key or _allocate_job_key(\n            connection,\n            job,\n            canonical_url,\n        )\n        existed = existing_key is not None\n        if not existed:\n            existed = (\n                connection.execute(\n                    "SELECT 1 FROM jobs WHERE job_key = ?",\n                    (job.job_key,),\n                ).fetchone()\n                is not None\n            )\n        values = _job_values(job, identity_fingerprint, canonical_url)\n''',
+          )
+
+          replace_once(
+              "src/job_intelligence/scoring.py",
+              '''def _lower_terms(values: Any) -> tuple[str, ...]:\n    if not isinstance(values, list | tuple):\n        return ()\n    return tuple(str(value).strip().lower() for value in values if str(value).strip())\n\n\n''',
+              '''def _lower_terms(values: Any) -> tuple[str, ...]:\n    if not isinstance(values, list | tuple):\n        return ()\n    return tuple(str(value).strip().lower() for value in values if str(value).strip())\n\n\ndef _mapping_or_empty(value: Any) -> dict[str, Any]:\n    return value if isinstance(value, dict) else {}\n\n\ndef _merge_int_config(\n    defaults: dict[str, int],\n    configured: Any,\n) -> dict[str, int]:\n    merged = dict(defaults)\n    for key, value in _mapping_or_empty(configured).items():\n        if key not in defaults:\n            continue\n        try:\n            merged[key] = int(value)\n        except (TypeError, ValueError):\n            continue\n    return merged\n\n\ndef _int_or_default(value: Any, default: int) -> int:\n    try:\n        return int(value)\n    except (TypeError, ValueError):\n        return default\n\n\n''',
+          )
+          replace_once(
+              "src/job_intelligence/scoring.py",
+              '''    weights = {**_DEFAULT_WEIGHTS, **scoring_data.get("weights", {})}\n    thresholds = {**_DEFAULT_THRESHOLDS, **scoring_data.get("thresholds", {})}\n    term_config = scoring_data.get("terms", {})\n''',
+              '''    weights = _merge_int_config(_DEFAULT_WEIGHTS, scoring_data.get("weights"))\n    thresholds = _merge_int_config(\n        _DEFAULT_THRESHOLDS,\n        scoring_data.get("thresholds"),\n    )\n    term_config = _mapping_or_empty(scoring_data.get("terms"))\n''',
+          )
+          replace_once(
+              "src/job_intelligence/scoring.py",
+              '''        weights={key: int(value) for key, value in weights.items()},\n        thresholds={key: int(value) for key, value in thresholds.items()},\n''',
+              '''        weights=weights,\n        thresholds=thresholds,\n''',
+          )
+          replace_once(
+              "src/job_intelligence/scoring.py",
+              '        recent_days=int(scoring_data.get("recent_days", 7)),',
+              '        recent_days=_int_or_default(scoring_data.get("recent_days"), 7),',
+          )
+
+          database_tests = Path("tests/test_database_integrity.py")
+          database_tests.write_text(
+              database_tests.read_text(encoding="utf-8")
+              + '''\n\ndef test_unkeyed_url_import_does_not_enrich_url_less_record(tmp_path: Path) -> None:\n    db_path = tmp_path / "jobs.db"\n    url_less = JobRecord(\n        title="Piping Engineer",\n        company="Example EPC",\n        description="Shared vacancy text",\n    )\n    with_url = JobRecord(\n        title=url_less.title,\n        company=url_less.company,\n        description=url_less.description,\n        apply_url="https://example.com/jobs/distinct",\n    )\n\n    assert upsert_job(db_path, url_less) is True\n    assert upsert_job(db_path, with_url) is True\n\n    rows = fetch_jobs(db_path)\n    assert len(rows) == 2\n    assert {row["canonical_url"] for row in rows} == {\n        "",\n        "https://example.com/jobs/distinct",\n    }\n\n\ndef test_allocated_existing_key_is_reported_as_update(tmp_path: Path) -> None:\n    db_path = tmp_path / "jobs.db"\n    url_less = JobRecord(\n        title="Piping Engineer",\n        company="Example EPC",\n        description="Shared vacancy text",\n    )\n    distinct_url = JobRecord(\n        title=url_less.title,\n        company=url_less.company,\n        description=url_less.description,\n        apply_url="https://example.com/jobs/distinct",\n    )\n\n    assert upsert_job(db_path, url_less) is True\n    assert upsert_job(db_path, distinct_url) is True\n\n    ambiguous_url_less_reimport = JobRecord(\n        title=url_less.title,\n        company=url_less.company,\n        description=url_less.description,\n    )\n    assert upsert_job(db_path, ambiguous_url_less_reimport) is False\n    assert len(fetch_jobs(db_path)) == 2\n''',
+              encoding="utf-8",
+          )
+
+          replace_once(
+              "tests/test_scoring.py",
+              'from job_intelligence.scoring import score_job',
+              'from job_intelligence.scoring import load_scoring_profile, score_job',
+          )
+          scoring_tests = Path("tests/test_scoring.py")
+          scoring_tests.write_text(
+              scoring_tests.read_text(encoding="utf-8")
+              + '''\n\ndef test_scoring_uses_defaults_for_null_yaml_values(tmp_path: Path) -> None:\n    (tmp_path / "roles.yaml").write_text("{}\\n", encoding="utf-8")\n    (tmp_path / "locations.yaml").write_text("{}\\n", encoding="utf-8")\n    (tmp_path / "scoring.yaml").write_text(\n        yaml.safe_dump(\n            {\n                "weights": None,\n                "thresholds": None,\n                "terms": None,\n                "recent_days": None,\n            }\n        ),\n        encoding="utf-8",\n    )\n\n    profile = load_scoring_profile(tmp_path)\n    assert profile.weights["target_role"] == 20\n    assert profile.thresholds["critical"] == 85\n    assert profile.recent_days == 7\n\n    result = score_job(\n        JobRecord(\n            title="Senior Piping Engineer",\n            company="Example EPC",\n            description="AVEVA E3D refinery role",\n        ),\n        profile=profile,\n    )\n    assert result.score > 0\n\n\ndef test_scoring_uses_defaults_for_invalid_numeric_overrides(tmp_path: Path) -> None:\n    (tmp_path / "roles.yaml").write_text("{}\\n", encoding="utf-8")\n    (tmp_path / "locations.yaml").write_text("{}\\n", encoding="utf-8")\n    (tmp_path / "scoring.yaml").write_text(\n        yaml.safe_dump(\n            {\n                "weights": {"target_role": None},\n                "thresholds": {"critical": "not-a-number"},\n                "recent_days": "invalid",\n            }\n        ),\n        encoding="utf-8",\n    )\n\n    profile = load_scoring_profile(tmp_path)\n    assert profile.weights["target_role"] == 20\n    assert profile.thresholds["critical"] == 85\n    assert profile.recent_days == 7\n''',
+              encoding="utf-8",
+          )
+
+          Path(".github/workflows/agent-fix-postmerge.yml").unlink()
+          PY
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && pip install -e ".[dev]"
+
+      - name: Verify patch
+        shell: bash
+        run: |
+          git diff --check
+          ruff check src tests
+          pytest -q
+          rm -rf tmp
+          job-intel --db tmp/jobs.db init-db
+          job-intel --db tmp/jobs.db export --output tmp/Piping_E3D_Jobs.xlsx
+          job-intel --db tmp/jobs.db verify --output tmp/Piping_E3D_Jobs.xlsx
+          rm -rf tmp
+
+      - name: Commit verified fix
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/job_intelligence/database.py src/job_intelligence/scoring.py tests/test_database_integrity.py tests/test_scoring.py .github/workflows/agent-fix-postmerge.yml
+          git commit -m "Fix post-merge identity and scoring review findings"
+          git push origin HEAD:agent/fix-postmerge-review-findings
