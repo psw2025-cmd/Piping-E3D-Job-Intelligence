@@ -4,7 +4,7 @@ from pathlib import Path
 import yaml
 
 from job_intelligence.models import JobRecord
-from job_intelligence.scoring import score_job
+from job_intelligence.scoring import load_scoring_profile, score_job
 
 
 def test_strong_profile_match_is_high_priority() -> None:
@@ -83,3 +83,33 @@ def test_scoring_reads_yaml_configuration(tmp_path: Path) -> None:
     result = score_job(job, config_dir=tmp_path)
     assert result.score == 80
     assert result.priority == "high"
+
+
+def test_null_scoring_sections_fall_back_to_defaults(tmp_path: Path) -> None:
+    (tmp_path / "roles.yaml").write_text("{}\n", encoding="utf-8")
+    (tmp_path / "locations.yaml").write_text("{}\n", encoding="utf-8")
+    (tmp_path / "scoring.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "weights": None,
+                "thresholds": None,
+                "terms": None,
+                "recent_days": None,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    profile = load_scoring_profile(config_dir=tmp_path)
+    assert profile.weights["target_role"] == 20
+    assert profile.thresholds["critical"] == 85
+    assert profile.recent_days == 7
+
+    job = JobRecord(
+        title="Senior Piping Engineer",
+        company="Example EPC",
+        description="PDMS piping layout role in offshore oil and gas.",
+        published_at=datetime.now(UTC).isoformat(),
+    )
+    result = score_job(job, config_dir=tmp_path)
+    assert result.priority in {"high", "critical"}
