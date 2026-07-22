@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ipaddress
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -10,6 +11,18 @@ import yaml
 
 _SUPPORTED_TYPES = {"greenhouse", "lever", "smartrecruiters", "rss", "sitemap"}
 _SOURCE_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9_-]{1,63}$")
+_POLICY_DEFAULTS = {
+    "respect_robots_txt": True,
+    "bypass_captcha": False,
+    "use_rotating_proxies": False,
+    "retain_source_evidence": True,
+}
+
+
+def _strict_bool(value: Any, field: str) -> bool:
+    if isinstance(value, bool):
+        return value
+    raise ValueError(f"{field} must be true or false")
 
 
 @dataclass(frozen=True, slots=True)
@@ -28,12 +41,26 @@ class SourceSpec:
         return value
 
     def int_option(self, key: str, default: int, minimum: int = 1) -> int:
-        value = int(self.options.get(key, default))
+        raw_value = self.options.get(key, default)
+        if isinstance(raw_value, bool):
+            raise ValueError(
+                f"source {self.source_id!r} option {key!r} must be an integer"
+            )
+        try:
+            value = int(raw_value)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                f"source {self.source_id!r} option {key!r} must be an integer"
+            ) from exc
         if value < minimum:
             raise ValueError(
                 f"source {self.source_id!r} option {key!r} must be >= {minimum}"
             )
         return value
+
+    def bool_option(self, key: str, default: bool) -> bool:
+        value = self.options.get(key, default)
+        return _strict_bool(value, f"source {self.source_id!r} option {key!r}")
 
 
 @dataclass(frozen=True, slots=True)
@@ -50,6 +77,16 @@ def _validate_public_url(value: str, source_id: str, field: str = "url") -> None
         )
     if parsed.username or parsed.password:
         raise ValueError(f"source {source_id!r} must not embed credentials in URLs")
+
+    host = parsed.hostname.lower()
+    if host in {"localhost", "localhost.localdomain"} or host.endswith(".local"):
+        raise ValueError(f"source {source_id!r} must use a public URL")
+    try:
+        address = ipaddress.ip_address(host)
+    except ValueError:
+        return
+    if not address.is_global:
+        raise ValueError(f"source {source_id!r} must use a public URL")
 
 
 def _validate_source(spec: SourceSpec) -> None:
@@ -72,8 +109,11 @@ def _validate_source(spec: SourceSpec) -> None:
             )
     elif spec.source_type == "smartrecruiters":
         spec.require_text("company_identifier")
+        spec.bool_option("fetch_details", True)
     else:
         _validate_public_url(spec.require_text("url"), spec.source_id)
+        if spec.source_type == "sitemap":
+            spec.bool_option("deny_on_robots_error", True)
 
     if not spec.company:
         raise ValueError(f"source {spec.source_id!r} requires company")
@@ -105,7 +145,10 @@ def load_source_config(path: str | Path) -> SourceConfig:
             source_id=source_id,
             name=str(raw.get("name", source_id)).strip() or source_id,
             source_type=str(raw.get("type", "")).strip().lower(),
-            enabled=bool(raw.get("enabled", False)),
+            enabled=_strict_bool(
+                raw.get("enabled", False),
+                f"source {source_id!r} field 'enabled'",
+            ),
             company=str(raw.get("company", "")).strip(),
             options={
                 key: value
@@ -116,12 +159,15 @@ def load_source_config(path: str | Path) -> SourceConfig:
         _validate_source(spec)
         sources.append(spec)
 
-    policy = loaded.get("policy", {})
-    if not isinstance(policy, dict):
+    raw_policy = loaded.get("policy", {})
+    if not isinstance(raw_policy, dict):
         raise ValueError("policy must be a mapping")
-    if bool(policy.get("bypass_captcha", False)):
+    policy = dict(raw_policy)
+    for key, default in _POLICY_DEFAULTS.items():
+        policy[key] = _strict_bool(raw_policy.get(key, default), f"policy {key!r}")
+    if policy["bypass_captcha"]:
         raise ValueError("bypass_captcha must remain false")
-    if bool(policy.get("use_rotating_proxies", False)):
+    if policy["use_rotating_proxies"]:
         raise ValueError("use_rotating_proxies must remain false")
 
-    return SourceConfig(tuple(sources), dict(policy))
+    return SourceConfig(tuple(sources), policy)
