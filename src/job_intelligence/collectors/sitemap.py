@@ -103,7 +103,7 @@ def collect_sitemap(
         client,
         enabled=respect_robots_txt,
         user_agent=getattr(client, "user_agent", DEFAULT_USER_AGENT),
-        deny_on_error=bool(spec.options.get("deny_on_robots_error", True)),
+        deny_on_error=spec.bool_option("deny_on_robots_error", True),
     )
 
     evidence: list[EvidenceArtifact] = []
