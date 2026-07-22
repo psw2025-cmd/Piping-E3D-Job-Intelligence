@@ -109,6 +109,19 @@ def _require_text_list(spec: SourceSpec, key: str) -> list[str]:
     return result
 
 
+def _validate_optional_text_list(spec: SourceSpec, key: str) -> None:
+    if key not in spec.options:
+        return
+    value = spec.options[key]
+    if not isinstance(value, list):
+        raise ValueError(f"source {spec.source_id!r} option {key!r} must be a list")
+    for item in value:
+        if not isinstance(item, str):
+            raise ValueError(
+                f"source {spec.source_id!r} option {key!r} must contain only text"
+            )
+
+
 def _validate_public_html(spec: SourceSpec) -> None:
     base_url = spec.require_text("url")
     _validate_public_url(base_url, spec.source_id)
@@ -124,6 +137,8 @@ def _validate_public_html(spec: SourceSpec) -> None:
                 f"source {spec.source_id!r} has invalid allowed domain {domain!r}"
             )
     _require_text_list(spec, "job_link_patterns")
+    _validate_optional_text_list(spec, "anchor_text_patterns")
+    _validate_optional_text_list(spec, "exclude_anchor_text_patterns")
     template = str(spec.options.get("page_url_template", "")).strip()
     if template:
         if "{page}" not in template:
