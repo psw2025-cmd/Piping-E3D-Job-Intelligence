@@ -1,0 +1,50 @@
+target_roles:
+  - Lead Piping Engineer
+  - Senior Piping Engineer
+  - Piping Design Engineer
+  - Senior Piping Layout Engineer
+  - Senior E3D Piping Designer
+  - Senior PDMS Piping Designer
+  - Offshore Piping Engineer
+  - Site Piping Engineer
+  - Piping Layout Engineer
+  - Piping CAD Lead
+
+primary_skills:
+  - AVEVA E3D
+  - E3D
+  - PDMS
+  - Piping Layout
+  - Equipment Layout
+  - Plot Plan
+  - Piping General Arrangement
+  - Isometrics
+  - P&ID Review
+  - Pipe Support
+  - MTO
+  - Navisworks
+  - AutoCAD
+  - Model Review
+  - Clash Resolution
+
+engineering_skills:
+  - Stress Review
+  - Flexibility Review
+  - Thermal Expansion
+  - Tie-in
+  - Brownfield
+  - Site Engineering
+  - Punch List
+  - As-built
+  - Constructability
+  - Interdisciplinary Coordination
+
+sectors:
+  - Oil and Gas
+  - Refinery
+  - Petrochemical
+  - Offshore
+  - LNG
+  - Nuclear
+  - Chemical
+  - Power
