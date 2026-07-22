@@ -97,6 +97,59 @@ def test_identical_fields_with_distinct_urls_stay_separate(tmp_path: Path) -> No
     assert len(fetch_jobs(db_path)) == 2
 
 
+def test_empty_url_enrichment_then_distinct_url_stays_separate(tmp_path: Path) -> None:
+    db_path = tmp_path / "jobs.db"
+    initial = JobRecord(
+        title="Piping Engineer",
+        company="Example EPC",
+        description="Same public description",
+    )
+    first_url = JobRecord(
+        title=initial.title,
+        company=initial.company,
+        description=initial.description,
+        apply_url="https://example.com/jobs/one",
+    )
+    second_url = JobRecord(
+        title=initial.title,
+        company=initial.company,
+        description=initial.description,
+        apply_url="https://example.com/jobs/two",
+    )
+
+    assert upsert_job(db_path, initial) is True
+    assert upsert_job(db_path, first_url) is False
+    assert upsert_job(db_path, second_url) is True
+
+    rows = fetch_jobs(db_path)
+    assert len(rows) == 2
+    assert {row["canonical_url"] for row in rows} == {
+        "https://example.com/jobs/one",
+        "https://example.com/jobs/two",
+    }
+
+
+def test_upsert_reports_update_when_allocated_key_already_exists(tmp_path: Path) -> None:
+    db_path = tmp_path / "jobs.db"
+    initial = JobRecord(
+        title="Senior Piping Engineer",
+        company="Example EPC",
+        description="Refinery E3D role",
+    )
+    assert upsert_job(db_path, initial) is True
+
+    with connect(db_path) as connection:
+        connection.execute("DELETE FROM job_identity_aliases")
+
+    reimport = JobRecord(
+        title=initial.title,
+        company=initial.company,
+        description=initial.description,
+    )
+    assert upsert_job(db_path, reimport) is False
+    assert len(fetch_jobs(db_path)) == 1
+
+
 def test_existing_phase1_database_is_migrated(tmp_path: Path) -> None:
     db_path = tmp_path / "jobs.db"
     with connect(db_path) as connection:
