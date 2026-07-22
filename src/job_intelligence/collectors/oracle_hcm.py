@@ -22,6 +22,10 @@ def _mapping(value: Any) -> dict[str, Any]:
     return value if isinstance(value, dict) else {}
 
 
+def _text(value: Any) -> str:
+    return "" if value is None else str(value).strip()
+
+
 def _requisition_rows(payload: Any) -> tuple[list[dict[str, Any]], int]:
     if not isinstance(payload, dict):
         raise ValueError("Oracle HCM response root must be a mapping")
@@ -44,30 +48,48 @@ def _requisition_rows(payload: Any) -> tuple[list[dict[str, Any]], int]:
     return rows, total_jobs
 
 
+def _page_fingerprint(rows: list[dict[str, Any]]) -> str:
+    identities = [
+        _text(row.get("Id"))
+        or "|".join(
+            (
+                _text(row.get("Title")),
+                _text(row.get("PrimaryLocation")),
+                _text(row.get("PostedDate")),
+            )
+        )
+        for row in rows
+    ]
+    return hashlib.sha256(json_bytes(identities)).hexdigest()
+
+
 def _matches_terms(text: str, terms: tuple[str, ...]) -> bool:
     return not terms or any(term in text for term in terms)
 
 
-def _job_from_row(spec: SourceSpec, base_url: str, site_number: str, row: dict[str, Any]) -> JobRecord | None:
-    title = str(row.get("Title", "")).strip()
-    requisition_id = str(row.get("Id", "")).strip()
+def _job_from_row(
+    spec: SourceSpec,
+    base_url: str,
+    site_number: str,
+    row: dict[str, Any],
+) -> JobRecord | None:
+    title = _text(row.get("Title"))
+    requisition_id = _text(row.get("Id"))
     if not title or not requisition_id:
         return None
 
-    location = str(row.get("PrimaryLocation", "")).strip()
+    location = _text(row.get("PrimaryLocation"))
     description_parts = (
-        html_to_text(str(row.get("ShortDescriptionStr", ""))),
-        html_to_text(str(row.get("ExternalResponsibilitiesStr", ""))),
-        html_to_text(str(row.get("ExternalQualificationsStr", ""))),
+        html_to_text(_text(row.get("ShortDescriptionStr"))),
+        html_to_text(_text(row.get("ExternalResponsibilitiesStr"))),
+        html_to_text(_text(row.get("ExternalQualificationsStr"))),
     )
     description = join_nonempty(description_parts, "\n\n")
     skills_text = join_nonempty(
         (row.get("JobFunction", ""), row.get("JobFamily", "")),
         "; ",
     )
-    searchable = " ".join(
-        (title, location, description, skills_text)
-    ).lower()
+    searchable = " ".join((title, location, description, skills_text)).lower()
     include_terms = spec.text_list_option("include_terms")
     location_terms = spec.text_list_option("location_terms")
     if not _matches_terms(searchable, include_terms):
@@ -87,7 +109,7 @@ def _job_from_row(spec: SourceSpec, base_url: str, site_number: str, row: dict[s
         apply_url=apply_url,
         source_url=apply_url,
         source_name=spec.name,
-        published_at=str(row.get("PostedDate", "")).strip(),
+        published_at=_text(row.get("PostedDate")),
         job_type=join_nonempty(
             (
                 row.get("JobType", ""),
@@ -97,7 +119,7 @@ def _job_from_row(spec: SourceSpec, base_url: str, site_number: str, row: dict[s
             ),
             "; ",
         ),
-        experience_text=str(row.get("StudyLevel", "")).strip(),
+        experience_text=_text(row.get("StudyLevel")),
         skills_text=skills_text,
     )
 
@@ -138,7 +160,10 @@ def collect_oracle_hcm(spec: SourceSpec, client: HttpClient) -> CollectionResult
         )
         payload = response.json()
         page_bytes = json_bytes(payload)
-        page_fingerprint = hashlib.sha256(page_bytes).hexdigest()
+        rows, total_jobs = _requisition_rows(payload)
+        if not rows:
+            break
+        page_fingerprint = _page_fingerprint(rows)
         if page_fingerprint in seen_pages:
             raise ValueError(
                 f"source {spec.source_id!r} repeated a pagination page"
@@ -156,9 +181,6 @@ def collect_oracle_hcm(spec: SourceSpec, client: HttpClient) -> CollectionResult
             )
         )
 
-        rows, total_jobs = _requisition_rows(payload)
-        if not rows:
-            break
         for row in rows:
             job = _job_from_row(spec, base_url, site_number, row)
             if job is not None:
@@ -167,7 +189,7 @@ def collect_oracle_hcm(spec: SourceSpec, client: HttpClient) -> CollectionResult
                     break
         scanned += len(rows)
         offset += len(rows)
-        if scanned >= total_jobs or len(rows) < requested:
+        if (total_jobs and scanned >= total_jobs) or len(rows) < requested:
             break
 
     return CollectionResult(jobs=jobs, evidence=evidence)
