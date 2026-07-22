@@ -1,0 +1,189 @@
+name: agent-fix-phase2-high-effort-review
+
+on:
+  push:
+    branches:
+      - agent/fix-phase2-high-effort-review
+
+permissions:
+  contents: write
+
+jobs:
+  patch-test-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/fix-phase2-high-effort-review
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Apply reviewed fixes and regression tests
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              target = Path(path)
+              text = target.read_text(encoding="utf-8")
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(
+                      f"Expected exactly one match in {path}, found {count}: {old[:100]!r}"
+                  )
+              target.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          replace_once(
+              "src/job_intelligence/database.py",
+              '''def upsert_job(db_path: str | Path, job: JobRecord) -> bool:\n    init_database(db_path)\n    if not job.title.strip() or not job.company.strip():\n        raise ValueError("title and company are required")\n\n    identity_fingerprint = build_identity_fingerprint(job)\n    canonical_url = canonicalize_url(job.apply_url or job.source_url)\n    columns = ", ".join(JOB_COLUMNS)\n    placeholders = ", ".join(f":{column}" for column in JOB_COLUMNS)\n    string_updates = ",\\n                ".join(\n        f"{column}=COALESCE(NULLIF(excluded.{column}, ''), jobs.{column})"\n        for column in _STRING_REFRESH_COLUMNS\n    )\n\n    with connect(db_path) as connection:\n        existing_key = _find_existing_job_key(\n            connection,\n            job.job_key,\n            identity_fingerprint,\n            canonical_url,\n        )\n        job.job_key = existing_key or _allocate_job_key(\n            connection,\n            job,\n            canonical_url,\n        )\n        existed = existing_key is not None\n        if not existed:\n            existed = (\n                connection.execute(\n                    "SELECT 1 FROM jobs WHERE job_key = ?",\n                    (job.job_key,),\n                ).fetchone()\n                is not None\n            )\n        values = _job_values(job, identity_fingerprint, canonical_url)\n        connection.execute(\n            f"""\n            INSERT INTO jobs ({columns}) VALUES ({placeholders})\n            ON CONFLICT(job_key) DO UPDATE SET\n                identity_fingerprint=excluded.identity_fingerprint,\n                canonical_url=COALESCE(\n                    NULLIF(excluded.canonical_url, ''), jobs.canonical_url\n                ),\n                {string_updates},\n                last_seen_at=excluded.last_seen_at,\n                recruiter_name=COALESCE(\n                    NULLIF(excluded.recruiter_name, ''), jobs.recruiter_name\n                ),\n                recruiter_email=COALESCE(\n                    NULLIF(excluded.recruiter_email, ''), jobs.recruiter_email\n                ),\n                contact_confidence=COALESCE(\n                    NULLIF(excluded.contact_confidence, ''), jobs.contact_confidence\n                ),\n                match_score=CASE\n                    WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''\n                    THEN excluded.match_score ELSE jobs.match_score END,\n                match_reasons=CASE\n                    WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''\n                    THEN excluded.match_reasons ELSE jobs.match_reasons END,\n                gaps=CASE\n                    WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''\n                    THEN excluded.gaps ELSE jobs.gaps END,\n                priority=CASE\n                    WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''\n                    THEN excluded.priority ELSE jobs.priority END,\n                application_status=jobs.application_status\n            """,\n            values,\n        )\n        _register_identity_aliases(\n            connection,\n            job.job_key,\n            identity_fingerprint,\n            canonical_url,\n            job.found_at,\n        )\n    return not existed\n\n\ndef upsert_jobs(db_path: str | Path, jobs: Iterable[JobRecord]) -> tuple[int, int]:\n    new_count = 0\n    updated_count = 0\n    for job in jobs:\n        if upsert_job(db_path, job):\n            new_count += 1\n        else:\n            updated_count += 1\n    return new_count, updated_count\n''',
+              '''def _upsert_job(connection: sqlite3.Connection, job: JobRecord) -> bool:\n    if not job.title.strip() or not job.company.strip():\n        raise ValueError("title and company are required")\n\n    identity_fingerprint = build_identity_fingerprint(job)\n    canonical_url = canonicalize_url(job.apply_url or job.source_url)\n    columns = ", ".join(JOB_COLUMNS)\n    placeholders = ", ".join(f":{column}" for column in JOB_COLUMNS)\n    string_updates = ",\\n                ".join(\n        f"{column}=COALESCE(NULLIF(excluded.{column}, ''), jobs.{column})"\n        for column in _STRING_REFRESH_COLUMNS\n    )\n\n    existing_key = _find_existing_job_key(\n        connection,\n        job.job_key,\n        identity_fingerprint,\n        canonical_url,\n    )\n    job.job_key = existing_key or _allocate_job_key(\n        connection,\n        job,\n        canonical_url,\n    )\n    existed = existing_key is not None\n    if not existed:\n        existed = (\n            connection.execute(\n                "SELECT 1 FROM jobs WHERE job_key = ?",\n                (job.job_key,),\n            ).fetchone()\n            is not None\n        )\n    values = _job_values(job, identity_fingerprint, canonical_url)\n    connection.execute(\n        f"""\n        INSERT INTO jobs ({columns}) VALUES ({placeholders})\n        ON CONFLICT(job_key) DO UPDATE SET\n            identity_fingerprint=excluded.identity_fingerprint,\n            canonical_url=COALESCE(\n                NULLIF(excluded.canonical_url, ''), jobs.canonical_url\n            ),\n            {string_updates},\n            last_seen_at=excluded.last_seen_at,\n            recruiter_name=COALESCE(\n                NULLIF(excluded.recruiter_name, ''), jobs.recruiter_name\n            ),\n            recruiter_email=COALESCE(\n                NULLIF(excluded.recruiter_email, ''), jobs.recruiter_email\n            ),\n            contact_confidence=COALESCE(\n                NULLIF(excluded.contact_confidence, ''), jobs.contact_confidence\n            ),\n            match_score=CASE\n                WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''\n                THEN excluded.match_score ELSE jobs.match_score END,\n            match_reasons=CASE\n                WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''\n                THEN excluded.match_reasons ELSE jobs.match_reasons END,\n            gaps=CASE\n                WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''\n                THEN excluded.gaps ELSE jobs.gaps END,\n            priority=CASE\n                WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''\n                THEN excluded.priority ELSE jobs.priority END,\n            application_status=jobs.application_status\n        """,\n        values,\n    )\n    _register_identity_aliases(\n        connection,\n        job.job_key,\n        identity_fingerprint,\n        canonical_url,\n        job.found_at,\n    )\n    return not existed\n\n\ndef upsert_job(db_path: str | Path, job: JobRecord) -> bool:\n    init_database(db_path)\n    with connect(db_path) as connection:\n        return _upsert_job(connection, job)\n\n\ndef upsert_jobs(db_path: str | Path, jobs: Iterable[JobRecord]) -> tuple[int, int]:\n    init_database(db_path)\n    new_count = 0\n    updated_count = 0\n    with connect(db_path) as connection:\n        for job in jobs:\n            if _upsert_job(connection, job):\n                new_count += 1\n            else:\n                updated_count += 1\n    return new_count, updated_count\n''',
+          )
+
+          replace_once(
+              "src/job_intelligence/collection_runner.py",
+              '''def _prepare_jobs(spec: SourceSpec, jobs: list[JobRecord], config_dir: Path) -> None:\n''',
+              '''def _delete_evidence(\n    db_path: str | Path,\n    evidence_root: str | Path,\n    run_id: str,\n    source_id: str,\n) -> None:\n    destination = Path(evidence_root) / source_id / run_id\n    shutil.rmtree(destination, ignore_errors=True)\n    with connect(db_path) as connection:\n        connection.execute(\n            "DELETE FROM source_evidence WHERE run_id=? AND source_id=?",\n            (run_id, source_id),\n        )\n\n\ndef _prepare_jobs(spec: SourceSpec, jobs: list[JobRecord], config_dir: Path) -> None:\n''',
+          )
+          replace_once(
+              "src/job_intelligence/collection_runner.py",
+              '''        try:\n            client = factory(spec)\n            if spec.source_type == "sitemap":\n                result = collect_sitemap(\n                    spec,\n                    client,\n                    respect_robots_txt=source_config.policy["respect_robots_txt"],\n                )\n            else:\n                collector = COLLECTORS[spec.source_type]\n                result = collector(spec, client)\n            _prepare_jobs(spec, result.jobs, config_path.parent)\n            if source_config.policy["retain_source_evidence"]:\n                _save_evidence(\n                    db_path,\n                    evidence_root,\n                    run_id,\n                    spec.source_id,\n                    result.evidence,\n                )\n            new_jobs, updated_jobs = upsert_jobs(db_path, result.jobs)\n            record_source_health(\n                db_path,\n                spec.source_id,\n                spec.name,\n                "pass",\n                records_found=len(result.jobs),\n            )\n            summary.sources_passed += 1\n            summary.jobs_collected += len(result.jobs)\n            summary.new_jobs += new_jobs\n            summary.updated_jobs += updated_jobs\n            summary.source_results.append(\n                SourceRunResult(\n                    source_id=spec.source_id,\n                    status="pass",\n                    jobs_collected=len(result.jobs),\n                    new_jobs=new_jobs,\n                    updated_jobs=updated_jobs,\n                )\n            )\n        except Exception as exc:\n            message = f"{type(exc).__name__}: {exc}"\n            errors.append(f"{spec.source_id}: {message}")\n            record_source_health(\n                db_path,\n                spec.source_id,\n                spec.name,\n                "fail",\n                error_message=message,\n            )\n            summary.sources_failed += 1\n            summary.source_results.append(\n                SourceRunResult(\n                    source_id=spec.source_id,\n                    status="fail",\n                    jobs_collected=0,\n                    new_jobs=0,\n                    updated_jobs=0,\n                    error_message=message,\n                )\n            )\n''',
+              '''        result = None\n        evidence_saved = False\n        stage = "collect"\n        try:\n            client = factory(spec)\n            if spec.source_type == "sitemap":\n                result = collect_sitemap(\n                    spec,\n                    client,\n                    respect_robots_txt=source_config.policy["respect_robots_txt"],\n                )\n            else:\n                collector = COLLECTORS[spec.source_type]\n                result = collector(spec, client)\n            if source_config.policy["retain_source_evidence"]:\n                _save_evidence(\n                    db_path,\n                    evidence_root,\n                    run_id,\n                    spec.source_id,\n                    result.evidence,\n                )\n                evidence_saved = True\n            stage = "score"\n            _prepare_jobs(spec, result.jobs, config_path.parent)\n            stage = "upsert"\n            new_jobs, updated_jobs = upsert_jobs(db_path, result.jobs)\n            stage = "health"\n            record_source_health(\n                db_path,\n                spec.source_id,\n                spec.name,\n                "pass",\n                records_found=len(result.jobs),\n            )\n            summary.sources_passed += 1\n            summary.jobs_collected += len(result.jobs)\n            summary.new_jobs += new_jobs\n            summary.updated_jobs += updated_jobs\n            summary.source_results.append(\n                SourceRunResult(\n                    source_id=spec.source_id,\n                    status="pass",\n                    jobs_collected=len(result.jobs),\n                    new_jobs=new_jobs,\n                    updated_jobs=updated_jobs,\n                )\n            )\n        except Exception as exc:\n            message = f"{type(exc).__name__}: {exc}"\n            if evidence_saved and stage == "upsert":\n                try:\n                    _delete_evidence(\n                        db_path,\n                        evidence_root,\n                        run_id,\n                        spec.source_id,\n                    )\n                except Exception as cleanup_exc:\n                    message += (\n                        " | evidence cleanup failed: "\n                        f"{type(cleanup_exc).__name__}: {cleanup_exc}"\n                    )\n            fetched_count = len(result.jobs) if result is not None else 0\n            errors.append(f"{spec.source_id}: {message}")\n            record_source_health(\n                db_path,\n                spec.source_id,\n                spec.name,\n                "fail",\n                records_found=fetched_count,\n                error_message=message,\n            )\n            summary.sources_failed += 1\n            summary.source_results.append(\n                SourceRunResult(\n                    source_id=spec.source_id,\n                    status="fail",\n                    jobs_collected=fetched_count,\n                    new_jobs=0,\n                    updated_jobs=0,\n                    error_message=message,\n                )\n            )\n''',
+          )
+
+          replace_once(
+              "src/job_intelligence/collectors/lever.py",
+              '''from __future__ import annotations\n\nfrom typing import Any\n''',
+              '''from __future__ import annotations\n\nimport hashlib\nfrom typing import Any\n''',
+          )
+          replace_once(
+              "src/job_intelligence/collectors/lever.py",
+              '''    max_items = spec.int_option("max_items", 500)\n    page_size = min(spec.int_option("page_size", 100), 100)\n\n    jobs: list[JobRecord] = []\n    evidence: list[EvidenceArtifact] = []\n    skip = 0\n    while len(jobs) < max_items:\n''',
+              '''    max_items = spec.int_option("max_items", 500)\n    page_size = min(spec.int_option("page_size", 100), 100)\n    default_max_pages = max(4, ((max_items + page_size - 1) // page_size) * 4)\n    max_pages = spec.int_option("max_pages", default_max_pages)\n\n    jobs: list[JobRecord] = []\n    evidence: list[EvidenceArtifact] = []\n    seen_pages: set[str] = set()\n    pages_fetched = 0\n    skip = 0\n    while len(jobs) < max_items:\n        if pages_fetched >= max_pages:\n            raise ValueError(\n                f"source {spec.source_id!r} exceeded max_pages={max_pages}"\n            )\n''',
+          )
+          replace_once(
+              "src/job_intelligence/collectors/lever.py",
+              '''        evidence.append(\n            EvidenceArtifact(\n                source_url=response.url,\n                content_type=response.headers.get("content-type", "application/json"),\n                body=json_bytes(payload),\n                status_code=response.status_code,\n                suffix=".json",\n            )\n        )\n        if not payload:\n''',
+              '''        page_bytes = json_bytes(payload)\n        evidence.append(\n            EvidenceArtifact(\n                source_url=response.url,\n                content_type=response.headers.get("content-type", "application/json"),\n                body=page_bytes,\n                status_code=response.status_code,\n                suffix=".json",\n            )\n        )\n        page_fingerprint = hashlib.sha256(page_bytes).hexdigest()\n        if page_fingerprint in seen_pages:\n            raise ValueError(\n                f"source {spec.source_id!r} repeated a pagination page"\n            )\n        seen_pages.add(page_fingerprint)\n        pages_fetched += 1\n        if not payload:\n''',
+          )
+
+          replace_once(
+              "src/job_intelligence/collectors/smartrecruiters.py",
+              '''from __future__ import annotations\n\nfrom typing import Any\n''',
+              '''from __future__ import annotations\n\nimport hashlib\nfrom typing import Any\n''',
+          )
+          replace_once(
+              "src/job_intelligence/collectors/smartrecruiters.py",
+              '''    max_items = spec.int_option("max_items", 300)\n    page_size = min(spec.int_option("page_size", 100), 100)\n    fetch_details = spec.bool_option("fetch_details", True)\n\n    jobs: list[JobRecord] = []\n    evidence: list[EvidenceArtifact] = []\n    offset = 0\n    while len(jobs) < max_items:\n''',
+              '''    max_items = spec.int_option("max_items", 300)\n    page_size = min(spec.int_option("page_size", 100), 100)\n    fetch_details = spec.bool_option("fetch_details", True)\n    default_max_pages = max(4, ((max_items + page_size - 1) // page_size) * 4)\n    max_pages = spec.int_option("max_pages", default_max_pages)\n\n    jobs: list[JobRecord] = []\n    evidence: list[EvidenceArtifact] = []\n    seen_pages: set[str] = set()\n    pages_fetched = 0\n    offset = 0\n    while len(jobs) < max_items:\n        if pages_fetched >= max_pages:\n            raise ValueError(\n                f"source {spec.source_id!r} exceeded max_pages={max_pages}"\n            )\n''',
+          )
+          replace_once(
+              "src/job_intelligence/collectors/smartrecruiters.py",
+              '''        evidence.append(\n            EvidenceArtifact(\n                source_url=response.url,\n                content_type=response.headers.get("content-type", "application/json"),\n                body=json_bytes(payload),\n                status_code=response.status_code,\n                suffix=".json",\n            )\n        )\n        raw_postings = payload.get("content", payload.get("postings", []))\n''',
+              '''        page_bytes = json_bytes(payload)\n        evidence.append(\n            EvidenceArtifact(\n                source_url=response.url,\n                content_type=response.headers.get("content-type", "application/json"),\n                body=page_bytes,\n                status_code=response.status_code,\n                suffix=".json",\n            )\n        )\n        page_fingerprint = hashlib.sha256(page_bytes).hexdigest()\n        if page_fingerprint in seen_pages:\n            raise ValueError(\n                f"source {spec.source_id!r} repeated a pagination page"\n            )\n        seen_pages.add(page_fingerprint)\n        pages_fetched += 1\n        raw_postings = payload.get("content", payload.get("postings", []))\n''',
+          )
+
+          replace_once(
+              "src/job_intelligence/source_config.py",
+              '''    spec.int_option("max_items", 500)\n''',
+              '''    spec.int_option("max_items", 500)\n    spec.int_option("max_pages", 100)\n''',
+          )
+
+          replace_once(
+              "src/job_intelligence/collectors/schema_org.py",
+              '''    if minimum is None and maximum is None:\n        return ""\n    amount = str(minimum if maximum is None else f"{minimum}–{maximum}")\n''',
+              '''    if minimum is None and maximum is None:\n        return ""\n    if minimum is None:\n        amount = str(maximum)\n    elif maximum is None:\n        amount = str(minimum)\n    else:\n        amount = f"{minimum}–{maximum}"\n''',
+          )
+
+          replace_once(
+              "scripts/run_daily.ps1",
+              '''$collectExit = $LASTEXITCODE\n\n& $Python -m job_intelligence.cli --db $db verify --output $xlsx *>&1 |\n    Tee-Object -FilePath $proof -Append\n$verifyExit = $LASTEXITCODE\nif ($verifyExit -ne 0) {\n    throw "Verification failed. See $proof"\n}\n\nif ($collectExit -eq 2) {\n    throw "Collection failed after verification. Review Source_Health and $proof"\n}\nif ($collectExit -eq 1) {\n    throw "Collection was partial but verification completed. Review Source_Health and $proof"\n}\nif ($collectExit -ne 0) {\n    throw "Collection returned unexpected exit code $collectExit. See $proof"\n}\n''',
+              '''$collectExit = $LASTEXITCODE\nif ($collectExit -eq 2) {\n    throw "Collection failed; verification was not run against a possibly stale workbook. Review Source_Health and $proof"\n}\nif ($collectExit -notin @(0, 1)) {\n    throw "Collection returned unexpected exit code $collectExit. See $proof"\n}\n\n& $Python -m job_intelligence.cli --db $db verify --output $xlsx *>&1 |\n    Tee-Object -FilePath $proof -Append\n$verifyExit = $LASTEXITCODE\nif ($verifyExit -ne 0) {\n    throw "Verification failed. See $proof"\n}\n\nif ($collectExit -eq 1) {\n    throw "Collection was partial but verification completed. Review Source_Health and $proof"\n}\n''',
+          )
+
+          replace_once(
+              "tests/test_database_integrity.py",
+              '''from pathlib import Path\n\nfrom job_intelligence.database import connect, fetch_jobs, init_database, upsert_job\n''',
+              '''from pathlib import Path\n\nimport pytest\n\nfrom job_intelligence.database import (\n    connect,\n    fetch_jobs,\n    init_database,\n    upsert_job,\n    upsert_jobs,\n)\n''',
+          )
+          database_tests = Path("tests/test_database_integrity.py")
+          database_tests.write_text(
+              database_tests.read_text(encoding="utf-8")
+              + '''\n\ndef test_batch_upsert_rolls_back_all_jobs_on_failure(tmp_path: Path) -> None:\n    db_path = tmp_path / "jobs.db"\n    valid = JobRecord(title="Piping Engineer", company="Example EPC")\n    invalid = JobRecord(title="", company="Example EPC")\n\n    with pytest.raises(ValueError, match="title and company are required"):\n        upsert_jobs(db_path, [valid, invalid])\n\n    assert fetch_jobs(db_path) == []\n''',
+              encoding="utf-8",
+          )
+
+          collection_tests = Path("tests/test_collection_runner_integrity.py")
+          replace_once(
+              str(collection_tests),
+              '''from job_intelligence.database import fetch_jobs\n''',
+              '''from job_intelligence.database import connect, fetch_jobs\n''',
+          )
+          collection_tests.write_text(
+              collection_tests.read_text(encoding="utf-8")
+              + '''\n\ndef _greenhouse_client_factory(url: str, payload: bytes):\n    def factory(_source: SourceSpec) -> OneResponseClient:\n        return OneResponseClient(\n            url,\n            FetchedResponse(\n                url=url,\n                status_code=200,\n                headers={"content-type": "application/json"},\n                content=payload,\n            ),\n        )\n\n    return factory\n\n\ndef test_scoring_failure_retains_fetched_evidence(\n    tmp_path: Path,\n    monkeypatch: pytest.MonkeyPatch,\n) -> None:\n    config = tmp_path / "sources.yaml"\n    config.write_text(source_yaml(), encoding="utf-8")\n    url = "https://boards-api.greenhouse.io/v1/boards/example/jobs"\n    payload = (\n        b'{"jobs":[{"title":"Piping Engineer",'\n        b'"absolute_url":"https://example.com/jobs/score"}]}'\n    )\n\n    def fail_scoring(*_args, **_kwargs) -> None:\n        raise RuntimeError("simulated scoring failure")\n\n    monkeypatch.setattr(collection_runner, "_prepare_jobs", fail_scoring)\n    db_path = tmp_path / "jobs.db"\n    summary = collect_sources(\n        db_path,\n        config,\n        tmp_path / "evidence",\n        client_factory=_greenhouse_client_factory(url, payload),\n    )\n\n    assert summary.status == "fail"\n    assert summary.source_results[0].jobs_collected == 1\n    assert fetch_jobs(db_path) == []\n    with connect(db_path) as connection:\n        evidence = connection.execute(\n            "SELECT file_path FROM source_evidence"\n        ).fetchone()\n        health = connection.execute(\n            "SELECT status, records_found FROM source_health"\n        ).fetchone()\n    assert evidence is not None\n    assert Path(evidence["file_path"]).exists()\n    assert tuple(health) == ("fail", 1)\n\n\ndef test_upsert_failure_removes_evidence_and_jobs(\n    tmp_path: Path,\n    monkeypatch: pytest.MonkeyPatch,\n) -> None:\n    config = tmp_path / "sources.yaml"\n    config.write_text(source_yaml(), encoding="utf-8")\n    url = "https://boards-api.greenhouse.io/v1/boards/example/jobs"\n    payload = (\n        b'{"jobs":[{"title":"Piping Engineer",'\n        b'"absolute_url":"https://example.com/jobs/upsert"}]}'\n    )\n\n    def fail_upsert(*_args, **_kwargs):\n        raise RuntimeError("simulated upsert failure")\n\n    monkeypatch.setattr(collection_runner, "upsert_jobs", fail_upsert)\n    db_path = tmp_path / "jobs.db"\n    evidence_root = tmp_path / "evidence"\n    summary = collect_sources(\n        db_path,\n        config,\n        evidence_root,\n        client_factory=_greenhouse_client_factory(url, payload),\n    )\n\n    assert summary.status == "fail"\n    assert fetch_jobs(db_path) == []\n    with connect(db_path) as connection:\n        count = connection.execute("SELECT COUNT(*) FROM source_evidence").fetchone()[0]\n    assert count == 0\n    run_directory = evidence_root / "target_greenhouse" / summary.run_id\n    assert run_directory.exists() is False\n''',
+              encoding="utf-8",
+          )
+
+          replace_once(
+              "tests/test_collector_limits.py",
+              '''import json\nfrom typing import Mapping\n\nfrom job_intelligence.collectors.http_client import FetchedResponse\n''',
+              '''import json\nfrom typing import Mapping\n\nimport pytest\n\nfrom job_intelligence.collectors.http_client import FetchedResponse\n''',
+          )
+          collector_tests = Path("tests/test_collector_limits.py")
+          collector_tests.write_text(
+              collector_tests.read_text(encoding="utf-8")
+              + '''\n\ndef test_lever_rejects_repeated_full_pages() -> None:\n    url = "https://api.lever.co/v0/postings/example"\n    repeated = [{"id": "invalid", "text": ""}]\n    client = FakeClient(\n        {url: [response(url, repeated), response(url, repeated)]}\n    )\n\n    with pytest.raises(ValueError, match="repeated a pagination page"):\n        collect_lever(\n            source(\n                "lever",\n                site="example",\n                max_items=1,\n                page_size=1,\n                max_pages=4,\n            ),\n            client,\n        )\n\n    assert len(client.calls) == 2\n\n\ndef test_smartrecruiters_rejects_repeated_full_pages() -> None:\n    url = "https://api.smartrecruiters.com/v1/companies/example/postings"\n    repeated = {"content": [{"id": "invalid", "name": ""}]}\n    client = FakeClient(\n        {url: [response(url, repeated), response(url, repeated)]}\n    )\n\n    with pytest.raises(ValueError, match="repeated a pagination page"):\n        collect_smartrecruiters(\n            source(\n                "smartrecruiters",\n                company_identifier="example",\n                fetch_details=False,\n                max_items=1,\n                page_size=1,\n                max_pages=4,\n            ),\n            client,\n        )\n\n    assert len(client.calls) == 2\n''',
+              encoding="utf-8",
+          )
+
+          Path("tests/test_schema_org_salary.py").write_text(
+              '''from job_intelligence.collectors.schema_org import _salary\n\n\ndef test_max_only_salary_does_not_render_none() -> None:\n    result = _salary(\n        {\n            "currency": "USD",\n            "value": {"maxValue": 150000, "unitText": "YEAR"},\n        }\n    )\n    assert result == "USD 150000 per YEAR"\n    assert "None" not in result\n''',
+              encoding="utf-8",
+          )
+
+          Path("tests/test_windows_runner.py").write_text(
+              '''from pathlib import Path\n\n\ndef test_failed_collect_stops_before_verify() -> None:\n    script = Path("scripts/run_daily.ps1").read_text(encoding="utf-8")\n    collect_check = script.index("if ($collectExit -eq 2)")\n    verify_command = script.index(" -m job_intelligence.cli --db $db verify")\n    assert collect_check < verify_command\n    assert "possibly stale workbook" in script\n\n\ndef test_partial_collect_still_runs_verify() -> None:\n    script = Path("scripts/run_daily.ps1").read_text(encoding="utf-8")\n    verify_command = script.index(" -m job_intelligence.cli --db $db verify")\n    partial_check = script.index("if ($collectExit -eq 1)")\n    assert verify_command < partial_check\n''',
+              encoding="utf-8",
+          )
+
+          Path(".github/workflows/agent-fix-phase2-review.yml").unlink()
+          PY
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && pip install -e ".[dev]"
+
+      - name: Verify all fixes
+        shell: bash
+        run: |
+          git diff --check
+          ruff check src tests
+          pytest -q
+          rm -rf tmp
+          job-intel validate-sources --sources config/sources.yaml
+          job-intel --db tmp/jobs.db init-db
+          job-intel --db tmp/jobs.db collect \
+            --sources config/sources.yaml \
+            --evidence-dir tmp/raw \
+            --no-export
+          job-intel --db tmp/jobs.db export \
+            --output tmp/Piping_E3D_Jobs.xlsx
+          job-intel --db tmp/jobs.db verify \
+            --output tmp/Piping_E3D_Jobs.xlsx
+          rm -rf tmp
+
+      - name: Commit verified fixes
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Fix Phase 2 high-effort review findings"
+          git push origin HEAD:agent/fix-phase2-high-effort-review
