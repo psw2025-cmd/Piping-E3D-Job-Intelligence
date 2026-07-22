@@ -1,0 +1,24 @@
+# Only public, permitted sources belong here. Do not add credentials or private URLs.
+sources:
+  - id: example_rss
+    name: Example RSS source
+    type: rss
+    url: https://example.com/jobs.rss
+    enabled: false
+    interval_minutes: 60
+    rate_limit_per_minute: 2
+
+  - id: example_sitemap
+    name: Example company careers sitemap
+    type: sitemap
+    url: https://example.com/jobs-sitemap.xml
+    enabled: false
+    interval_minutes: 360
+    rate_limit_per_minute: 2
+
+policy:
+  respect_robots_txt: true
+  skip_login_required_pages: true
+  bypass_captcha: false
+  use_rotating_proxies: false
+  retain_source_evidence: true
