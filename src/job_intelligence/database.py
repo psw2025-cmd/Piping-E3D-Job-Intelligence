@@ -1,14 +1,17 @@
 from __future__ import annotations
 
+import hashlib
 import sqlite3
 from pathlib import Path
 from typing import Iterable
 
-from .deduplicate import build_job_key
+from .deduplicate import build_identity_fingerprint, build_job_key, canonicalize_url
 from .models import JobRecord, utc_now_iso
 
 JOB_COLUMNS = (
     "job_key",
+    "identity_fingerprint",
+    "canonical_url",
     "title",
     "company",
     "location",
@@ -33,6 +36,21 @@ JOB_COLUMNS = (
     "application_status",
 )
 
+_STRING_REFRESH_COLUMNS = (
+    "title",
+    "company",
+    "location",
+    "description",
+    "apply_url",
+    "source_url",
+    "source_name",
+    "published_at",
+    "job_type",
+    "salary_text",
+    "experience_text",
+    "skills_text",
+)
+
 
 def connect(db_path: str | Path) -> sqlite3.Connection:
     path = Path(db_path)
@@ -42,12 +60,107 @@ def connect(db_path: str | Path) -> sqlite3.Connection:
     return connection
 
 
+def _register_identity_aliases(
+    connection: sqlite3.Connection,
+    job_key: str,
+    identity_fingerprint: str,
+    canonical_url: str,
+    first_seen_at: str | None = None,
+) -> None:
+    timestamp = first_seen_at or utc_now_iso()
+    aliases = (
+        ("fingerprint", identity_fingerprint),
+        ("canonical_url", canonical_url),
+    )
+    connection.executemany(
+        """
+        INSERT OR IGNORE INTO job_identity_aliases (
+            alias_type, alias_value, job_key, first_seen_at
+        ) VALUES (?, ?, ?, ?)
+        """,
+        [
+            (alias_type, alias_value, job_key, timestamp)
+            for alias_type, alias_value in aliases
+            if alias_value
+        ],
+    )
+
+
+def _ensure_job_identity_columns(connection: sqlite3.Connection) -> None:
+    columns = {row[1] for row in connection.execute("PRAGMA table_info(jobs)")}
+    if "identity_fingerprint" not in columns:
+        connection.execute(
+            "ALTER TABLE jobs ADD COLUMN identity_fingerprint TEXT NOT NULL DEFAULT ''"
+        )
+    if "canonical_url" not in columns:
+        connection.execute(
+            "ALTER TABLE jobs ADD COLUMN canonical_url TEXT NOT NULL DEFAULT ''"
+        )
+
+    rows = connection.execute(
+        "SELECT * FROM jobs WHERE identity_fingerprint = '' OR canonical_url = ''"
+    ).fetchall()
+    for row in rows:
+        job = JobRecord(
+            title=row["title"],
+            company=row["company"],
+            location=row["location"],
+            description=row["description"],
+            apply_url=row["apply_url"],
+            source_url=row["source_url"],
+        )
+        connection.execute(
+            "UPDATE jobs SET identity_fingerprint = ?, canonical_url = ? "
+            "WHERE job_key = ?",
+            (
+                build_identity_fingerprint(job),
+                canonicalize_url(job.apply_url or job.source_url),
+                row["job_key"],
+            ),
+        )
+
+    connection.execute(
+        "CREATE INDEX IF NOT EXISTS idx_jobs_identity_fingerprint "
+        "ON jobs(identity_fingerprint)"
+    )
+    connection.execute(
+        "CREATE INDEX IF NOT EXISTS idx_jobs_canonical_url ON jobs(canonical_url)"
+    )
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS job_identity_aliases (
+            alias_type TEXT NOT NULL,
+            alias_value TEXT NOT NULL,
+            job_key TEXT NOT NULL,
+            first_seen_at TEXT NOT NULL,
+            PRIMARY KEY (alias_type, alias_value, job_key)
+        )
+        """
+    )
+    connection.execute(
+        "CREATE INDEX IF NOT EXISTS idx_identity_alias_lookup "
+        "ON job_identity_aliases(alias_type, alias_value)"
+    )
+    for row in connection.execute(
+        "SELECT job_key, identity_fingerprint, canonical_url, found_at FROM jobs"
+    ):
+        _register_identity_aliases(
+            connection,
+            str(row["job_key"]),
+            str(row["identity_fingerprint"]),
+            str(row["canonical_url"]),
+            str(row["found_at"]),
+        )
+
+
 def init_database(db_path: str | Path) -> None:
     with connect(db_path) as connection:
         connection.executescript(
             """
             CREATE TABLE IF NOT EXISTS jobs (
                 job_key TEXT PRIMARY KEY,
+                identity_fingerprint TEXT NOT NULL DEFAULT '',
+                canonical_url TEXT NOT NULL DEFAULT '',
                 title TEXT NOT NULL,
                 company TEXT NOT NULL,
                 location TEXT NOT NULL DEFAULT '',
@@ -71,6 +184,17 @@ def init_database(db_path: str | Path) -> None:
                 priority TEXT NOT NULL DEFAULT 'normal',
                 application_status TEXT NOT NULL DEFAULT 'new'
             );
+
+            CREATE TABLE IF NOT EXISTS job_identity_aliases (
+                alias_type TEXT NOT NULL,
+                alias_value TEXT NOT NULL,
+                job_key TEXT NOT NULL,
+                first_seen_at TEXT NOT NULL,
+                PRIMARY KEY (alias_type, alias_value, job_key)
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_identity_alias_lookup
+                ON job_identity_aliases(alias_type, alias_value);
 
             CREATE TABLE IF NOT EXISTS source_health (
                 source_id TEXT PRIMARY KEY,
@@ -97,6 +221,101 @@ def init_database(db_path: str | Path) -> None:
             );
             """
         )
+        _ensure_job_identity_columns(connection)
+
+
+def _canonical_urls_compatible(existing_url: str, incoming_url: str) -> bool:
+    return not existing_url or not incoming_url or existing_url == incoming_url
+
+
+def _find_alias_candidates(
+    connection: sqlite3.Connection,
+    alias_type: str,
+    alias_value: str,
+    incoming_url: str,
+) -> list[sqlite3.Row]:
+    if not alias_value:
+        return []
+    rows = connection.execute(
+        """
+        SELECT jobs.job_key, jobs.canonical_url
+        FROM job_identity_aliases AS aliases
+        JOIN jobs ON jobs.job_key = aliases.job_key
+        WHERE aliases.alias_type = ? AND aliases.alias_value = ?
+        ORDER BY jobs.found_at
+        """,
+        (alias_type, alias_value),
+    ).fetchall()
+    return [
+        row
+        for row in rows
+        if _canonical_urls_compatible(str(row["canonical_url"]), incoming_url)
+    ]
+
+
+def _find_existing_job_key(
+    connection: sqlite3.Connection,
+    requested_key: str,
+    identity_fingerprint: str,
+    canonical_url: str,
+) -> str | None:
+    if requested_key:
+        row = connection.execute(
+            "SELECT job_key, canonical_url FROM jobs WHERE job_key = ?",
+            (requested_key,),
+        ).fetchone()
+        if row and _canonical_urls_compatible(str(row["canonical_url"]), canonical_url):
+            return str(row["job_key"])
+
+    canonical_matches = _find_alias_candidates(
+        connection,
+        "canonical_url",
+        canonical_url,
+        canonical_url,
+    )
+    if len(canonical_matches) == 1:
+        return str(canonical_matches[0]["job_key"])
+
+    fingerprint_matches = _find_alias_candidates(
+        connection,
+        "fingerprint",
+        identity_fingerprint,
+        canonical_url,
+    )
+    if len(fingerprint_matches) == 1:
+        return str(fingerprint_matches[0]["job_key"])
+    return None
+
+
+def _allocate_job_key(
+    connection: sqlite3.Connection,
+    job: JobRecord,
+    canonical_url: str,
+) -> str:
+    base_key = job.job_key or build_job_key(job)
+    row = connection.execute(
+        "SELECT canonical_url FROM jobs WHERE job_key = ?",
+        (base_key,),
+    ).fetchone()
+    if not row or _canonical_urls_compatible(str(row["canonical_url"]), canonical_url):
+        return base_key
+
+    disambiguator = canonical_url or (
+        f"{job.source_name}|{job.apply_url}|{job.source_url}"
+    )
+    raw = f"{base_key}|variant|{disambiguator}"
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+
+def _job_values(
+    job: JobRecord,
+    identity_fingerprint: str,
+    canonical_url: str,
+) -> dict[str, object]:
+    values = job.to_dict()
+    values["identity_fingerprint"] = identity_fingerprint
+    values["canonical_url"] = canonical_url
+    return values
 
 
 def upsert_job(db_path: str | Path, job: JobRecord) -> bool:
@@ -104,26 +323,72 @@ def upsert_job(db_path: str | Path, job: JobRecord) -> bool:
     if not job.title.strip() or not job.company.strip():
         raise ValueError("title and company are required")
 
-    job.job_key = job.job_key or build_job_key(job)
-    values = job.to_dict()
+    identity_fingerprint = build_identity_fingerprint(job)
+    canonical_url = canonicalize_url(job.apply_url or job.source_url)
     columns = ", ".join(JOB_COLUMNS)
     placeholders = ", ".join(f":{column}" for column in JOB_COLUMNS)
-    updates = ", ".join(
-        f"{column}=excluded.{column}"
-        for column in JOB_COLUMNS
-        if column not in {"job_key", "found_at"}
+    string_updates = ",\n                ".join(
+        f"{column}=COALESCE(NULLIF(excluded.{column}, ''), jobs.{column})"
+        for column in _STRING_REFRESH_COLUMNS
     )
 
     with connect(db_path) as connection:
-        existed = connection.execute(
-            "SELECT 1 FROM jobs WHERE job_key = ?", (job.job_key,)
-        ).fetchone()
+        existing_key = _find_existing_job_key(
+            connection,
+            job.job_key,
+            identity_fingerprint,
+            canonical_url,
+        )
+        existed = existing_key is not None
+        job.job_key = existing_key or _allocate_job_key(
+            connection,
+            job,
+            canonical_url,
+        )
+        values = _job_values(job, identity_fingerprint, canonical_url)
         connection.execute(
-            f"INSERT INTO jobs ({columns}) VALUES ({placeholders}) "
-            f"ON CONFLICT(job_key) DO UPDATE SET {updates}",
+            f"""
+            INSERT INTO jobs ({columns}) VALUES ({placeholders})
+            ON CONFLICT(job_key) DO UPDATE SET
+                identity_fingerprint=excluded.identity_fingerprint,
+                canonical_url=COALESCE(
+                    NULLIF(excluded.canonical_url, ''), jobs.canonical_url
+                ),
+                {string_updates},
+                last_seen_at=excluded.last_seen_at,
+                recruiter_name=COALESCE(
+                    NULLIF(excluded.recruiter_name, ''), jobs.recruiter_name
+                ),
+                recruiter_email=COALESCE(
+                    NULLIF(excluded.recruiter_email, ''), jobs.recruiter_email
+                ),
+                contact_confidence=COALESCE(
+                    NULLIF(excluded.contact_confidence, ''), jobs.contact_confidence
+                ),
+                match_score=CASE
+                    WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''
+                    THEN excluded.match_score ELSE jobs.match_score END,
+                match_reasons=CASE
+                    WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''
+                    THEN excluded.match_reasons ELSE jobs.match_reasons END,
+                gaps=CASE
+                    WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''
+                    THEN excluded.gaps ELSE jobs.gaps END,
+                priority=CASE
+                    WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''
+                    THEN excluded.priority ELSE jobs.priority END,
+                application_status=jobs.application_status
+            """,
             values,
         )
-    return existed is None
+        _register_identity_aliases(
+            connection,
+            job.job_key,
+            identity_fingerprint,
+            canonical_url,
+            job.found_at,
+        )
+    return not existed
 
 
 def upsert_jobs(db_path: str | Path, jobs: Iterable[JobRecord]) -> tuple[int, int]:

@@ -14,6 +14,37 @@ thresholds:
   high: 70
   normal: 50
 
+recent_days: 7
+
+terms:
+  e3d_pdms:
+    - AVEVA E3D
+    - E3D
+    - PDMS
+  piping_layout:
+    - Piping Layout
+    - Equipment Layout
+    - Plot Plan
+    - General Arrangement
+  experience:
+    - 10 years
+    - 12 years
+    - 15 years
+    - Senior
+    - Lead
+  site_offshore:
+    - Site Engineering
+    - Site Experience
+    - Brownfield
+    - Punch List
+    - Offshore
+  diploma_eligible:
+    - Diploma
+    - Degree or Diploma
+  mandatory_degree:
+    - Degree Required
+    - Bachelor's Degree Required
+
 rules:
   require_explanation: true
   never_infer_missing_salary: true

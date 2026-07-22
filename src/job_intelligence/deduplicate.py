@@ -6,7 +6,16 @@ from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from .models import JobRecord
 
-_TRACKING_PREFIXES = ("utm_", "trk", "tracking", "source", "ref")
+_TRACKING_KEYS = {
+    "fbclid",
+    "gclid",
+    "dclid",
+    "msclkid",
+    "mc_cid",
+    "mc_eid",
+    "igshid",
+}
+_TRACKING_PREFIXES = ("utm_",)
 
 
 def normalize_text(value: str) -> str:
@@ -21,7 +30,8 @@ def canonicalize_url(url: str) -> str:
     filtered_query = [
         (key, value)
         for key, value in parse_qsl(parts.query, keep_blank_values=True)
-        if not key.lower().startswith(_TRACKING_PREFIXES)
+        if key.lower() not in _TRACKING_KEYS
+        and not key.lower().startswith(_TRACKING_PREFIXES)
     ]
     path = parts.path.rstrip("/") or "/"
     return urlunsplit(
@@ -29,19 +39,22 @@ def canonicalize_url(url: str) -> str:
     )
 
 
-def build_job_key(job: JobRecord) -> str:
-    canonical_url = canonicalize_url(job.apply_url or job.source_url)
-    if canonical_url:
-        raw = f"url|{canonical_url}"
-    else:
-        description_sample = normalize_text(job.description)[:500]
-        raw = "|".join(
-            (
-                "fields",
-                normalize_text(job.title),
-                normalize_text(job.company),
-                normalize_text(job.location),
-                description_sample,
-            )
+def build_identity_fingerprint(job: JobRecord) -> str:
+    raw = "|".join(
+        (
+            normalize_text(job.title),
+            normalize_text(job.company),
+            normalize_text(job.location),
+            normalize_text(job.description),
         )
+    )
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+
+def build_job_key(job: JobRecord) -> str:
+    """Return an immutable field-based primary key.
+
+    URL matching is a secondary database identity. Adding an apply URL later therefore
+    does not change an existing record's primary key.
+    """
+    return build_identity_fingerprint(job)
