@@ -112,6 +112,23 @@ def _read_yaml(path: Path) -> dict[str, Any]:
     return loaded
 
 
+def _mapping_or_empty(value: Any, name: str) -> dict[str, Any]:
+    if value is None:
+        return {}
+    if not isinstance(value, dict):
+        raise ValueError(f"Configuration section must be a mapping: {name}")
+    return value
+
+
+def _int_or_default(value: Any, default: int, name: str) -> int:
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"Configuration value must be an integer: {name}") from exc
+
+
 def _resolve_config_dir(config_dir: str | Path | None) -> Path | None:
     candidates: list[Path] = []
     if config_dir is not None:
@@ -138,9 +155,11 @@ def load_scoring_profile(config_dir: str | Path | None = None) -> ScoringProfile
         locations_data = _read_yaml(resolved / "locations.yaml")
         scoring_data = _read_yaml(resolved / "scoring.yaml")
 
-    weights = {**_DEFAULT_WEIGHTS, **scoring_data.get("weights", {})}
-    thresholds = {**_DEFAULT_THRESHOLDS, **scoring_data.get("thresholds", {})}
-    term_config = scoring_data.get("terms", {})
+    weight_config = _mapping_or_empty(scoring_data.get("weights"), "weights")
+    threshold_config = _mapping_or_empty(scoring_data.get("thresholds"), "thresholds")
+    term_config = _mapping_or_empty(scoring_data.get("terms"), "terms")
+    weights = {**_DEFAULT_WEIGHTS, **weight_config}
+    thresholds = {**_DEFAULT_THRESHOLDS, **threshold_config}
 
     location_groups = locations_data.get("locations", {})
     location_values: list[str] = []
@@ -167,7 +186,7 @@ def load_scoring_profile(config_dir: str | Path | None = None) -> ScoringProfile
         or _DEFAULT_TERMS["diploma_eligible"],
         mandatory_degree_terms=_lower_terms(term_config.get("mandatory_degree"))
         or _DEFAULT_TERMS["mandatory_degree"],
-        recent_days=int(scoring_data.get("recent_days", 7)),
+        recent_days=_int_or_default(scoring_data.get("recent_days"), 7, "recent_days"),
     )
 
 
