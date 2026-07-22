@@ -7,6 +7,7 @@ from .common import CollectionResult
 from .greenhouse import collect_greenhouse
 from .http_client import HttpClient
 from .lever import collect_lever
+from .public_html import collect_public_html
 from .rss import collect_rss
 from .sitemap import collect_sitemap
 from .smartrecruiters import collect_smartrecruiters
@@ -24,5 +25,6 @@ __all__ = [
     "COLLECTORS",
     "CollectionResult",
     "Collector",
+    "collect_public_html",
     "collect_sitemap",
 ]
