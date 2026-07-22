@@ -51,7 +51,7 @@ jobs:
           connection = sqlite3.connect(db_path)
           connection.row_factory = sqlite3.Row
           latest_run = connection.execute(
-              "SELECT * FROM collection_runs ORDER BY started_at DESC LIMIT 1"
+              "SELECT * FROM runs ORDER BY started_at DESC LIMIT 1"
           ).fetchone()
           health = connection.execute(
               "SELECT source_id, source_name, status, records_found, error_message "
