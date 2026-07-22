@@ -1,0 +1,85 @@
+name: verify-official-robots
+
+on:
+  push:
+    branches:
+      - agent/verify-official-epc-sources
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/verify-official-epc-sources
+          fetch-depth: 0
+
+      - name: Fetch fixed official robots files
+        shell: bash
+        run: |
+          mkdir -p tmp docs
+          ua='Piping-E3D-Job-Intelligence/0.3 (+public-source-verification)'
+          curl --silent --show-error --location --max-time 20 --max-filesize 200000 \
+            --user-agent "$ua" --output tmp/mcdermott-robots.txt --write-out '%{http_code}' \
+            https://edsv.fa.us2.oraclecloud.com/robots.txt > tmp/mcdermott-status.txt
+          curl --silent --show-error --location --max-time 20 --max-filesize 200000 \
+            --user-agent "$ua" --output tmp/wood-robots.txt --write-out '%{http_code}' \
+            https://ehif.fa.em2.oraclecloud.com/robots.txt > tmp/wood-status.txt
+
+      - name: Build robots verification report
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from urllib.robotparser import RobotFileParser
+
+          targets = [
+              ("McDermott", "https://edsv.fa.us2.oraclecloud.com", "mcdermott"),
+              ("Wood", "https://ehif.fa.em2.oraclecloud.com", "wood"),
+          ]
+          ua = "Piping-E3D-Job-Intelligence/0.3 (+public-source-verification)"
+          api_path = "/hcmRestApi/resources/11.13.18.05/recruitingCEJobRequisitions"
+          jobs_path = "/hcmUI/CandidateExperience/en/sites/CX_1/jobs"
+          lines = [
+              "# Official Oracle Career Robots Verification",
+              "",
+              "Low-volume read-only check of two fixed official career hosts.",
+              "",
+          ]
+          for company, base, slug in targets:
+              status = Path(f"tmp/{slug}-status.txt").read_text().strip()
+              body = Path(f"tmp/{slug}-robots.txt").read_text(
+                  encoding="utf-8", errors="replace"
+              )
+              parser = RobotFileParser()
+              parser.set_url(f"{base}/robots.txt")
+              parser.parse(body.splitlines())
+              lines.extend(
+                  [
+                      f"## {company}",
+                      "",
+                      f"- robots status: `{status}`",
+                      f"- API path allowed: **{'YES' if parser.can_fetch(ua, base + api_path) else 'NO'}**",
+                      f"- Jobs page allowed: **{'YES' if parser.can_fetch(ua, base + jobs_path) else 'NO'}**",
+                      f"- robots bytes: `{len(body.encode('utf-8'))}`",
+                      "",
+                  ]
+              )
+          Path("docs/OFFICIAL_SOURCE_ROBOTS_20260723.md").write_text(
+              "\n".join(lines), encoding="utf-8"
+          )
+          Path(".github/workflows/verify-official-robots.yml").unlink()
+          PY
+
+      - name: Commit report and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/OFFICIAL_SOURCE_ROBOTS_20260723.md .github/workflows/verify-official-robots.yml
+          git commit -m "Verify official Oracle career robots policies"
+          git push origin HEAD:agent/verify-official-epc-sources
