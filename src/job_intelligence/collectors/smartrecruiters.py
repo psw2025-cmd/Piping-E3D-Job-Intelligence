@@ -90,6 +90,8 @@ def collect_smartrecruiters(spec: SourceSpec, client: HttpClient) -> CollectionR
             break
 
         for summary in raw_postings:
+            if len(jobs) >= max_items:
+                break
             if not isinstance(summary, dict):
                 continue
             detail = summary
@@ -172,7 +174,7 @@ def collect_smartrecruiters(spec: SourceSpec, client: HttpClient) -> CollectionR
                 )
             )
 
-        if len(raw_postings) < limit:
+        if len(jobs) >= max_items or len(raw_postings) < limit:
             break
         offset += len(raw_postings)
 
