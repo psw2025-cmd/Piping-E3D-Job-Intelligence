@@ -22,6 +22,7 @@ class EvidenceArtifact:
 class CollectionResult:
     jobs: list[JobRecord] = field(default_factory=list)
     evidence: list[EvidenceArtifact] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
 
 
 class _TextExtractor(HTMLParser):
