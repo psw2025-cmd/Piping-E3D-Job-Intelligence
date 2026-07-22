@@ -2,7 +2,7 @@
 
 Local-first job intelligence, matching and tracking for piping, AVEVA E3D, PDMS, offshore, refinery, nuclear and EPC opportunities.
 
-> **Current status:** Phase 2 public-source foundation. Tested collectors now support public Greenhouse, Lever, SmartRecruiters, RSS/Atom and sitemap-based `JobPosting` sources. All example sources remain disabled until their public identifiers, access rules and employer ownership are verified. OCR, Gmail ingestion, alerts and a user dashboard remain future work.
+> **Current status:** Phase 3 employer registry. The production source file now contains verified official McDermott career searches for Chennai, Dubai and Doha. Public Greenhouse, Lever, SmartRecruiters, RSS/Atom, sitemap `JobPosting`, and constrained public employer HTML collectors are tested. OCR, Gmail ingestion, alerts and a user dashboard remain future work.
 
 ## Safety boundaries
 
@@ -27,11 +27,14 @@ Local-first job intelligence, matching and tracking for piping, AVEVA E3D, PDMS,
 - Public SmartRecruiters Posting collector with optional detail fetches
 - Public RSS and Atom collector
 - Robots-aware XML sitemap traversal with schema.org `JobPosting` extraction
-- Per-source timeout, rate-limit, item-limit and allowed-domain controls
+- Constrained public employer HTML collector with domain allowlists, pagination, role filters, required location markers and detail-page evidence
+- Verified McDermott Chennai, Dubai and Doha source definitions
+- Separate production, template and network-free CI source configurations
+- Per-source timeout, rate-limit, response-size, redirect, item and allowed-domain controls
 - Source failure isolation and partial-run reporting
 - Multi-sheet Excel export with source-health, evidence and run-proof sheets
 - Database, evidence-hash and Excel verification commands
-- GitHub Actions tests, lint and CLI proof flow
+- GitHub Actions tests, lint and network-free CLI proof flow
 - Windows PowerShell installation and daily runner
 
 ## Quick start on Windows
@@ -44,11 +47,14 @@ pip install -e ".[dev]"
 job-intel --db data/database/jobs.db init-db
 ```
 
-## Configure public sources
+## Source files
 
-Every template in `config/sources.yaml` is disabled. Replace only the public identifier or URL for a verified employer source, then set `enabled: true`.
+- `config/sources.yaml` — production registry with verified active employer sources
+- `config/sources.example.yaml` — disabled templates for new source types
+- `config/sources.ci.yaml` — network-free GitHub Actions smoke configuration
+- `config/employer_registry.yaml` — priority employer research and connector status
 
-Validate before making any network request:
+Validate the production registry before collecting:
 
 ```powershell
 job-intel validate-sources --sources config/sources.yaml
@@ -106,7 +112,7 @@ The generated workbook contains:
 ## Repository layout
 
 ```text
-config/                     Target roles, locations, source registry and scoring
+config/                     Target roles, locations, employer/source registries and scoring
 src/job_intelligence/       Application and collector code
 tests/                      Unit, migration, fixture and end-to-end tests
 scripts/                    Windows installation and daily execution helpers
@@ -116,7 +122,7 @@ docs/                       Scope, security and source-operation guides
 
 ## Next controlled phases
 
-1. Verify and add selected EPC company source identifiers without committing personal data.
+1. Add verified connectors for Worley, Bechtel, Wood, KBR, Petrofac and other priority EPC employers.
 2. Add review-required PDF and image OCR imports.
 3. Add Gmail job-alert ingestion without scraping restricted platforms.
 4. Add optional email or Telegram high-priority alerts.
