@@ -70,6 +70,8 @@ def collect_lever(spec: SourceSpec, client: HttpClient) -> CollectionResult:
             break
 
         for raw in payload:
+            if len(jobs) >= max_items:
+                break
             if not isinstance(raw, dict):
                 continue
             title = str(raw.get("text", "")).strip()
@@ -110,7 +112,7 @@ def collect_lever(spec: SourceSpec, client: HttpClient) -> CollectionResult:
                 )
             )
 
-        if len(payload) < limit:
+        if len(jobs) >= max_items or len(payload) < limit:
             break
         skip += len(payload)
 
