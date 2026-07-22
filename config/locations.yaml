@@ -1,0 +1,32 @@
+locations:
+  india:
+    - Mumbai
+    - Navi Mumbai
+    - Pune
+    - Vadodara
+    - Chennai
+    - Bengaluru
+    - Delhi NCR
+    - Hyderabad
+  middle_east:
+    - UAE
+    - Saudi Arabia
+    - Oman
+    - Qatar
+    - Kuwait
+    - Bahrain
+  international:
+    - Europe
+    - United Kingdom
+    - Norway
+    - Netherlands
+    - France
+    - Germany
+    - Singapore
+    - Malaysia
+
+languages:
+  - English
+  - Arabic
+  - French
+  - German
