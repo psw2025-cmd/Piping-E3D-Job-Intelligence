@@ -1,0 +1,20 @@
+weights:
+  target_role: 20
+  e3d_pdms: 20
+  piping_layout: 15
+  sector: 10
+  experience: 10
+  preferred_location: 10
+  site_offshore: 5
+  diploma_eligible: 5
+  recent_posting: 5
+
+thresholds:
+  critical: 85
+  high: 70
+  normal: 50
+
+rules:
+  require_explanation: true
+  never_infer_missing_salary: true
+  never_mark_suggested_email_as_verified: true
