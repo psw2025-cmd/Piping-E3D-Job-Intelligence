@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import sqlite3
 from pathlib import Path
 from typing import Iterable
@@ -158,6 +159,10 @@ def init_database(db_path: str | Path) -> None:
         _ensure_job_identity_columns(connection)
 
 
+def _canonical_urls_compatible(existing_url: str, incoming_url: str) -> bool:
+    return not existing_url or not incoming_url or existing_url == incoming_url
+
+
 def _find_existing_job_key(
     connection: sqlite3.Connection,
     requested_key: str,
@@ -166,9 +171,10 @@ def _find_existing_job_key(
 ) -> str | None:
     if requested_key:
         row = connection.execute(
-            "SELECT job_key FROM jobs WHERE job_key = ?", (requested_key,)
+            "SELECT job_key, canonical_url FROM jobs WHERE job_key = ?",
+            (requested_key,),
         ).fetchone()
-        if row:
+        if row and _canonical_urls_compatible(str(row["canonical_url"]), canonical_url):
             return str(row["job_key"])
 
     if canonical_url:
@@ -179,11 +185,34 @@ def _find_existing_job_key(
         if row:
             return str(row["job_key"])
 
-    row = connection.execute(
-        "SELECT job_key FROM jobs WHERE identity_fingerprint = ? ORDER BY found_at LIMIT 1",
+    rows = connection.execute(
+        "SELECT job_key, canonical_url FROM jobs "
+        "WHERE identity_fingerprint = ? ORDER BY found_at",
         (identity_fingerprint,),
+    ).fetchall()
+    compatible = [
+        row
+        for row in rows
+        if _canonical_urls_compatible(str(row["canonical_url"]), canonical_url)
+    ]
+    return str(compatible[0]["job_key"]) if len(compatible) == 1 else None
+
+
+def _allocate_job_key(
+    connection: sqlite3.Connection,
+    job: JobRecord,
+    canonical_url: str,
+) -> str:
+    base_key = job.job_key or build_job_key(job)
+    row = connection.execute(
+        "SELECT canonical_url FROM jobs WHERE job_key = ?", (base_key,)
     ).fetchone()
-    return str(row["job_key"]) if row else None
+    if not row or _canonical_urls_compatible(str(row["canonical_url"]), canonical_url):
+        return base_key
+
+    disambiguator = canonical_url or f"{job.source_name}|{job.apply_url}|{job.source_url}"
+    raw = f"{base_key}|variant|{disambiguator}"
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
 
 def _job_values(
@@ -219,7 +248,7 @@ def upsert_job(db_path: str | Path, job: JobRecord) -> bool:
             canonical_url,
         )
         existed = existing_key is not None
-        job.job_key = existing_key or job.job_key or build_job_key(job)
+        job.job_key = existing_key or _allocate_job_key(connection, job, canonical_url)
         values = _job_values(job, identity_fingerprint, canonical_url)
         connection.execute(
             f"""
