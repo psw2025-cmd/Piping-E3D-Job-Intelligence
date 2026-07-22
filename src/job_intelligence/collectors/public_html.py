@@ -28,6 +28,13 @@ _JOB_TYPE_RE = re.compile(
     re.IGNORECASE,
 )
 _SALARY_RE = re.compile(r"salary range\s*:?\s*(.+)", re.IGNORECASE)
+_GENERIC_TITLES = {
+    "career site",
+    "careers",
+    "job details",
+    "jobs",
+    "oracle careers",
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -209,6 +216,46 @@ def _clean_document_text(soup: BeautifulSoup) -> str:
     return html_to_text(str(main))
 
 
+def _listing_title(listing_text: str) -> str:
+    return re.split(
+        r"\bJob ID\s*:",
+        listing_text,
+        maxsplit=1,
+        flags=re.IGNORECASE,
+    )[0].strip()
+
+
+def _listing_location(listing_text: str) -> str:
+    match = re.search(
+        r"Job ID\s*:\s*#?\S+\s+(.+?)\s+"
+        r"(?:Full Time|Part Time|Contract|Temporary)$",
+        listing_text,
+        flags=re.IGNORECASE,
+    )
+    return match.group(1).strip() if match else ""
+
+
+def _listing_job(link: _ListingLink, spec: SourceSpec) -> JobRecord | None:
+    title = _listing_title(link.anchor_text)
+    if not title:
+        return None
+    job_type = ""
+    for candidate in ("Full Time", "Part Time", "Contract", "Temporary"):
+        if re.search(rf"\b{re.escape(candidate)}\b", link.anchor_text, re.IGNORECASE):
+            job_type = candidate
+            break
+    return JobRecord(
+        title=title,
+        company=spec.company,
+        location=_listing_location(link.anchor_text),
+        description=link.anchor_text,
+        apply_url=link.url,
+        source_url=link.url,
+        source_name=spec.name,
+        job_type=job_type,
+    )
+
+
 def _fallback_job(
     html_text: str,
     page_url: str,
@@ -232,28 +279,23 @@ def _fallback_job(
         title,
         flags=re.IGNORECASE,
     ).strip()
-    if not title and listing_text:
-        title = re.split(r"\bJob ID\s*:", listing_text, maxsplit=1, flags=re.IGNORECASE)[0]
-        title = title.strip()
+    if title.lower() in _GENERIC_TITLES:
+        title = ""
+    title = title or _listing_title(listing_text)
     if not title:
         return None
 
-    description = _clean_document_text(soup)
+    description = _clean_document_text(soup) or listing_text
     lines = [line.strip() for line in description.splitlines() if line.strip()]
-    location = _first_match(_LOCATION_RE, lines)
+    location = _first_match(_LOCATION_RE, lines) or _listing_location(listing_text)
     published_at = _first_match(_DATE_RE, lines)
     job_type = _first_match(_JOB_TYPE_RE, lines)
     salary_text = _first_match(_SALARY_RE, lines)
-    if not location and listing_text:
-        match = re.search(
-            r"Job ID\s*:\s*#?\S+\s+(.+?)\s+(?:Full Time|Part Time|Contract|Temporary)$",
-            listing_text,
-            flags=re.IGNORECASE,
-        )
-        if match:
-            location = match.group(1).strip()
-    if not job_type and re.search(r"\bFull Time\b", listing_text, re.IGNORECASE):
-        job_type = "Full Time"
+    if not job_type:
+        for candidate in ("Full Time", "Part Time", "Contract", "Temporary"):
+            if re.search(rf"\b{re.escape(candidate)}\b", listing_text, re.IGNORECASE):
+                job_type = candidate
+                break
 
     return JobRecord(
         title=_SPACE_RE.sub(" ", title),
@@ -318,6 +360,7 @@ def collect_public_html(
     )
 
     evidence: list[EvidenceArtifact] = []
+    warnings: list[str] = []
     links: deque[_ListingLink] = deque()
     seen_links: set[str] = set()
     for page_url in _page_urls(spec):
@@ -326,6 +369,7 @@ def collect_public_html(
                 f"source {spec.source_id!r} generated page outside allowed domains"
             )
         if not robots.can_fetch(page_url):
+            warnings.append(f"listing blocked by robots.txt: {page_url}")
             continue
         response = client.get(page_url)
         evidence.append(
@@ -359,28 +403,26 @@ def collect_public_html(
     jobs: list[JobRecord] = []
     while links and len(jobs) < max_items:
         link = links.popleft()
+        listing_job = _listing_job(link, spec)
         if not fetch_details:
-            title = re.split(
-                r"\bJob ID\s*:",
-                link.anchor_text,
-                maxsplit=1,
-                flags=re.IGNORECASE,
-            )[0].strip()
-            if title:
-                jobs.append(
-                    JobRecord(
-                        title=title,
-                        company=spec.company,
-                        description=link.anchor_text,
-                        apply_url=link.url,
-                        source_url=link.url,
-                        source_name=spec.name,
-                    )
-                )
+            if listing_job:
+                jobs.append(listing_job)
             continue
         if not robots.can_fetch(link.url):
+            if listing_job:
+                jobs.append(listing_job)
+            warnings.append(f"detail blocked by robots.txt; listing retained: {link.url}")
             continue
-        response = client.get(link.url)
+        try:
+            response = client.get(link.url)
+        except Exception as exc:
+            if listing_job:
+                jobs.append(listing_job)
+            warnings.append(
+                "detail fetch failed; listing retained: "
+                f"{link.url} ({type(exc).__name__}: {exc})"
+            )
+            continue
         evidence.append(
             EvidenceArtifact(
                 source_url=response.url,
@@ -391,13 +433,16 @@ def collect_public_html(
             )
         )
         remaining = max_items - len(jobs)
-        jobs.extend(
-            _parse_detail(
-                response.text,
-                response.url,
-                spec,
-                link.anchor_text,
-            )[:remaining]
+        detail_jobs = _parse_detail(
+            response.text,
+            response.url,
+            spec,
+            link.anchor_text,
         )
+        if detail_jobs:
+            jobs.extend(detail_jobs[:remaining])
+        elif listing_job:
+            jobs.append(listing_job)
+            warnings.append(f"detail page unparseable; listing retained: {link.url}")
 
-    return CollectionResult(jobs=jobs, evidence=evidence)
+    return CollectionResult(jobs=jobs, evidence=evidence, warnings=warnings)
