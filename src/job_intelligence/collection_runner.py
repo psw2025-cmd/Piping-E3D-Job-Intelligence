@@ -200,12 +200,15 @@ def collect_sources(
             stage = "upsert"
             new_jobs, updated_jobs = upsert_jobs(db_path, result.jobs)
             stage = "health"
+            warning_message = " | ".join(result.warnings)
+            source_status = "pass_with_warnings" if warning_message else "pass"
             record_source_health(
                 db_path,
                 spec.source_id,
                 spec.name,
-                "pass",
+                source_status,
                 records_found=len(result.jobs),
+                error_message=warning_message,
             )
             summary.sources_passed += 1
             summary.jobs_collected += len(result.jobs)
@@ -214,10 +217,11 @@ def collect_sources(
             summary.source_results.append(
                 SourceRunResult(
                     source_id=spec.source_id,
-                    status="pass",
+                    status=source_status,
                     jobs_collected=len(result.jobs),
                     new_jobs=new_jobs,
                     updated_jobs=updated_jobs,
+                    error_message=warning_message,
                 )
             )
         except Exception as exc:
