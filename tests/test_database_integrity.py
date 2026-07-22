@@ -50,6 +50,7 @@ def test_url_enrichment_updates_existing_record(tmp_path: Path) -> None:
         location=initial.location,
         description=initial.description,
         apply_url="https://example.com/jobs/123?utm_source=mail",
+        job_key=original_key,
     )
     assert upsert_job(db_path, enriched) is False
 
@@ -180,3 +181,54 @@ def test_url_less_reimport_matches_historical_fingerprint(tmp_path: Path) -> Non
     )
     assert upsert_job(db_path, old_text_without_url) is False
     assert len(fetch_jobs(db_path)) == 1
+
+
+def test_unkeyed_url_import_does_not_enrich_url_less_record(tmp_path: Path) -> None:
+    db_path = tmp_path / "jobs.db"
+    url_less = JobRecord(
+        title="Piping Engineer",
+        company="Example EPC",
+        description="Shared vacancy text",
+    )
+    with_url = JobRecord(
+        title=url_less.title,
+        company=url_less.company,
+        description=url_less.description,
+        apply_url="https://example.com/jobs/distinct",
+    )
+
+    assert upsert_job(db_path, url_less) is True
+    assert upsert_job(db_path, with_url) is True
+
+    rows = fetch_jobs(db_path)
+    assert len(rows) == 2
+    assert {row["canonical_url"] for row in rows} == {
+        "",
+        "https://example.com/jobs/distinct",
+    }
+
+
+def test_allocated_existing_key_is_reported_as_update(tmp_path: Path) -> None:
+    db_path = tmp_path / "jobs.db"
+    url_less = JobRecord(
+        title="Piping Engineer",
+        company="Example EPC",
+        description="Shared vacancy text",
+    )
+    distinct_url = JobRecord(
+        title=url_less.title,
+        company=url_less.company,
+        description=url_less.description,
+        apply_url="https://example.com/jobs/distinct",
+    )
+
+    assert upsert_job(db_path, url_less) is True
+    assert upsert_job(db_path, distinct_url) is True
+
+    ambiguous_url_less_reimport = JobRecord(
+        title=url_less.title,
+        company=url_less.company,
+        description=url_less.description,
+    )
+    assert upsert_job(db_path, ambiguous_url_less_reimport) is False
+    assert len(fetch_jobs(db_path)) == 2

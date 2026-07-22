@@ -103,6 +103,32 @@ def _lower_terms(values: Any) -> tuple[str, ...]:
     return tuple(str(value).strip().lower() for value in values if str(value).strip())
 
 
+def _mapping_or_empty(value: Any) -> dict[str, Any]:
+    return value if isinstance(value, dict) else {}
+
+
+def _merge_int_config(
+    defaults: dict[str, int],
+    configured: Any,
+) -> dict[str, int]:
+    merged = dict(defaults)
+    for key, value in _mapping_or_empty(configured).items():
+        if key not in defaults:
+            continue
+        try:
+            merged[key] = int(value)
+        except (TypeError, ValueError):
+            continue
+    return merged
+
+
+def _int_or_default(value: Any, default: int) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
 def _read_yaml(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
@@ -138,9 +164,12 @@ def load_scoring_profile(config_dir: str | Path | None = None) -> ScoringProfile
         locations_data = _read_yaml(resolved / "locations.yaml")
         scoring_data = _read_yaml(resolved / "scoring.yaml")
 
-    weights = {**_DEFAULT_WEIGHTS, **scoring_data.get("weights", {})}
-    thresholds = {**_DEFAULT_THRESHOLDS, **scoring_data.get("thresholds", {})}
-    term_config = scoring_data.get("terms", {})
+    weights = _merge_int_config(_DEFAULT_WEIGHTS, scoring_data.get("weights"))
+    thresholds = _merge_int_config(
+        _DEFAULT_THRESHOLDS,
+        scoring_data.get("thresholds"),
+    )
+    term_config = _mapping_or_empty(scoring_data.get("terms"))
 
     location_groups = locations_data.get("locations", {})
     location_values: list[str] = []
@@ -150,8 +179,8 @@ def load_scoring_profile(config_dir: str | Path | None = None) -> ScoringProfile
                 location_values.extend(str(value) for value in values)
 
     return ScoringProfile(
-        weights={key: int(value) for key, value in weights.items()},
-        thresholds={key: int(value) for key, value in thresholds.items()},
+        weights=weights,
+        thresholds=thresholds,
         target_roles=_lower_terms(roles_data.get("target_roles")) or _DEFAULT_ROLES,
         e3d_pdms_terms=_lower_terms(term_config.get("e3d_pdms"))
         or _DEFAULT_TERMS["e3d_pdms"],
@@ -167,7 +196,7 @@ def load_scoring_profile(config_dir: str | Path | None = None) -> ScoringProfile
         or _DEFAULT_TERMS["diploma_eligible"],
         mandatory_degree_terms=_lower_terms(term_config.get("mandatory_degree"))
         or _DEFAULT_TERMS["mandatory_degree"],
-        recent_days=int(scoring_data.get("recent_days", 7)),
+        recent_days=_int_or_default(scoring_data.get("recent_days"), 7),
     )
 
 

@@ -224,8 +224,14 @@ def init_database(db_path: str | Path) -> None:
         _ensure_job_identity_columns(connection)
 
 
-def _canonical_urls_compatible(existing_url: str, incoming_url: str) -> bool:
+def _requested_key_urls_compatible(existing_url: str, incoming_url: str) -> bool:
+    """Allow an explicit stable key to enrich a record that previously lacked a URL."""
     return not existing_url or not incoming_url or existing_url == incoming_url
+
+
+def _alias_urls_compatible(existing_url: str, incoming_url: str) -> bool:
+    """Do not use a field alias to attach a new URL to a URL-less record."""
+    return not incoming_url or existing_url == incoming_url
 
 
 def _find_alias_candidates(
@@ -249,7 +255,7 @@ def _find_alias_candidates(
     return [
         row
         for row in rows
-        if _canonical_urls_compatible(str(row["canonical_url"]), incoming_url)
+        if _alias_urls_compatible(str(row["canonical_url"]), incoming_url)
     ]
 
 
@@ -264,7 +270,7 @@ def _find_existing_job_key(
             "SELECT job_key, canonical_url FROM jobs WHERE job_key = ?",
             (requested_key,),
         ).fetchone()
-        if row and _canonical_urls_compatible(str(row["canonical_url"]), canonical_url):
+        if row and _requested_key_urls_compatible(str(row["canonical_url"]), canonical_url):
             return str(row["job_key"])
 
     canonical_matches = _find_alias_candidates(
@@ -297,7 +303,7 @@ def _allocate_job_key(
         "SELECT canonical_url FROM jobs WHERE job_key = ?",
         (base_key,),
     ).fetchone()
-    if not row or _canonical_urls_compatible(str(row["canonical_url"]), canonical_url):
+    if not row or str(row["canonical_url"]) == canonical_url:
         return base_key
 
     disambiguator = canonical_url or (
@@ -339,12 +345,20 @@ def upsert_job(db_path: str | Path, job: JobRecord) -> bool:
             identity_fingerprint,
             canonical_url,
         )
-        existed = existing_key is not None
         job.job_key = existing_key or _allocate_job_key(
             connection,
             job,
             canonical_url,
         )
+        existed = existing_key is not None
+        if not existed:
+            existed = (
+                connection.execute(
+                    "SELECT 1 FROM jobs WHERE job_key = ?",
+                    (job.job_key,),
+                ).fetchone()
+                is not None
+            )
         values = _job_values(job, identity_fingerprint, canonical_url)
         connection.execute(
             f"""
