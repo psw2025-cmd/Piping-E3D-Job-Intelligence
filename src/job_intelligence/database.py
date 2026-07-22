@@ -224,8 +224,17 @@ def init_database(db_path: str | Path) -> None:
         _ensure_job_identity_columns(connection)
 
 
-def _canonical_urls_compatible(existing_url: str, incoming_url: str) -> bool:
-    return not existing_url or not incoming_url or existing_url == incoming_url
+def _canonical_urls_compatible(
+    existing_url: str,
+    incoming_url: str,
+    *,
+    allow_existing_empty: bool = False,
+) -> bool:
+    if existing_url and incoming_url:
+        return existing_url == incoming_url
+    if not incoming_url:
+        return True
+    return allow_existing_empty and not existing_url
 
 
 def _find_alias_candidates(
@@ -264,7 +273,11 @@ def _find_existing_job_key(
             "SELECT job_key, canonical_url FROM jobs WHERE job_key = ?",
             (requested_key,),
         ).fetchone()
-        if row and _canonical_urls_compatible(str(row["canonical_url"]), canonical_url):
+        if row and _canonical_urls_compatible(
+            str(row["canonical_url"]),
+            canonical_url,
+            allow_existing_empty=True,
+        ):
             return str(row["job_key"])
 
     canonical_matches = _find_alias_candidates(
@@ -297,7 +310,11 @@ def _allocate_job_key(
         "SELECT canonical_url FROM jobs WHERE job_key = ?",
         (base_key,),
     ).fetchone()
-    if not row or _canonical_urls_compatible(str(row["canonical_url"]), canonical_url):
+    if not row or _canonical_urls_compatible(
+        str(row["canonical_url"]),
+        canonical_url,
+        allow_existing_empty=True,
+    ):
         return base_key
 
     disambiguator = canonical_url or (
@@ -305,6 +322,16 @@ def _allocate_job_key(
     )
     raw = f"{base_key}|variant|{disambiguator}"
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+
+def _job_key_exists(connection: sqlite3.Connection, job_key: str) -> bool:
+    return (
+        connection.execute(
+            "SELECT 1 FROM jobs WHERE job_key = ?",
+            (job_key,),
+        ).fetchone()
+        is not None
+    )
 
 
 def _job_values(
@@ -339,12 +366,12 @@ def upsert_job(db_path: str | Path, job: JobRecord) -> bool:
             identity_fingerprint,
             canonical_url,
         )
-        existed = existing_key is not None
         job.job_key = existing_key or _allocate_job_key(
             connection,
             job,
             canonical_url,
         )
+        existed = existing_key is not None or _job_key_exists(connection, job.job_key)
         values = _job_values(job, identity_fingerprint, canonical_url)
         connection.execute(
             f"""
