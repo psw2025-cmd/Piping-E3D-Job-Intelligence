@@ -153,3 +153,30 @@ def test_existing_phase1_database_is_migrated(tmp_path: Path) -> None:
     assert row["identity_fingerprint"]
     assert row["canonical_url"] == "https://example.com/jobs/123"
     assert row["job_key"] == "legacy-key"
+
+
+def test_url_less_reimport_matches_historical_fingerprint(tmp_path: Path) -> None:
+    db_path = tmp_path / "jobs.db"
+    original = JobRecord(
+        title="Senior Piping Engineer",
+        company="Example EPC",
+        description="Original E3D vacancy text",
+        apply_url="https://example.com/jobs/123",
+    )
+    assert upsert_job(db_path, original) is True
+
+    changed = JobRecord(
+        title="Lead Piping Engineer",
+        company="Example EPC",
+        description="Revised E3D vacancy text",
+        apply_url="https://example.com/jobs/123",
+    )
+    assert upsert_job(db_path, changed) is False
+
+    old_text_without_url = JobRecord(
+        title="Senior Piping Engineer",
+        company="Example EPC",
+        description="Original E3D vacancy text",
+    )
+    assert upsert_job(db_path, old_text_without_url) is False
+    assert len(fetch_jobs(db_path)) == 1
