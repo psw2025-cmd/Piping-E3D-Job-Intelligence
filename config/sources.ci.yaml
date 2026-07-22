@@ -1,0 +1,9 @@
+# Network-free source configuration for GitHub Actions smoke tests.
+sources: []
+
+policy:
+  respect_robots_txt: true
+  skip_login_required_pages: true
+  bypass_captcha: false
+  use_rotating_proxies: false
+  retain_source_evidence: true
