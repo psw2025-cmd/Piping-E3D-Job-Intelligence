@@ -1,0 +1,4 @@
+src/job_intelligence/cli.py:9:32: F401 [*] `.database.init_database` imported but unused
+Found 1 error.
+[*] 1 fixable with the `--fix` option.
+RUFF_RC=1
