@@ -59,7 +59,7 @@ def collect_smartrecruiters(spec: SourceSpec, client: HttpClient) -> CollectionR
     list_url = f"https://api.smartrecruiters.com/v1/companies/{identifier}/postings"
     max_items = spec.int_option("max_items", 300)
     page_size = min(spec.int_option("page_size", 100), 100)
-    fetch_details = bool(spec.options.get("fetch_details", True))
+    fetch_details = spec.bool_option("fetch_details", True)
 
     jobs: list[JobRecord] = []
     evidence: list[EvidenceArtifact] = []
