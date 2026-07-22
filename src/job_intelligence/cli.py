@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 from .collection_runner import collect_sources
-from .database import connect, init_database, upsert_job
+from .database import connect, upsert_job
 from .excel_export import export_excel, verify_excel
 from .manual_import import create_manual_job
 from .proof import init_proof_tables, set_run_export_status
