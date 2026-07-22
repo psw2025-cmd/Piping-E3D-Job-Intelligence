@@ -104,30 +104,49 @@ jobs:
               + '''\n\ndef test_scoring_uses_defaults_for_null_yaml_values(tmp_path: Path) -> None:\n    (tmp_path / "roles.yaml").write_text("{}\\n", encoding="utf-8")\n    (tmp_path / "locations.yaml").write_text("{}\\n", encoding="utf-8")\n    (tmp_path / "scoring.yaml").write_text(\n        yaml.safe_dump(\n            {\n                "weights": None,\n                "thresholds": None,\n                "terms": None,\n                "recent_days": None,\n            }\n        ),\n        encoding="utf-8",\n    )\n\n    profile = load_scoring_profile(tmp_path)\n    assert profile.weights["target_role"] == 20\n    assert profile.thresholds["critical"] == 85\n    assert profile.recent_days == 7\n\n    result = score_job(\n        JobRecord(\n            title="Senior Piping Engineer",\n            company="Example EPC",\n            description="AVEVA E3D refinery role",\n        ),\n        profile=profile,\n    )\n    assert result.score > 0\n\n\ndef test_scoring_uses_defaults_for_invalid_numeric_overrides(tmp_path: Path) -> None:\n    (tmp_path / "roles.yaml").write_text("{}\\n", encoding="utf-8")\n    (tmp_path / "locations.yaml").write_text("{}\\n", encoding="utf-8")\n    (tmp_path / "scoring.yaml").write_text(\n        yaml.safe_dump(\n            {\n                "weights": {"target_role": None},\n                "thresholds": {"critical": "not-a-number"},\n                "recent_days": "invalid",\n            }\n        ),\n        encoding="utf-8",\n    )\n\n    profile = load_scoring_profile(tmp_path)\n    assert profile.weights["target_role"] == 20\n    assert profile.thresholds["critical"] == 85\n    assert profile.recent_days == 7\n''',
               encoding="utf-8",
           )
-
-          Path(".github/workflows/agent-fix-postmerge.yml").unlink()
           PY
 
       - name: Install dependencies
         run: python -m pip install --upgrade pip && pip install -e ".[dev]"
 
-      - name: Verify patch
+      - name: Capture verification diagnostics
         shell: bash
         run: |
-          git diff --check
-          ruff check src tests
-          pytest -q
+          set +e
+          report=agent_fix_diagnostic.txt
+          : > "$report"
+          overall=0
+          run_check() {
+            name="$1"
+            shift
+            echo "=== $name ===" >> "$report"
+            "$@" >> "$report" 2>&1
+            rc=$?
+            echo "RC=$rc" >> "$report"
+            echo >> "$report"
+            if [ "$rc" -ne 0 ]; then overall=1; fi
+          }
+          run_check "git diff --check" git diff --check
+          run_check "ruff" ruff check src tests
+          run_check "pytest" pytest -q
           rm -rf tmp
-          job-intel --db tmp/jobs.db init-db
-          job-intel --db tmp/jobs.db export --output tmp/Piping_E3D_Jobs.xlsx
-          job-intel --db tmp/jobs.db verify --output tmp/Piping_E3D_Jobs.xlsx
+          run_check "cli init" job-intel --db tmp/jobs.db init-db
+          run_check "cli export" job-intel --db tmp/jobs.db export --output tmp/Piping_E3D_Jobs.xlsx
+          run_check "cli verify" job-intel --db tmp/jobs.db verify --output tmp/Piping_E3D_Jobs.xlsx
           rm -rf tmp
+          echo "$overall" > .agent_fix_status
+          cat "$report"
+          exit 0
 
-      - name: Commit verified fix
+      - name: Commit patch and diagnostic evidence
         shell: bash
         run: |
+          status=$(cat .agent_fix_status)
+          rm .agent_fix_status
+          rm .github/workflows/agent-fix-postmerge.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/job_intelligence/database.py src/job_intelligence/scoring.py tests/test_database_integrity.py tests/test_scoring.py .github/workflows/agent-fix-postmerge.yml
-          git commit -m "Fix post-merge identity and scoring review findings"
+          git add src/job_intelligence/database.py src/job_intelligence/scoring.py tests/test_database_integrity.py tests/test_scoring.py agent_fix_diagnostic.txt .github/workflows/agent-fix-postmerge.yml
+          git commit -m "WIP: apply post-merge review fixes with diagnostics"
           git push origin HEAD:agent/fix-postmerge-review-findings
+          exit "$status"
