@@ -1,0 +1,66 @@
+schema_version: 1
+verified_at: 2026-07-23
+
+status_definitions:
+  active_supported: Verified public source configured and enabled.
+  official_site_verified: Official employer careers site verified; connector research remains.
+  connector_planned: Public job portal verified; a constrained connector is planned.
+  restricted_endpoint_not_used: A platform endpoint exists but is not documented for public third-party use.
+
+employers:
+  - company: McDermott
+    priority: 1
+    official_careers_url: https://www.mcdermott.com/careers/search-apply
+    public_job_host: edsv.fa.us2.oraclecloud.com
+    status: active_supported
+    source_ids:
+      - mcdermott_oracle
+    notes: Verified public Oracle Candidate Experience requisition source with role and location filters.
+
+  - company: Wood
+    priority: 1
+    official_careers_url: https://careers.woodplc.com/
+    public_job_host: ehif.fa.em2.oraclecloud.com
+    status: active_supported
+    source_ids:
+      - wood_oracle
+    notes: Verified public Oracle Candidate Experience requisition source with role and location filters.
+
+  - company: Worley
+    priority: 1
+    official_careers_url: https://www.worley.com/en/careers
+    public_job_url: https://jobs.worley.com/careers
+    status: connector_planned
+    source_ids: []
+    notes: Official public job search verified; connector must use documented and permitted public access only.
+
+  - company: Bechtel
+    priority: 1
+    official_careers_url: https://www.bechtel.com/careers/
+    public_job_url: https://jobs.bechtel.com/us/en
+    status: connector_planned
+    source_ids: []
+    notes: Official public professional-job portal verified; connector remains disabled pending proof.
+
+  - company: KBR
+    priority: 1
+    official_careers_url: https://careers.kbr.com/us/en
+    public_job_url: https://careers.kbr.com/us/en/search-results
+    status: connector_planned
+    source_ids: []
+    notes: Official public careers portal verified; platform-specific connector remains disabled.
+
+  - company: Petrofac
+    priority: 1
+    official_careers_url: https://www.petrofac.com/careers/find-a-job-at-petrofac
+    public_job_url: https://petrofac.referrals.selectminds.com/
+    status: connector_planned
+    source_ids: []
+    notes: Official application portal verified; collector remains disabled pending proof.
+
+  - company: Technip Energies
+    priority: 1
+    official_careers_url: https://careers.technipenergies.com/
+    status: restricted_endpoint_not_used
+    source_ids: []
+    notes: Public rendered pages may be supported later; undocumented internal APIs will not be used.
