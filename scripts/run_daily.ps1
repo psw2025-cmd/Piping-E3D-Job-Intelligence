@@ -31,14 +31,23 @@ if ($LASTEXITCODE -ne 0) {
     --evidence-dir $evidence `
     --output $xlsx *>&1 |
     Tee-Object -FilePath $proof -Append
-if ($LASTEXITCODE -ne 0) {
-    throw "Collection was partial or failed. Review Source_Health and $proof"
-}
+$collectExit = $LASTEXITCODE
 
 & $Python -m job_intelligence.cli --db $db verify --output $xlsx *>&1 |
     Tee-Object -FilePath $proof -Append
-if ($LASTEXITCODE -ne 0) {
+$verifyExit = $LASTEXITCODE
+if ($verifyExit -ne 0) {
     throw "Verification failed. See $proof"
+}
+
+if ($collectExit -eq 2) {
+    throw "Collection failed after verification. Review Source_Health and $proof"
+}
+if ($collectExit -eq 1) {
+    throw "Collection was partial but verification completed. Review Source_Health and $proof"
+}
+if ($collectExit -ne 0) {
+    throw "Collection returned unexpected exit code $collectExit. See $proof"
 }
 
 Write-Host "PASS: daily collection, export and verification completed. Proof: $proof"
