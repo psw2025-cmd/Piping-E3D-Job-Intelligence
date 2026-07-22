@@ -50,6 +50,7 @@ def test_url_enrichment_updates_existing_record(tmp_path: Path) -> None:
         location=initial.location,
         description=initial.description,
         apply_url="https://example.com/jobs/123?utm_source=mail",
+        job_key=original_key,
     )
     assert upsert_job(db_path, enriched) is False
 
