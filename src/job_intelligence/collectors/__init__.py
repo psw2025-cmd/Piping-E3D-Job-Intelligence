@@ -7,6 +7,7 @@ from .common import CollectionResult
 from .greenhouse import collect_greenhouse
 from .http_client import HttpClient
 from .lever import collect_lever
+from .oracle_hcm import collect_oracle_hcm
 from .rss import collect_rss
 from .sitemap import collect_sitemap
 from .smartrecruiters import collect_smartrecruiters
@@ -16,6 +17,7 @@ Collector = Callable[[SourceSpec, HttpClient], CollectionResult]
 COLLECTORS: dict[str, Collector] = {
     "greenhouse": collect_greenhouse,
     "lever": collect_lever,
+    "oracle_hcm": collect_oracle_hcm,
     "smartrecruiters": collect_smartrecruiters,
     "rss": collect_rss,
 }

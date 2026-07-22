@@ -9,8 +9,16 @@ from urllib.parse import urlsplit
 
 import yaml
 
-_SUPPORTED_TYPES = {"greenhouse", "lever", "smartrecruiters", "rss", "sitemap"}
+_SUPPORTED_TYPES = {
+    "greenhouse",
+    "lever",
+    "oracle_hcm",
+    "smartrecruiters",
+    "rss",
+    "sitemap",
+}
 _SOURCE_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9_-]{1,63}$")
+_SITE_NUMBER_PATTERN = re.compile(r"^[A-Za-z0-9_-]{1,80}$")
 _POLICY_DEFAULTS = {
     "respect_robots_txt": True,
     "bypass_captcha": False,
@@ -62,6 +70,22 @@ class SourceSpec:
         value = self.options.get(key, default)
         return _strict_bool(value, f"source {self.source_id!r} option {key!r}")
 
+    def text_list_option(self, key: str) -> tuple[str, ...]:
+        raw_value = self.options.get(key, [])
+        if not isinstance(raw_value, list):
+            raise ValueError(
+                f"source {self.source_id!r} option {key!r} must be a list"
+            )
+        values: list[str] = []
+        for raw_item in raw_value:
+            if not isinstance(raw_item, str) or not raw_item.strip():
+                raise ValueError(
+                    f"source {self.source_id!r} option {key!r} "
+                    "must contain non-empty strings"
+                )
+            values.append(raw_item.strip().lower())
+        return tuple(values)
+
 
 @dataclass(frozen=True, slots=True)
 class SourceConfig:
@@ -89,6 +113,24 @@ def _validate_public_url(value: str, source_id: str, field: str = "url") -> None
         raise ValueError(f"source {source_id!r} must use a public URL")
 
 
+def _validate_oracle_source(spec: SourceSpec) -> None:
+    base_url = spec.require_text("base_url")
+    _validate_public_url(base_url, spec.source_id, "base_url")
+    parsed = urlsplit(base_url)
+    if parsed.scheme != "https" or parsed.path not in {"", "/"}:
+        raise ValueError(
+            f"source {spec.source_id!r} base_url must be an HTTPS origin"
+        )
+    site_number = spec.require_text("site_number")
+    if not _SITE_NUMBER_PATTERN.fullmatch(site_number):
+        raise ValueError(
+            f"source {spec.source_id!r} site_number contains invalid characters"
+        )
+    spec.text_list_option("include_terms")
+    spec.text_list_option("location_terms")
+    spec.int_option("max_scan_items", 2500)
+
+
 def _validate_source(spec: SourceSpec) -> None:
     if not _SOURCE_ID_PATTERN.fullmatch(spec.source_id):
         raise ValueError(
@@ -107,6 +149,8 @@ def _validate_source(spec: SourceSpec) -> None:
             raise ValueError(
                 f"source {spec.source_id!r} Lever region must be global or eu"
             )
+    elif spec.source_type == "oracle_hcm":
+        _validate_oracle_source(spec)
     elif spec.source_type == "smartrecruiters":
         spec.require_text("company_identifier")
         spec.bool_option("fetch_details", True)

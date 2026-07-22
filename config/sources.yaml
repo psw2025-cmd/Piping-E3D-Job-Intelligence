@@ -1,6 +1,69 @@
-# Public-source registry. Keep every source disabled until its public identifier is verified.
-# Never place credentials, private portals, cookies, CV data or recruiter lists in this file.
+# Public-source registry.
+# Never place credentials, private portals, cookies, CV data or recruiter lists here.
+# McDermott and Wood Oracle sources were verified read-only on 2026-07-23.
 sources:
+  - id: mcdermott_oracle
+    name: McDermott official Oracle careers
+    type: oracle_hcm
+    company: McDermott
+    base_url: https://edsv.fa.us2.oraclecloud.com
+    site_number: CX_1
+    enabled: true
+    include_terms:
+      - piping
+      - e3d
+      - pdms
+      - plant layout
+      - pipe support
+    location_terms:
+      - india
+      - united arab emirates
+      - qatar
+      - saudi arabia
+      - oman
+      - kuwait
+      - bahrain
+      - malaysia
+      - singapore
+    timeout_seconds: 30
+    rate_limit_per_minute: 60
+    max_response_bytes: 5000000
+    max_items: 250
+    max_scan_items: 3000
+    max_pages: 30
+    page_size: 100
+
+  - id: wood_oracle
+    name: Wood official Oracle careers
+    type: oracle_hcm
+    company: Wood
+    base_url: https://ehif.fa.em2.oraclecloud.com
+    site_number: CX_1
+    enabled: true
+    include_terms:
+      - piping
+      - e3d
+      - pdms
+      - plant layout
+      - pipe support
+    location_terms:
+      - india
+      - united arab emirates
+      - qatar
+      - saudi arabia
+      - oman
+      - kuwait
+      - bahrain
+      - malaysia
+      - singapore
+    timeout_seconds: 30
+    rate_limit_per_minute: 60
+    max_response_bytes: 5000000
+    max_items: 250
+    max_scan_items: 3000
+    max_pages: 30
+    page_size: 100
+
   - id: example_greenhouse
     name: Example Greenhouse board
     type: greenhouse
