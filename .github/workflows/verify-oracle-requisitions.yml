@@ -1,0 +1,114 @@
+name: verify-oracle-requisitions
+
+on:
+  push:
+    branches:
+      - agent/verify-official-epc-sources
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/verify-official-epc-sources
+          fetch-depth: 0
+
+      - name: Fetch two public requisitions from fixed hosts
+        shell: bash
+        run: |
+          mkdir -p tmp docs
+          ua='Piping-E3D-Job-Intelligence/0.3 (+public-source-verification)'
+          fetch_jobs() {
+            slug="$1"
+            host="$2"
+            curl --silent --show-error --max-time 30 --max-filesize 2000000 \
+              --user-agent "$ua" --header 'Accept: application/json' \
+              --get --output "tmp/${slug}.json" --write-out '%{http_code}' \
+              --data-urlencode 'onlyData=true' \
+              --data-urlencode 'expand=requisitionList' \
+              --data-urlencode 'limit=2' \
+              --data-urlencode 'offset=0' \
+              --data-urlencode 'finder=findReqs;siteNumber=CX_1,sortBy=POSTING_DATES_DESC' \
+              "https://${host}/hcmRestApi/resources/11.13.18.05/recruitingCEJobRequisitions" \
+              > "tmp/${slug}-status.txt"
+          }
+          fetch_jobs mcdermott edsv.fa.us2.oraclecloud.com
+          fetch_jobs wood ehif.fa.em2.oraclecloud.com
+
+      - name: Build structure-only report
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          targets = [("McDermott", "mcdermott"), ("Wood", "wood")]
+          allowed_sample_keys = (
+              "Title",
+              "RequisitionNumber",
+              "PrimaryLocation",
+              "PostedDate",
+              "ExternalPostedStartDate",
+          )
+          lines = [
+              "# Official Oracle Requisition Verification",
+              "",
+              "Two-record, read-only calls to fixed official career hosts. No response bodies are committed.",
+              "",
+          ]
+          for company, slug in targets:
+              status = Path(f"tmp/{slug}-status.txt").read_text().strip()
+              raw = Path(f"tmp/{slug}.json").read_bytes()
+              lines.extend([f"## {company}", "", f"- HTTP status: `{status}`", f"- Response bytes: `{len(raw)}`"])
+              try:
+                  payload = json.loads(raw)
+              except Exception as exc:
+                  lines.extend([f"- JSON parse: **FAIL — {type(exc).__name__}**", ""])
+                  continue
+              if not isinstance(payload, dict):
+                  lines.extend(["- JSON root: **NOT A MAPPING**", ""])
+                  continue
+              items = payload.get("items") if isinstance(payload.get("items"), list) else []
+              lines.append(f"- Top-level keys: `{', '.join(sorted(payload))}`")
+              lines.append(f"- Wrapper items: `{len(items)}`")
+              lines.append(f"- hasMore: `{payload.get('hasMore', '')}`")
+              requisitions = []
+              wrapper_keys = []
+              if items and isinstance(items[0], dict):
+                  wrapper_keys = sorted(items[0])
+                  candidate = items[0].get("requisitionList")
+                  if isinstance(candidate, list):
+                      requisitions = candidate
+              lines.append(f"- First wrapper keys: `{', '.join(wrapper_keys)}`")
+              lines.append(f"- Requisition rows in first wrapper: `{len(requisitions)}`")
+              sample = {}
+              if requisitions and isinstance(requisitions[0], dict):
+                  first = requisitions[0]
+                  sample = {
+                      key: first.get(key)
+                      for key in allowed_sample_keys
+                      if first.get(key) not in (None, "")
+                  }
+                  lines.append(f"- First requisition keys: `{', '.join(sorted(first))}`")
+              lines.append(f"- Public sample: `{json.dumps(sample, ensure_ascii=True, sort_keys=True)}`")
+              compatible = status == "200" and bool(requisitions)
+              lines.extend([f"- Connector-compatible: **{'YES' if compatible else 'NO'}**", ""])
+          Path("docs/OFFICIAL_ORACLE_REQUISITIONS_20260723.md").write_text(
+              "\n".join(lines), encoding="utf-8"
+          )
+          Path(".github/workflows/verify-oracle-requisitions.yml").unlink()
+          PY
+
+      - name: Commit report and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/OFFICIAL_ORACLE_REQUISITIONS_20260723.md .github/workflows/verify-oracle-requisitions.yml
+          git commit -m "Verify official Oracle requisition responses"
+          git push origin HEAD:agent/verify-official-epc-sources
