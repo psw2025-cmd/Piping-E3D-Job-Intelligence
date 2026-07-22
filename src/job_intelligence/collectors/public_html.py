@@ -83,6 +83,14 @@ def _text_list(value: object, field: str, source_id: str) -> list[str]:
     return result
 
 
+def _optional_text_list(value: object, field: str, source_id: str) -> list[str]:
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise ValueError(f"source {source_id!r} option {field!r} must be a list")
+    return [str(item).strip() for item in value if str(item).strip()]
+
+
 def _allowed_domains(spec: SourceSpec) -> set[str]:
     root_host = (urlsplit(spec.require_text("url")).hostname or "").lower()
     configured = _text_list(
@@ -109,6 +117,16 @@ def _matches_any(value: str, patterns: list[str]) -> bool:
     return any(pattern.lower() in lowered for pattern in patterns)
 
 
+def _matches_anchor_filters(
+    anchor_text: str,
+    include_patterns: list[str],
+    exclude_patterns: list[str],
+) -> bool:
+    if include_patterns and not _matches_any(anchor_text, include_patterns):
+        return False
+    return not (exclude_patterns and _matches_any(anchor_text, exclude_patterns))
+
+
 def _page_urls(spec: SourceSpec) -> list[str]:
     base_url = spec.require_text("url")
     template = str(spec.options.get("page_url_template", "")).strip()
@@ -128,27 +146,30 @@ def _extract_listing_links(
     html_text: str,
     page_url: str,
     domains: set[str],
-    patterns: list[str],
+    link_patterns: list[str],
+    anchor_include_patterns: list[str],
+    anchor_exclude_patterns: list[str],
 ) -> list[_ListingLink]:
     soup = BeautifulSoup(html_text, "html.parser")
     found: list[_ListingLink] = []
     seen: set[str] = set()
     for anchor in soup.find_all("a", href=True):
         target = urljoin(page_url, str(anchor.get("href", "")).strip())
+        anchor_text = _SPACE_RE.sub(" ", anchor.get_text(" ", strip=True))
         if (
             not target
             or target in seen
             or not _is_allowed_url(target, domains)
-            or not _matches_any(target, patterns)
+            or not _matches_any(target, link_patterns)
+            or not _matches_anchor_filters(
+                anchor_text,
+                anchor_include_patterns,
+                anchor_exclude_patterns,
+            )
         ):
             continue
         seen.add(target)
-        found.append(
-            _ListingLink(
-                url=target,
-                anchor_text=_SPACE_RE.sub(" ", anchor.get_text(" ", strip=True)),
-            )
-        )
+        found.append(_ListingLink(url=target, anchor_text=anchor_text))
     return found
 
 
@@ -258,9 +279,19 @@ def collect_public_html(
     respect_robots_txt: bool = True,
 ) -> CollectionResult:
     domains = _allowed_domains(spec)
-    patterns = _text_list(
+    link_patterns = _text_list(
         spec.options.get("job_link_patterns", []),
         "job_link_patterns",
+        spec.source_id,
+    )
+    anchor_include_patterns = _optional_text_list(
+        spec.options.get("anchor_text_patterns"),
+        "anchor_text_patterns",
+        spec.source_id,
+    )
+    anchor_exclude_patterns = _optional_text_list(
+        spec.options.get("exclude_anchor_text_patterns"),
+        "exclude_anchor_text_patterns",
         spec.source_id,
     )
     max_items = spec.int_option("max_items", 100)
@@ -295,18 +326,18 @@ def collect_public_html(
             response.text,
             response.url,
             domains,
-            patterns,
+            link_patterns,
+            anchor_include_patterns,
+            anchor_exclude_patterns,
         )
-        new_count = 0
         for link in page_links:
             if link.url in seen_links:
                 continue
             seen_links.add(link.url)
             links.append(link)
-            new_count += 1
             if len(links) >= max_items:
                 break
-        if len(links) >= max_items or new_count == 0:
+        if len(links) >= max_items:
             break
 
     jobs: list[JobRecord] = []
