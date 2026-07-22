@@ -1,6 +1,14 @@
 from pathlib import Path
 
-from job_intelligence.database import connect, fetch_jobs, init_database, upsert_job
+import pytest
+
+from job_intelligence.database import (
+    connect,
+    fetch_jobs,
+    init_database,
+    upsert_job,
+    upsert_jobs,
+)
 from job_intelligence.models import JobRecord
 
 
@@ -232,3 +240,14 @@ def test_allocated_existing_key_is_reported_as_update(tmp_path: Path) -> None:
     )
     assert upsert_job(db_path, ambiguous_url_less_reimport) is False
     assert len(fetch_jobs(db_path)) == 2
+
+
+def test_batch_upsert_rolls_back_all_jobs_on_failure(tmp_path: Path) -> None:
+    db_path = tmp_path / "jobs.db"
+    valid = JobRecord(title="Piping Engineer", company="Example EPC")
+    invalid = JobRecord(title="", company="Example EPC")
+
+    with pytest.raises(ValueError, match="title and company are required"):
+        upsert_jobs(db_path, [valid, invalid])
+
+    assert fetch_jobs(db_path) == []

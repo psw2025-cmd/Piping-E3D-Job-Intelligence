@@ -100,7 +100,12 @@ def _salary(value: Any) -> str:
         unit = ""
     if minimum is None and maximum is None:
         return ""
-    amount = str(minimum if maximum is None else f"{minimum}–{maximum}")
+    if minimum is None:
+        amount = str(maximum)
+    elif maximum is None:
+        amount = str(minimum)
+    else:
+        amount = f"{minimum}–{maximum}"
     return join_nonempty((currency, amount, f"per {unit}" if unit else ""), " ")
 
 

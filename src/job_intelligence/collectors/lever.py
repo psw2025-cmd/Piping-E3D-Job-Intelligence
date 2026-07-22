@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 from typing import Any
 
 from ..models import JobRecord
@@ -44,11 +45,19 @@ def collect_lever(spec: SourceSpec, client: HttpClient) -> CollectionResult:
     url = f"https://{host}/v0/postings/{site}"
     max_items = spec.int_option("max_items", 500)
     page_size = min(spec.int_option("page_size", 100), 100)
+    default_max_pages = max(4, ((max_items + page_size - 1) // page_size) * 4)
+    max_pages = spec.int_option("max_pages", default_max_pages)
 
     jobs: list[JobRecord] = []
     evidence: list[EvidenceArtifact] = []
+    seen_pages: set[str] = set()
+    pages_fetched = 0
     skip = 0
     while len(jobs) < max_items:
+        if pages_fetched >= max_pages:
+            raise ValueError(
+                f"source {spec.source_id!r} exceeded max_pages={max_pages}"
+            )
         limit = min(page_size, max_items - len(jobs))
         response = client.get(
             url,
@@ -57,15 +66,23 @@ def collect_lever(spec: SourceSpec, client: HttpClient) -> CollectionResult:
         payload = response.json()
         if not isinstance(payload, list):
             raise ValueError(f"source {spec.source_id!r} returned invalid Lever data")
+        page_bytes = json_bytes(payload)
         evidence.append(
             EvidenceArtifact(
                 source_url=response.url,
                 content_type=response.headers.get("content-type", "application/json"),
-                body=json_bytes(payload),
+                body=page_bytes,
                 status_code=response.status_code,
                 suffix=".json",
             )
         )
+        page_fingerprint = hashlib.sha256(page_bytes).hexdigest()
+        if page_fingerprint in seen_pages:
+            raise ValueError(
+                f"source {spec.source_id!r} repeated a pagination page"
+            )
+        seen_pages.add(page_fingerprint)
+        pages_fetched += 1
         if not payload:
             break
 
