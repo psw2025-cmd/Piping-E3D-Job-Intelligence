@@ -1,7 +1,12 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
+from typing import Any
+
+import yaml
 
 from .models import JobRecord
 
@@ -14,7 +19,54 @@ class MatchResult:
     gaps: tuple[str, ...]
 
 
-ROLE_TERMS = (
+@dataclass(frozen=True, slots=True)
+class ScoringProfile:
+    weights: dict[str, int]
+    thresholds: dict[str, int]
+    target_roles: tuple[str, ...]
+    e3d_pdms_terms: tuple[str, ...]
+    layout_terms: tuple[str, ...]
+    sector_terms: tuple[str, ...]
+    experience_terms: tuple[str, ...]
+    preferred_locations: tuple[str, ...]
+    site_offshore_terms: tuple[str, ...]
+    diploma_terms: tuple[str, ...]
+    mandatory_degree_terms: tuple[str, ...]
+    recent_days: int
+
+
+_DEFAULT_WEIGHTS = {
+    "target_role": 20,
+    "e3d_pdms": 20,
+    "piping_layout": 15,
+    "sector": 10,
+    "experience": 10,
+    "preferred_location": 10,
+    "site_offshore": 5,
+    "diploma_eligible": 5,
+    "recent_posting": 5,
+}
+_DEFAULT_THRESHOLDS = {"critical": 85, "high": 70, "normal": 50}
+_DEFAULT_TERMS = {
+    "e3d_pdms": ("aveva e3d", "e3d", "pdms"),
+    "piping_layout": (
+        "piping layout",
+        "equipment layout",
+        "plot plan",
+        "general arrangement",
+    ),
+    "experience": ("10 years", "12 years", "15 years", "senior", "lead"),
+    "site_offshore": (
+        "site engineering",
+        "site experience",
+        "brownfield",
+        "punch list",
+        "offshore",
+    ),
+    "diploma_eligible": ("diploma", "degree or diploma"),
+    "mandatory_degree": ("degree required", "bachelor's degree required"),
+}
+_DEFAULT_ROLES = (
     "lead piping engineer",
     "senior piping engineer",
     "piping design engineer",
@@ -24,11 +76,15 @@ ROLE_TERMS = (
     "offshore piping engineer",
     "site piping engineer",
 )
-E3D_TERMS = ("aveva e3d", "e3d", "pdms")
-LAYOUT_TERMS = ("piping layout", "equipment layout", "plot plan", "general arrangement")
-SECTOR_TERMS = ("oil and gas", "refinery", "petrochemical", "offshore", "lng", "nuclear")
-SITE_TERMS = ("site engineering", "site experience", "brownfield", "punch list", "offshore")
-PREFERRED_LOCATIONS = (
+_DEFAULT_SECTORS = (
+    "oil and gas",
+    "refinery",
+    "petrochemical",
+    "offshore",
+    "lng",
+    "nuclear",
+)
+_DEFAULT_LOCATIONS = (
     "mumbai",
     "navi mumbai",
     "pune",
@@ -41,11 +97,85 @@ PREFERRED_LOCATIONS = (
 )
 
 
+def _lower_terms(values: Any) -> tuple[str, ...]:
+    if not isinstance(values, list | tuple):
+        return ()
+    return tuple(str(value).strip().lower() for value in values if str(value).strip())
+
+
+def _read_yaml(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    loaded = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    if not isinstance(loaded, dict):
+        raise ValueError(f"Configuration root must be a mapping: {path}")
+    return loaded
+
+
+def _resolve_config_dir(config_dir: str | Path | None) -> Path | None:
+    candidates: list[Path] = []
+    if config_dir is not None:
+        candidates.append(Path(config_dir))
+    env_dir = os.getenv("JOB_INTEL_CONFIG_DIR")
+    if env_dir:
+        candidates.append(Path(env_dir))
+    candidates.extend(
+        (
+            Path.cwd() / "config",
+            Path(__file__).resolve().parents[2] / "config",
+        )
+    )
+    return next((path for path in candidates if path.is_dir()), None)
+
+
+def load_scoring_profile(config_dir: str | Path | None = None) -> ScoringProfile:
+    resolved = _resolve_config_dir(config_dir)
+    roles_data: dict[str, Any] = {}
+    locations_data: dict[str, Any] = {}
+    scoring_data: dict[str, Any] = {}
+    if resolved:
+        roles_data = _read_yaml(resolved / "roles.yaml")
+        locations_data = _read_yaml(resolved / "locations.yaml")
+        scoring_data = _read_yaml(resolved / "scoring.yaml")
+
+    weights = {**_DEFAULT_WEIGHTS, **scoring_data.get("weights", {})}
+    thresholds = {**_DEFAULT_THRESHOLDS, **scoring_data.get("thresholds", {})}
+    term_config = scoring_data.get("terms", {})
+
+    location_groups = locations_data.get("locations", {})
+    location_values: list[str] = []
+    if isinstance(location_groups, dict):
+        for values in location_groups.values():
+            if isinstance(values, list):
+                location_values.extend(str(value) for value in values)
+
+    return ScoringProfile(
+        weights={key: int(value) for key, value in weights.items()},
+        thresholds={key: int(value) for key, value in thresholds.items()},
+        target_roles=_lower_terms(roles_data.get("target_roles")) or _DEFAULT_ROLES,
+        e3d_pdms_terms=_lower_terms(term_config.get("e3d_pdms"))
+        or _DEFAULT_TERMS["e3d_pdms"],
+        layout_terms=_lower_terms(term_config.get("piping_layout"))
+        or _DEFAULT_TERMS["piping_layout"],
+        sector_terms=_lower_terms(roles_data.get("sectors")) or _DEFAULT_SECTORS,
+        experience_terms=_lower_terms(term_config.get("experience"))
+        or _DEFAULT_TERMS["experience"],
+        preferred_locations=_lower_terms(location_values) or _DEFAULT_LOCATIONS,
+        site_offshore_terms=_lower_terms(term_config.get("site_offshore"))
+        or _DEFAULT_TERMS["site_offshore"],
+        diploma_terms=_lower_terms(term_config.get("diploma_eligible"))
+        or _DEFAULT_TERMS["diploma_eligible"],
+        mandatory_degree_terms=_lower_terms(term_config.get("mandatory_degree"))
+        or _DEFAULT_TERMS["mandatory_degree"],
+        recent_days=int(scoring_data.get("recent_days", 7)),
+    )
+
+
 def _contains_any(text: str, terms: tuple[str, ...]) -> bool:
     return any(term in text for term in terms)
 
 
-def _is_recent(published_at: str, days: int = 7) -> bool:
+def _is_recent(published_at: str, days: int) -> bool:
     if not published_at:
         return False
     try:
@@ -57,54 +187,68 @@ def _is_recent(published_at: str, days: int = 7) -> bool:
         return False
 
 
-def score_job(job: JobRecord) -> MatchResult:
+def score_job(
+    job: JobRecord,
+    *,
+    config_dir: str | Path | None = None,
+    profile: ScoringProfile | None = None,
+) -> MatchResult:
+    active = profile or load_scoring_profile(config_dir)
     text = job.searchable_text
     score = 0
     reasons: list[str] = []
     gaps: list[str] = []
 
-    if _contains_any(text, ROLE_TERMS):
-        score += 20
+    if _contains_any(text, active.target_roles):
+        score += active.weights["target_role"]
         reasons.append("Target piping/E3D role alignment")
     else:
         gaps.append("Target role wording not detected")
 
-    if _contains_any(text, E3D_TERMS):
-        score += 20
+    if _contains_any(text, active.e3d_pdms_terms):
+        score += active.weights["e3d_pdms"]
         reasons.append("AVEVA E3D or PDMS requirement detected")
     else:
         gaps.append("E3D/PDMS requirement not stated")
 
-    if _contains_any(text, LAYOUT_TERMS):
-        score += 15
+    if _contains_any(text, active.layout_terms):
+        score += active.weights["piping_layout"]
         reasons.append("Piping or equipment layout scope detected")
 
-    if _contains_any(text, SECTOR_TERMS):
-        score += 10
+    if _contains_any(text, active.sector_terms):
+        score += active.weights["sector"]
         reasons.append("Relevant EPC process-industry sector detected")
 
-    if any(term in text for term in ("10 years", "12 years", "15 years", "senior", "lead")):
-        score += 10
+    if _contains_any(text, active.experience_terms):
+        score += active.weights["experience"]
         reasons.append("Senior experience level appears compatible")
 
-    if _contains_any(text, PREFERRED_LOCATIONS):
-        score += 10
+    if _contains_any(text, active.preferred_locations):
+        score += active.weights["preferred_location"]
         reasons.append("Preferred location detected")
 
-    if _contains_any(text, SITE_TERMS):
-        score += 5
+    if _contains_any(text, active.site_offshore_terms):
+        score += active.weights["site_offshore"]
         reasons.append("Site, brownfield or offshore experience valued")
 
-    if "diploma" in text or "degree or diploma" in text:
-        score += 5
+    if _contains_any(text, active.diploma_terms):
+        score += active.weights["diploma_eligible"]
         reasons.append("Diploma eligibility stated")
-    elif "degree required" in text or "bachelor's degree required" in text:
+    elif _contains_any(text, active.mandatory_degree_terms):
         gaps.append("Degree may be mandatory")
 
-    if _is_recent(job.published_at):
-        score += 5
+    if _is_recent(job.published_at, active.recent_days):
+        score += active.weights["recent_posting"]
         reasons.append("Recently published")
 
     score = min(score, 100)
-    priority = "critical" if score >= 85 else "high" if score >= 70 else "normal" if score >= 50 else "low"
+    priority = (
+        "critical"
+        if score >= active.thresholds["critical"]
+        else "high"
+        if score >= active.thresholds["high"]
+        else "normal"
+        if score >= active.thresholds["normal"]
+        else "low"
+    )
     return MatchResult(score, priority, tuple(reasons), tuple(gaps))
