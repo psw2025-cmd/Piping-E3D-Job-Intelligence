@@ -35,41 +35,52 @@ target_roles:
 role_families:
   Lead Piping Engineer:
     - lead piping engineer
-    - piping discipline lead
-    - piping engineering lead
-    - principal piping engineer
     - piping lead engineer
   Senior Piping Engineer:
     - senior piping engineer
     - sr piping engineer
     - senior engineer piping
+  Principal Piping Engineer:
+    - principal piping engineer
+  Piping Discipline Lead:
+    - piping discipline lead
+  Piping Engineering Lead:
+    - piping engineering lead
+  Piping Design Engineer:
+    - piping design engineer
+    - piping engineer design
   Lead Piping Design Engineer:
     - lead piping design engineer
     - lead design engineer piping
     - piping design lead
-  Piping Design Engineer:
-    - piping design engineer
-    - piping engineer design
-  Senior Piping Layout Engineer:
-    - senior piping layout engineer
-    - senior layout engineer piping
-    - senior piping layout designer
+  Senior Piping Design Engineer:
+    - senior piping design engineer
+    - senior design engineer piping
   Piping Layout Engineer:
     - piping layout engineer
     - pipe layout engineer
     - plant layout engineer piping
+  Senior Piping Layout Engineer:
+    - senior piping layout engineer
+    - senior layout engineer piping
+    - senior piping layout designer
+  Senior Layout Engineer:
+    - senior layout engineer
   Piping Area Lead:
     - piping area lead
     - area lead piping
-  Senior Piping Design Checker:
-    - senior piping design checker
+  Piping Design Checker:
     - piping design checker
     - piping checker
+  Senior Piping Design Checker:
+    - senior piping design checker
     - senior checker piping
   Site Piping Engineer:
     - site piping engineer
+  Field Piping Engineer:
     - field piping engineer
     - piping field engineer
+  Piping Construction Engineer:
     - piping construction engineer
     - construction piping engineer
   Offshore Piping Engineer:
@@ -78,6 +89,9 @@ role_families:
   Senior E3D Piping Designer:
     - senior e3d piping designer
     - senior aveva e3d designer
+  AVEVA E3D Designer:
+    - aveva e3d designer
+  E3D Piping Designer:
     - e3d piping designer
     - aveva e3d piping designer
     - e3d designer piping
@@ -91,10 +105,12 @@ role_families:
     - e3d model coordinator
   Senior PDMS Piping Designer:
     - senior pdms piping designer
-    - senior pdms designer
     - pdms piping designer
+  Senior PDMS Designer:
+    - senior pdms designer
   SP3D Piping Designer:
     - sp3d piping designer
+  SmartPlant 3D Piping Designer:
     - smartplant 3d piping designer
     - smart plant 3d piping designer
   3D Model Coordinator:
@@ -103,8 +119,13 @@ role_families:
     - plant model coordinator
   Plant Design Engineer:
     - plant design engineer
+  Plant Layout Designer:
     - plant layout designer
+  Mechanical Piping Designer:
     - mechanical piping designer
+  Piping CAD Lead:
+    - piping cad lead
+    - cad lead piping
 
 primary_skills:
   - AVEVA E3D
