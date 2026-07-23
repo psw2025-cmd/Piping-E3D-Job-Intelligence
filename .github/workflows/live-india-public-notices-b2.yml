@@ -6,6 +6,7 @@ on:
     paths:
       - "src/job_intelligence/collectors/public_notice_adaptive.py"
       - "src/job_intelligence/collectors/__init__.py"
+      - "scripts/verify_live_notice_sources.py"
       - "config/sources.india-notices.yaml"
       - "config/employer_registry.d/**"
       - "config/worldwide_companies.d/**"
@@ -42,6 +43,7 @@ jobs:
         run: |
           ruff check \
             src/job_intelligence/collectors/public_notice_adaptive.py \
+            scripts/verify_live_notice_sources.py \
             tests/test_public_notice_adaptive.py \
             tests/test_public_notice_config.py
           pytest -q \
