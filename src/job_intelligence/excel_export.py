@@ -10,7 +10,13 @@ from openpyxl.styles import Font
 
 from .database import JOB_COLUMNS, connect, fetch_jobs
 from .gmail_alerts import init_gmail_tables
-from .worldwide_views import deduplicate_worldwide, registry_frames, summary_by
+from .worldwide_views import (
+    coverage_gaps,
+    deduplicate_worldwide,
+    registry_frames,
+    summary_by,
+    taxonomy_frames,
+)
 
 REQUIRED_SHEETS = (
     "New_Today",
@@ -29,6 +35,10 @@ REQUIRED_SHEETS = (
     "Company_Summary",
     "Employer_Coverage",
     "Recruiter_Coverage",
+    "Portal_Coverage",
+    "Role_Coverage",
+    "Location_Coverage",
+    "Coverage_Gaps",
     "Source_Health",
     "Source_Evidence",
     "Private_Imports",
@@ -121,6 +131,12 @@ def _daily_summary(
     contacts: pd.DataFrame,
     source_health: pd.DataFrame,
     gmail_alerts: pd.DataFrame,
+    employer_coverage: pd.DataFrame,
+    recruiter_coverage: pd.DataFrame,
+    portal_coverage: pd.DataFrame,
+    role_coverage: pd.DataFrame,
+    location_coverage: pd.DataFrame,
+    gap_frame: pd.DataFrame,
 ) -> pd.DataFrame:
     source_status = source_health.get("status", pd.Series(dtype="string"))
     gmail_status = gmail_alerts.get("status", pd.Series(dtype="string"))
@@ -128,6 +144,7 @@ def _daily_summary(
     companies = active.get("company", pd.Series(dtype="string"))
     source_passes = source_status.isin(["pass", "pass_with_warnings"])
     gmail_complete = gmail_status.str.startswith("complete", na=False)
+    employer_status = employer_coverage.get("status", pd.Series(dtype="string"))
     metrics = (
         ("generated_at", datetime.now(UTC).replace(microsecond=0).isoformat()),
         ("raw_source_rows", len(jobs)),
@@ -146,6 +163,14 @@ def _daily_summary(
         ("sources_total", len(source_health)),
         ("sources_passing", int(source_passes.sum())),
         ("sources_failing", int(source_status.eq("fail").sum())),
+        ("sources_with_warnings", int(source_status.eq("pass_with_warnings").sum())),
+        ("active_employers", int(employer_status.eq("active_supported").sum())),
+        ("tracked_employers", len(employer_coverage)),
+        ("tracked_recruiters", len(recruiter_coverage)),
+        ("tracked_portals", len(portal_coverage)),
+        ("role_matrix_rows", len(role_coverage)),
+        ("location_matrix_rows", len(location_coverage)),
+        ("coverage_gaps", len(gap_frame)),
         ("gmail_messages", len(gmail_alerts)),
         ("gmail_complete", int(gmail_complete.sum())),
         ("gmail_failed", int(gmail_status.eq("failed").sum())),
@@ -191,7 +216,9 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
     statuses = jobs.get("application_status", pd.Series(dtype="string"))
     active_source_rows = jobs[~statuses.isin(["expired", "rejected"])]
     active, duplicate_variants = deduplicate_worldwide(active_source_rows)
-    employer_coverage, recruiter_coverage = registry_frames()
+    employer_coverage, recruiter_coverage, portal_coverage = registry_frames()
+    role_coverage, location_coverage = taxonomy_frames()
+    gap_frame = coverage_gaps(employer_coverage, source_health)
 
     review_job_keys = set(
         private_imports.loc[
@@ -237,6 +264,12 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
         contacts=contacts,
         source_health=source_health,
         gmail_alerts=gmail_alerts,
+        employer_coverage=employer_coverage,
+        recruiter_coverage=recruiter_coverage,
+        portal_coverage=portal_coverage,
+        role_coverage=role_coverage,
+        location_coverage=location_coverage,
+        gap_frame=gap_frame,
     )
 
     sheets = {
@@ -256,6 +289,10 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
         "Company_Summary": company_summary,
         "Employer_Coverage": employer_coverage,
         "Recruiter_Coverage": recruiter_coverage,
+        "Portal_Coverage": portal_coverage,
+        "Role_Coverage": role_coverage,
+        "Location_Coverage": location_coverage,
+        "Coverage_Gaps": gap_frame,
         "Source_Health": source_health,
         "Source_Evidence": source_evidence,
         "Private_Imports": private_imports,
