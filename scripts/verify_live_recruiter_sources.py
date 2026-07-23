@@ -9,24 +9,19 @@ from job_intelligence.collectors.http_client import SafeHttpClient
 from job_intelligence.collectors.public_html import collect_public_html
 from job_intelligence.source_registry import load_source_registry
 
-SOURCE_IDS = (
-    "airswift_global_public",
-    "nesfircroft_piping_public",
-    "brunel_global_public",
-)
+SOURCE_IDS = ("airswift_global_public",)
 PROOF_PATH = Path("live-recruiter-proof.json")
 
 
 def _verify_source(source_id: str, source) -> dict[str, object]:
-    max_pages = 33 if source_id == "airswift_global_public" else 8
-    if source_id == "brunel_global_public":
-        max_pages = 1
+    if not source.enabled:
+        raise RuntimeError(f"{source_id} is not enabled")
     constrained = replace(
         source,
         options={
             **source.options,
             "max_items": 3,
-            "max_pages": max_pages,
+            "max_pages": 33,
             "rate_limit_per_minute": 60,
         },
     )
@@ -101,6 +96,10 @@ def main() -> int:
     payload = {
         "status": "FAIL" if failures else "PASS",
         "sources": proof,
+        "disabled_fallback_sources": [
+            "nesfircroft_piping_public",
+            "brunel_global_public",
+        ],
         "failures": failures,
     }
     PROOF_PATH.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
