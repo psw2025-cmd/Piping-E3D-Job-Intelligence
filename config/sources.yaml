@@ -1,6 +1,6 @@
-# Public-source registry.
+# Worldwide public-source registry.
 # Never place credentials, private portals, cookies, CV data or recruiter lists here.
-# McDermott and Wood Oracle sources were verified read-only on 2026-07-23.
+# Enabled sources must be official, public, read-only and protected by profile filtering.
 sources:
   - id: mcdermott_oracle
     name: McDermott official Oracle careers
@@ -9,28 +9,28 @@ sources:
     base_url: https://edsv.fa.us2.oraclecloud.com
     site_number: CX_1
     enabled: true
-    include_terms:
+    profile_filter: true
+    include_terms: &global_profile_terms
       - piping
-      - e3d
-      - pdms
+      - pipe layout
       - plant layout
+      - plant design
+      - e3d
+      - aveva e3d
+      - pdms
+      - sp3d
+      - smartplant 3d
       - pipe support
-    location_terms:
-      - india
-      - united arab emirates
-      - qatar
-      - saudi arabia
-      - oman
-      - kuwait
-      - bahrain
-      - malaysia
-      - singapore
+      - piping stress
+      - piping materials
+      - 3d model
+    location_terms: []
     timeout_seconds: 30
     rate_limit_per_minute: 60
     max_response_bytes: 5000000
-    max_items: 250
-    max_scan_items: 3000
-    max_pages: 30
+    max_items: 300
+    max_scan_items: 5000
+    max_pages: 50
     page_size: 100
 
   - id: wood_oracle
@@ -40,29 +40,173 @@ sources:
     base_url: https://ehif.fa.em2.oraclecloud.com
     site_number: CX_1
     enabled: true
-    include_terms:
-      - piping
-      - e3d
-      - pdms
-      - plant layout
-      - pipe support
-    location_terms:
-      - india
-      - united arab emirates
-      - qatar
-      - saudi arabia
-      - oman
-      - kuwait
-      - bahrain
-      - malaysia
-      - singapore
+    profile_filter: true
+    include_terms: *global_profile_terms
+    location_terms: []
     timeout_seconds: 30
     rate_limit_per_minute: 60
     max_response_bytes: 5000000
-    max_items: 250
-    max_scan_items: 3000
-    max_pages: 30
+    max_items: 300
+    max_scan_items: 5000
+    max_pages: 50
     page_size: 100
+
+  - id: petrofac_selectminds_html
+    name: Petrofac official SelectMinds careers
+    type: public_html
+    company: Petrofac
+    url: https://petrofac.referrals.selectminds.com/latest-jobs
+    enabled: true
+    profile_filter: true
+    allowed_domains: [petrofac.referrals.selectminds.com]
+    job_link_patterns: [/jobs/]
+    anchor_text_patterns: *global_profile_terms
+    exclude_anchor_text_patterns: [sign up, login, job alerts]
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 15
+    max_response_bytes: 5000000
+    max_items: 100
+    max_pages: 1
+
+  - id: bechtel_successfactors_html
+    name: Bechtel official SuccessFactors careers
+    type: public_html
+    company: Bechtel
+    url: https://jobs.bechtel.com/go/Engineering/399431
+    enabled: true
+    profile_filter: true
+    allowed_domains: [jobs.bechtel.com]
+    job_link_patterns: [/job/]
+    anchor_text_patterns: *global_profile_terms
+    page_url_template: https://jobs.bechtel.com/go/Engineering/399431/{page}/?q=&sortColumn=referencedate&sortDirection=desc
+    page_start: 0
+    page_step: 25
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 12
+    max_response_bytes: 5000000
+    max_items: 150
+    max_pages: 12
+
+  - id: worley_eightfold_html
+    name: Worley official Eightfold careers
+    type: public_html
+    company: Worley
+    url: https://jobs.worley.com/careers?query=piping&start=0
+    enabled: true
+    profile_filter: true
+    allowed_domains: [jobs.worley.com]
+    job_link_patterns: [/careers/job/]
+    anchor_text_patterns: *global_profile_terms
+    page_url_template: https://jobs.worley.com/careers?query=piping&start={page}
+    page_start: 0
+    page_step: 20
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 12
+    max_response_bytes: 8000000
+    max_items: 250
+    max_pages: 20
+
+  - id: kbr_phenom_html
+    name: KBR official Phenom careers
+    type: public_html
+    company: KBR
+    url: https://careers.kbr.com/us/en/search-results?keywords=piping
+    enabled: false
+    profile_filter: true
+    allowed_domains: [careers.kbr.com]
+    job_link_patterns: [/us/en/job/]
+    anchor_text_patterns: *global_profile_terms
+    page_url_template: https://careers.kbr.com/us/en/search-results?keywords=piping&from={page}&s=1
+    page_start: 0
+    page_step: 10
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_response_bytes: 8000000
+    max_items: 200
+    max_pages: 30
+
+  - id: atkinsrealis_public_html
+    name: AtkinsRealis official careers
+    type: public_html
+    company: AtkinsRealis
+    url: https://careers.atkinsrealis.com/en/jobs
+    enabled: false
+    profile_filter: true
+    allowed_domains: [careers.atkinsrealis.com]
+    job_link_patterns: [/en/jobs/, /job/]
+    anchor_text_patterns: *global_profile_terms
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_response_bytes: 8000000
+    max_items: 250
+    max_pages: 1
+
+  - id: fluor_eightfold_html
+    name: Fluor official Eightfold careers
+    type: public_html
+    company: Fluor
+    url: https://careers.fluor.com/careers?query=piping
+    enabled: false
+    profile_filter: true
+    allowed_domains: [careers.fluor.com]
+    job_link_patterns: [/careers/job/]
+    anchor_text_patterns: *global_profile_terms
+    page_url_template: https://careers.fluor.com/careers?query=piping&start={page}
+    page_start: 0
+    page_step: 20
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_response_bytes: 10000000
+    max_items: 250
+    max_pages: 30
+
+  - id: technip_energies_public_html
+    name: Technip Energies official careers
+    type: public_html
+    company: Technip Energies
+    url: https://careers.technipenergies.com/
+    enabled: false
+    profile_filter: true
+    allowed_domains: [careers.technipenergies.com]
+    job_link_patterns: [/job/, /jobs/]
+    anchor_text_patterns: *global_profile_terms
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_response_bytes: 8000000
+    max_items: 250
+    max_pages: 1
+
+  - id: jacobs_public_html
+    name: Jacobs official careers
+    type: public_html
+    company: Jacobs
+    url: https://careers.jacobs.com/
+    enabled: false
+    profile_filter: true
+    allowed_domains: [careers.jacobs.com]
+    job_link_patterns: [/job/, /jobs/]
+    anchor_text_patterns: *global_profile_terms
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_response_bytes: 8000000
+    max_items: 250
+    max_pages: 1
 
   - id: example_greenhouse
     name: Example Greenhouse board
@@ -70,6 +214,7 @@ sources:
     company: Example EPC
     board_token: replace-with-public-board-token
     enabled: false
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 20
     max_items: 500
@@ -81,6 +226,7 @@ sources:
     site: replace-with-public-site-name
     region: global
     enabled: false
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 20
     max_items: 500
@@ -92,6 +238,7 @@ sources:
     company: Example EPC
     company_identifier: replace-with-public-company-identifier
     enabled: false
+    profile_filter: true
     fetch_details: true
     timeout_seconds: 30
     rate_limit_per_minute: 20
@@ -105,6 +252,7 @@ sources:
     url: https://example.com/jobs.rss
     location: ""
     enabled: false
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 10
     max_items: 500
@@ -114,12 +262,10 @@ sources:
     type: sitemap
     company: Example EPC
     url: https://example.com/jobs-sitemap.xml
-    allowed_domains:
-      - example.com
-    job_url_patterns:
-      - /careers/
-      - /jobs/
+    allowed_domains: [example.com]
+    job_url_patterns: [/careers/, /jobs/]
     enabled: false
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 10
     max_items: 300
