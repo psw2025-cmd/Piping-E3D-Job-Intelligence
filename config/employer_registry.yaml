@@ -31,6 +31,17 @@ employers:
     verified_at: 2026-07-23
     notes: Verified public Oracle Candidate Experience requisition source with worldwide profile filtering.
 
+  - company: Technip Energies
+    priority: 1
+    official_careers_url: https://www.ten.com/en/careers
+    public_job_url: https://hcxg.fa.em2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1
+    public_job_host: hcxg.fa.em2.oraclecloud.com
+    ats_type: oracle_hcm
+    status: active_supported
+    source_ids: [technip_energies_oracle]
+    verified_at: 2026-07-23
+    notes: Verified public Oracle Candidate Experience requisitions collected read-only with worldwide profile filtering; no candidate account or internal authenticated endpoint is used.
+
   - company: KBR
     priority: 1
     official_careers_url: https://careers.kbr.com/us/en
@@ -52,6 +63,28 @@ employers:
     source_ids: [atkinsrealis_workday]
     verified_at: 2026-07-23
     notes: Official AtkinsRealis Workday candidate search and detail responses are collected read-only.
+
+  - company: Fluor
+    priority: 1
+    official_careers_url: https://www.fluor.com/careers
+    public_job_url: https://thrivecareers.fluor.com/go/Engineering-%26-Design/9791200/
+    public_job_host: thrivecareers.fluor.com
+    ats_type: sap_successfactors_public_html
+    status: active_supported
+    source_ids: [fluor_successfactors]
+    verified_at: 2026-07-23
+    notes: Verified official SAP SuccessFactors engineering and design listing/detail pages collected read-only; craft-only roles are excluded.
+
+  - company: Saipem
+    priority: 1
+    official_careers_url: https://www.saipem.com/en/people/careers
+    public_job_url: https://jobs.saipem.com/
+    public_job_host: jobs.saipem.com
+    ats_type: official_card_board
+    status: active_supported
+    source_ids: [saipem_card_board]
+    verified_at: 2026-07-23
+    notes: Verified official public vacancy cards and detail pages; context-aware extraction is used because public detail links contain generic labels.
 
   - company: Bechtel
     priority: 1
@@ -86,25 +119,7 @@ employers:
     ats_type: eightfold_public_html
     status: staged_source
     source_ids: [worley_eightfold_html]
-    notes: Configured but disabled until source-specific Eightfold pagination and detail proof passes.
-
-  - company: Technip Energies
-    priority: 1
-    official_careers_url: https://careers.technipenergies.com/
-    public_job_host: careers.technipenergies.com
-    ats_type: rendered_public_pages
-    status: staged_source
-    source_ids: [technip_energies_public_html]
-    notes: Configured rendered-page fallback; undocumented internal endpoints remain prohibited.
-
-  - company: Fluor
-    priority: 1
-    official_careers_url: https://www.fluor.com/careers
-    public_job_url: https://careers.fluor.com/careers
-    ats_type: eightfold_public_html
-    status: staged_source
-    source_ids: [fluor_eightfold_html]
-    notes: Configured but disabled until source-specific live proof passes.
+    notes: Configured but disabled until source-specific Eightfold pagination and detail proof passes; authorized Gmail alerts remain available.
 
   - company: Jacobs
     priority: 1
@@ -112,7 +127,7 @@ employers:
     ats_type: rendered_public_pages
     status: staged_source
     source_ids: [jacobs_public_html]
-    notes: Configured but disabled until source-specific live proof passes.
+    notes: Configured but disabled until source-specific live proof passes; authorized Gmail alerts remain available.
 
   - company: L&T Energy Hydrocarbon
     priority: 1
@@ -120,12 +135,6 @@ employers:
     status: official_site_verified
     source_ids: []
     notes: Official careers entry verified; employer-specific vacancy source still requires proof.
-
-  - company: Saipem
-    priority: 1
-    official_careers_url: https://www.saipem.com/en/people/careers
-    status: connector_planned
-    source_ids: []
 
   - company: Kent
     priority: 2
