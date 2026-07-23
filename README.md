@@ -1,8 +1,8 @@
 # Piping-E3D-Job-Intelligence
 
-Local-first job intelligence, matching and tracking for piping, AVEVA E3D, PDMS, offshore, refinery, nuclear and EPC opportunities.
+Local-first job intelligence, matching and tracking for piping, AVEVA E3D, PDMS, SP3D, offshore, refinery, nuclear and global EPC opportunities.
 
-> **Current status:** verified public-source collection runs automatically in GitHub every day at 09:00 Asia/Kolkata. The private import layer supports text, PDF, Word, `.eml` email and review-required image OCR while keeping personal source files and evidence outside Git.
+> **Current status:** verified public-source collection runs automatically in GitHub every day at 09:00 Asia/Kolkata. Private local ingestion supports text, PDF, Word, saved `.eml`, image OCR and user-authorized Gmail job alerts while keeping personal source files and evidence outside Git.
 
 ## Safety boundaries
 
@@ -11,25 +11,29 @@ Local-first job intelligence, matching and tracking for piping, AVEVA E3D, PDMS,
 - Never bypass CAPTCHAs, login walls or access controls.
 - Never commit CVs, application records, recruiter lists, databases, evidence or credentials.
 - Public-source GitHub automation and private local imports remain separate.
-- Detected email addresses are stored only as `PUBLIC_UNVERIFIED`.
+- Gmail uses only the official read-only Gmail API scope.
+- Detected contacts are stored as `PUBLIC_UNVERIFIED` or `ALERT_SUPPLIED`, never automatically verified.
 - OCR and inferred vacancy fields always require review.
 - SQLite is the source of truth. Excel is a review and tracking output.
 
 ## Implemented capabilities
 
-- SQLite jobs, identity aliases, source health, evidence, private-import and run-proof tables
-- Stable duplicate handling and transactional source upserts
+- SQLite jobs, identity aliases, source health, evidence, private-import, Gmail-alert and run-proof tables
+- Stable cross-source duplicate handling and transactional upserts
 - Preservation of user-managed application and recruiter fields
+- Config-driven worldwide role, software, sector and location normalization
 - Explainable YAML-controlled 0–100 piping/E3D match scoring
 - Verified McDermott and Wood Oracle career sources
+- Verified Bechtel SAP SuccessFactors public listings
+- Verified Petrofac SelectMinds new, hot and India listings
 - Greenhouse, Lever, SmartRecruiters, RSS/Atom and sitemap collectors
-- Disabled-by-default constrained public employer HTML collector
-- Safe HTTP validation, redirects, response limits, robots handling and evidence hashing
+- Constrained public employer HTML collector with domain, robots and response controls
 - Daily GitHub Actions collection at 09:00 Asia/Kolkata with verified artifacts
-- Text, PDF, Word, `.eml` and image-OCR private imports
-- SHA-256 duplicate-file protection and private evidence verification
-- Multi-sheet Excel export including source and private-import proof
-- Windows private-folder runner and Task Scheduler installer
+- Text, PDF, Word, saved `.eml` and image-OCR private imports
+- User-authorized Gmail API alert ingestion with multiple jobs per email
+- SHA-256 evidence protection and private/Gmail evidence verification
+- Multi-sheet Excel export including source, Gmail, private-import and daily-summary proof
+- Windows private-folder and Gmail runners with Task Scheduler installers
 
 ## Quick start on Windows
 
@@ -46,6 +50,22 @@ job-intel --db data/database/jobs.db init-db
 The `daily-live-job-intelligence` workflow runs every day at 09:00 Asia/Kolkata and can also be started manually from GitHub Actions. It validates enabled official sources, collects jobs, retains evidence, exports Excel, verifies all proof and uploads a 14-day portable artifact.
 
 See `docs/DAILY_AUTOMATION.md`.
+
+## User-authorized Gmail alerts
+
+After creating a Google Desktop OAuth client and saving the credential locally:
+
+```powershell
+.\.venv\Scripts\python.exe -m job_intelligence.cli gmail-auth `
+  --credentials private-config\gmail_credentials.json `
+  --token private-config\gmail_token.json
+
+.\scripts\run_gmail_alerts.ps1
+```
+
+The Gmail importer reads matching alerts through the read-only scope, stores hashed `.eml` evidence locally, extracts multiple distinct job links, deduplicates against official sources and updates the same workbook.
+
+See `docs/GMAIL_ALERTS.md`.
 
 ## Private vacancy import
 
@@ -98,30 +118,34 @@ The generated workbook contains:
 4. `Manual_Review`
 5. `Applied`
 6. `Follow_Up`
-7. `Expired`
-8. `Recruiter_Contacts`
-9. `Source_Health`
-10. `Source_Evidence`
-11. `Private_Imports`
-12. `Run_Proof`
+7. `Rejected`
+8. `Expired`
+9. `Recruiter_Contacts`
+10. `Source_Health`
+11. `Source_Evidence`
+12. `Private_Imports`
+13. `Gmail_Alerts`
+14. `Gmail_Alert_Jobs`
+15. `Run_Proof`
+16. `Daily_Summary`
 
 ## Repository layout
 
 ```text
 config/                     Roles, locations, sources, employer registry and scoring
-src/job_intelligence/       Application, collectors and private imports
+src/job_intelligence/       Application, collectors and private/Gmail imports
 tests/                      Unit, migration, fixture and end-to-end tests
 scripts/                    Windows and GitHub execution helpers
 docs/                       Operation, safety and import guides
 .github/workflows/          CI and scheduled collection
 ```
 
-## Next controlled phases
+## Remaining controlled phases
 
-1. Gmail job-alert ingestion through user-authorized Google access.
-2. Optional email or Telegram high-priority notifications.
-3. Application follow-up controls and local dashboard.
-4. Additional live-proven priority EPC employer connectors.
-5. Local Task Scheduler installation and recovery proof on the user's Windows computer.
+1. Additional live-proven priority EPC employer connectors.
+2. Workday, SuccessFactors, iCIMS, Taleo, SelectMinds, Teamtailor, Workable, Ashby and source-specific rendered-page connectors.
+3. Recruiter and engineering-consultancy source expansion.
+4. Optional email or Telegram high-priority notifications.
+5. Production backup/restore, Windows restart recovery and 7–14-day soak proof.
 
-No fixed coverage percentage is promised. The objective is verifiable coverage of selected official sources plus one auditable tracker for privately discovered opportunities.
+No fixed coverage percentage is promised. The objective is broad, evidence-backed coverage of verified public sources and authorized alerts through one auditable tracker.
