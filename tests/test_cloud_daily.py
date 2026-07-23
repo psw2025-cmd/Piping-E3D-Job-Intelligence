@@ -1,10 +1,22 @@
 from __future__ import annotations
 
+import importlib.util
 import json
 from pathlib import Path
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
 
-from scripts import run_cloud_daily
+
+def _load_runner() -> ModuleType:
+    script_path = Path(__file__).resolve().parents[1] / "scripts" / "run_cloud_daily.py"
+    spec = importlib.util.spec_from_file_location("run_cloud_daily_test_target", script_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Unable to load {script_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+run_cloud_daily = _load_runner()
 
 
 def _fake_collection(status: str) -> SimpleNamespace:
