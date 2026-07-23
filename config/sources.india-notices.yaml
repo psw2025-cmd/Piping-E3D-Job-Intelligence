@@ -1,0 +1,95 @@
+# India public-sector recruitment notice sources.
+# Remain disabled until bounded live-contract proof passes for each employer.
+
+sources:
+  - id: npcil_public_notices
+    name: NPCIL official opportunities and recruitment notices
+    type: public_notice
+    company: Nuclear Power Corporation of India
+    url: https://www.npcil.nic.in/content/289_1_Opportunities.aspx
+    allowed_domains:
+      - www.npcil.nic.in
+    notice_link_patterns:
+      - /content/
+      - /WriteReadData/
+      - .pdf
+    include_notice_terms:
+      - recruitment
+      - advertisement
+      - engagement
+      - apprentice
+      - corrigendum
+      - postponed
+      - extension
+    exclude_notice_terms:
+      - result
+      - selected candidates
+      - shortlist
+      - admit card
+      - interview schedule
+    include_followup_notices: false
+    country: India
+    location: India
+    sector: Nuclear
+    profile_filter: true
+    deny_on_robots_error: true
+    enabled: false
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_items: 100
+    max_pdf_pages: 50
+    max_response_bytes: 15000000
+    max_redirects: 5
+
+  - id: indian_oil_public_notices
+    name: IndianOil official latest job openings
+    type: public_notice
+    company: Indian Oil Corporation
+    url: https://iocl.com/latest-job-opening
+    allowed_domains:
+      - iocl.com
+      - www.iocl.com
+    notice_link_patterns:
+      - /latest-job-opening
+      - /download/
+      - /uploads/
+      - .pdf
+      - /Pages/
+    include_notice_terms:
+      - recruitment
+      - requirement
+      - advertisement
+      - notification
+      - job opening
+      - corrigendum
+      - addendum
+      - extension
+      - apply online
+    exclude_notice_terms:
+      - admit card
+      - call letter
+      - scorecard
+      - shortlisted
+      - selected candidates
+      - document verification
+      - medical examination
+    include_followup_notices: false
+    country: India
+    location: India
+    sector: Refinery; Petrochemical; Pipelines; Oil and Gas
+    profile_filter: true
+    deny_on_robots_error: true
+    enabled: false
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_items: 150
+    max_pdf_pages: 50
+    max_response_bytes: 15000000
+    max_redirects: 5
+
+policy:
+  respect_robots_txt: true
+  skip_login_required_pages: true
+  bypass_captcha: false
+  use_rotating_proxies: false
+  retain_source_evidence: true
