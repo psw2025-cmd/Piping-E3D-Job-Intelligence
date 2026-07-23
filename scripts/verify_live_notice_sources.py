@@ -9,8 +9,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from job_intelligence.collectors import COLLECTORS
 from job_intelligence.collectors.http_client import SafeHttpClient
-from job_intelligence.collectors.public_notice import collect_public_notice
 from job_intelligence.source_config import SourceSpec, load_source_config
 
 
@@ -42,7 +42,11 @@ def _proof_spec(source: SourceSpec, max_notices: int, max_pdf_pages: int) -> Sou
     return replace(source, enabled=True, options=options)
 
 
-def _save_evidence(output: Path, source_id: str, artifacts: list[Any]) -> list[dict[str, Any]]:
+def _save_evidence(
+    output: Path,
+    source_id: str,
+    artifacts: list[Any],
+) -> list[dict[str, Any]]:
     destination = output / "evidence" / source_id
     destination.mkdir(parents=True, exist_ok=True)
     records: list[dict[str, Any]] = []
@@ -83,11 +87,13 @@ def _source_result(
         ),
         max_redirects=proof_source.int_option("max_redirects", 5, minimum=0),
     )
-    result = collect_public_notice(
-        proof_source,
-        client,
-        respect_robots_txt=True,
-    )
+    try:
+        collector = COLLECTORS[proof_source.source_type]
+    except KeyError as exc:
+        raise ValueError(
+            f"no production collector registered for {proof_source.source_type!r}"
+        ) from exc
+    result = collector(proof_source, client)
     evidence = _save_evidence(output, source.source_id, result.evidence)
     jobs = [
         {
