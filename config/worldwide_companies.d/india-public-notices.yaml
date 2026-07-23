@@ -1,0 +1,19 @@
+schema_version: 1
+verified_at: 2026-07-23
+
+overrides:
+  - company_id: npcil
+    status: ACTIVE_DIRECT
+    source_mode: direct
+    source_ids: [npcil_public_notices]
+    ats_family: Public recruitment notice
+    alert_supported: false
+    blocked_reason: ''
+
+  - company_id: indian_oil
+    status: ACTIVE_GMAIL_ALERT
+    source_mode: gmail_alert
+    source_ids: []
+    ats_family: Restricted JavaScript public page
+    alert_supported: true
+    blocked_reason: Direct non-browser access receives a JavaScript/Sucuri challenge; use read-only Gmail alerts and private imports without bypassing access controls.

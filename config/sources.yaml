@@ -1,6 +1,6 @@
 # Worldwide public-source registry.
 # Never place credentials, private portals, cookies, CV data or recruiter lists here.
-# McDermott, Wood, KBR, AtkinsRealis, Bechtel and Petrofac were verified read-only on 2026-07-23.
+# McDermott, Wood, KBR, AtkinsRealis, Bechtel, Petrofac and NPCIL were verified read-only on 2026-07-23.
 sources:
   - id: mcdermott_oracle
     name: McDermott official Oracle careers
@@ -215,6 +215,45 @@ sources:
     max_response_bytes: 5000000
     max_items: 150
     max_pages: 1
+    max_redirects: 5
+
+  - id: npcil_public_notices
+    name: NPCIL official opportunities and recruitment notices
+    type: public_notice
+    company: Nuclear Power Corporation of India
+    url: https://www.npcil.nic.in/content/289_1_Opportunities.aspx
+    allowed_domains:
+      - www.npcil.nic.in
+    notice_link_patterns:
+      - /content/
+      - /WriteReadData/
+      - .pdf
+    include_notice_terms:
+      - recruitment
+      - advertisement
+      - engagement
+      - apprentice
+      - corrigendum
+      - postponed
+      - extension
+    exclude_notice_terms:
+      - result
+      - selected candidates
+      - shortlist
+      - admit card
+      - interview schedule
+    include_followup_notices: false
+    country: India
+    location: India
+    sector: Nuclear
+    enabled: true
+    profile_filter: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_response_bytes: 15000000
+    max_items: 5
+    max_pdf_pages: 10
     max_redirects: 5
 
   # Configured but disabled until source-specific live proof passes.
