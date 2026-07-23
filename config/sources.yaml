@@ -1,6 +1,6 @@
 # Public-source registry.
 # Never place credentials, private portals, cookies, CV data or recruiter lists here.
-# McDermott and Wood Oracle sources were verified read-only on 2026-07-23.
+# McDermott, Wood, Bechtel and Petrofac sources were verified read-only on 2026-07-23.
 sources:
   - id: mcdermott_oracle
     name: McDermott official Oracle careers
@@ -13,6 +13,7 @@ sources:
       - piping
       - e3d
       - pdms
+      - sp3d
       - plant layout
       - pipe support
     location_terms:
@@ -25,6 +26,11 @@ sources:
       - bahrain
       - malaysia
       - singapore
+      - united kingdom
+      - europe
+      - canada
+      - australia
+      - united states
     timeout_seconds: 30
     rate_limit_per_minute: 60
     max_response_bytes: 5000000
@@ -44,6 +50,7 @@ sources:
       - piping
       - e3d
       - pdms
+      - sp3d
       - plant layout
       - pipe support
     location_terms:
@@ -56,6 +63,11 @@ sources:
       - bahrain
       - malaysia
       - singapore
+      - united kingdom
+      - europe
+      - canada
+      - australia
+      - united states
     timeout_seconds: 30
     rate_limit_per_minute: 60
     max_response_bytes: 5000000
@@ -63,6 +75,146 @@ sources:
     max_scan_items: 3000
     max_pages: 30
     page_size: 100
+
+  - id: bechtel_successfactors
+    name: Bechtel official SAP SuccessFactors careers
+    type: public_html
+    company: Bechtel
+    url: https://jobs.bechtel.com/go/Professional/4321400/0/?q=&sortColumn=referencedate&sortDirection=desc
+    page_url_template: https://jobs.bechtel.com/go/Professional/4321400/{page}/?q=&sortColumn=referencedate&sortDirection=desc
+    page_start: 0
+    page_step: 25
+    max_pages: 40
+    allowed_domains:
+      - jobs.bechtel.com
+    job_link_patterns:
+      - /job/
+    anchor_text_patterns:
+      - piping
+      - pipe
+      - s3d
+      - smart 3d
+      - smart3d
+      - e3d
+      - pdms
+      - plant layout
+      - model coordinator
+      - pipe support
+    exclude_anchor_text_patterns:
+      - electrical
+      - civil
+      - structural
+      - instrumentation
+    fetch_details: true
+    deny_on_robots_error: true
+    enabled: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 30
+    max_response_bytes: 5000000
+    max_items: 250
+    max_redirects: 5
+
+  - id: petrofac_latest_selectminds
+    name: Petrofac official SelectMinds new jobs
+    type: public_html
+    company: Petrofac
+    url: https://petrofac.referrals.selectminds.com/latest-jobs
+    allowed_domains:
+      - petrofac.referrals.selectminds.com
+    job_link_patterns:
+      - /jobs/
+    anchor_text_patterns:
+      - piping
+      - pipe
+      - e3d
+      - pdms
+      - sp3d
+      - plant layout
+      - mechanical designer
+      - model coordinator
+      - pipe support
+    exclude_anchor_text_patterns:
+      - civil
+      - structural
+      - electrical
+      - instrumentation
+    fetch_details: true
+    deny_on_robots_error: true
+    enabled: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 20
+    max_response_bytes: 5000000
+    max_items: 150
+    max_pages: 1
+    max_redirects: 5
+
+  - id: petrofac_hot_selectminds
+    name: Petrofac official SelectMinds hot jobs
+    type: public_html
+    company: Petrofac
+    url: https://petrofac.referrals.selectminds.com/hot-jobs
+    allowed_domains:
+      - petrofac.referrals.selectminds.com
+    job_link_patterns:
+      - /jobs/
+    anchor_text_patterns:
+      - piping
+      - pipe
+      - e3d
+      - pdms
+      - sp3d
+      - plant layout
+      - mechanical designer
+      - model coordinator
+      - pipe support
+    exclude_anchor_text_patterns:
+      - civil
+      - structural
+      - electrical
+      - instrumentation
+    fetch_details: true
+    deny_on_robots_error: true
+    enabled: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 20
+    max_response_bytes: 5000000
+    max_items: 150
+    max_pages: 1
+    max_redirects: 5
+
+  - id: petrofac_india_selectminds
+    name: Petrofac official SelectMinds India opportunities
+    type: public_html
+    company: Petrofac
+    url: https://petrofac.referrals.selectminds.com/location/india-opportunities-at-petrofac-280
+    allowed_domains:
+      - petrofac.referrals.selectminds.com
+    job_link_patterns:
+      - /jobs/
+    anchor_text_patterns:
+      - piping
+      - pipe
+      - e3d
+      - pdms
+      - sp3d
+      - plant layout
+      - mechanical designer
+      - model coordinator
+      - pipe support
+    exclude_anchor_text_patterns:
+      - civil
+      - structural
+      - electrical
+      - instrumentation
+    fetch_details: true
+    deny_on_robots_error: true
+    enabled: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 20
+    max_response_bytes: 5000000
+    max_items: 150
+    max_pages: 1
+    max_redirects: 5
 
   - id: example_greenhouse
     name: Example Greenhouse board
