@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from urllib.parse import urljoin, urlsplit, urlunsplit
 from urllib.robotparser import RobotFileParser
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 from ..models import JobRecord
 from ..source_config import SourceSpec
@@ -16,31 +16,65 @@ from .schema_org import parse_job_postings
 
 _SPACE_RE = re.compile(r"\s+")
 _DATE_RE = re.compile(
-    r"(?:posting date|date posted)\s*:?\s*(.+)",
+    r"(?:posting date|date posted|posted|date published)\s*:?\s*(.+)",
+    re.IGNORECASE,
+)
+_CLOSING_DATE_RE = re.compile(
+    r"(?:closing date|closing|application deadline|apply by)\s*:?\s*(.+)",
     re.IGNORECASE,
 )
 _LOCATION_RE = re.compile(
-    r"(?:work location|locations?|near location)\s*:?\s*(.+)",
+    r"(?:work location|job location|locations?|near location)\s*:?\s*(.+)",
     re.IGNORECASE,
 )
 _JOB_TYPE_RE = re.compile(
-    r"(?:job schedule|employment type|contract type)\s*:?\s*(.+)",
+    r"(?:job schedule|employment type|contract type|job type)\s*:?\s*(.+)",
     re.IGNORECASE,
 )
-_SALARY_RE = re.compile(r"salary range\s*:?\s*(.+)", re.IGNORECASE)
+_SALARY_RE = re.compile(
+    r"(?:salary range|salary|rate|pay)\s*:?\s*(.+)",
+    re.IGNORECASE,
+)
+_EMAIL_RE = re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.I)
 _GENERIC_TITLES = {
+    "apply",
+    "apply now",
     "career site",
     "careers",
     "job details",
     "jobs",
+    "learn more",
     "oracle careers",
+    "read more",
+    "view job",
+    "view job and apply",
+    "view jobs",
 }
+_METADATA_PREFIXES = (
+    "apply",
+    "competitive",
+    "contract",
+    "date published",
+    "employment type",
+    "experience",
+    "full time",
+    "job id",
+    "job reference",
+    "location",
+    "part time",
+    "permanent",
+    "posted",
+    "salary",
+    "temporary",
+    "view job",
+)
 
 
 @dataclass(frozen=True, slots=True)
 class _ListingLink:
     url: str
     anchor_text: str
+    context_text: str = ""
 
 
 class _RobotsCache:
@@ -134,16 +168,16 @@ def _matches_all(value: str, patterns: list[str]) -> bool:
 
 
 def _matches_anchor_filters(
-    anchor_text: str,
+    filter_text: str,
     include_patterns: list[str],
     required_patterns: list[str],
     exclude_patterns: list[str],
 ) -> bool:
-    if include_patterns and not _matches_any(anchor_text, include_patterns):
+    if include_patterns and not _matches_any(filter_text, include_patterns):
         return False
-    if required_patterns and not _matches_all(anchor_text, required_patterns):
+    if required_patterns and not _matches_all(filter_text, required_patterns):
         return False
-    return not (exclude_patterns and _matches_any(anchor_text, exclude_patterns))
+    return not (exclude_patterns and _matches_any(filter_text, exclude_patterns))
 
 
 def _page_urls(spec: SourceSpec) -> list[str]:
@@ -161,6 +195,37 @@ def _page_urls(spec: SourceSpec) -> list[str]:
     return [template.format(page=page + index * step) for index in range(max_pages)]
 
 
+def _listing_context(anchor: Tag) -> str:
+    anchor_text = _SPACE_RE.sub(" ", anchor.get_text(" ", strip=True)).strip()
+    best = anchor_text
+    for depth, parent in enumerate(anchor.parents):
+        if depth >= 6 or not isinstance(parent, Tag) or parent.name in {"body", "html"}:
+            break
+        text = _SPACE_RE.sub(" ", parent.get_text(" ", strip=True)).strip()
+        if not text or len(text) > 10_000:
+            continue
+        if len(text) >= len(best):
+            best = text
+        lowered = text.lower()
+        if (
+            len(text) <= 6_000
+            and any(
+                marker in lowered
+                for marker in (
+                    "date published",
+                    "employment type",
+                    "job id",
+                    "job reference",
+                    "posted",
+                    "salary",
+                    "location",
+                )
+            )
+        ):
+            return text
+    return best
+
+
 def _extract_listing_links(
     html_text: str,
     page_url: str,
@@ -175,14 +240,16 @@ def _extract_listing_links(
     seen: set[str] = set()
     for anchor in soup.find_all("a", href=True):
         target = urljoin(page_url, str(anchor.get("href", "")).strip())
-        anchor_text = _SPACE_RE.sub(" ", anchor.get_text(" ", strip=True))
+        anchor_text = _SPACE_RE.sub(" ", anchor.get_text(" ", strip=True)).strip()
+        context_text = _listing_context(anchor)
+        filter_text = f"{anchor_text} {context_text}".strip()
         if (
             not target
             or target in seen
             or not _is_allowed_url(target, domains)
             or not _matches_any(target, link_patterns)
             or not _matches_anchor_filters(
-                anchor_text,
+                filter_text,
                 anchor_include_patterns,
                 anchor_required_patterns,
                 anchor_exclude_patterns,
@@ -190,7 +257,13 @@ def _extract_listing_links(
         ):
             continue
         seen.add(target)
-        found.append(_ListingLink(url=target, anchor_text=anchor_text))
+        found.append(
+            _ListingLink(
+                url=target,
+                anchor_text=anchor_text,
+                context_text=context_text,
+            )
+        )
     return found
 
 
@@ -220,16 +293,47 @@ def _clean_document_text(soup: BeautifulSoup) -> str:
     return html_to_text(str(main))
 
 
-def _listing_title(listing_text: str) -> str:
-    return re.split(
+def _context_lines(value: str) -> list[str]:
+    return [
+        _SPACE_RE.sub(" ", line).strip(" -:|")
+        for line in re.split(r"[\r\n]+", value)
+        if _SPACE_RE.sub(" ", line).strip(" -:|")
+    ]
+
+
+def _listing_title(
+    listing_text: str,
+    *,
+    include_patterns: list[str] | None = None,
+) -> str:
+    split_title = re.split(
         r"\bJob ID\s*:",
         listing_text,
         maxsplit=1,
         flags=re.IGNORECASE,
     )[0].strip()
+    if split_title and len(split_title) <= 200 and split_title.lower() not in _GENERIC_TITLES:
+        if not include_patterns or _matches_any(split_title, include_patterns):
+            return split_title
+
+    patterns = include_patterns or []
+    for line in _context_lines(listing_text):
+        lowered = line.lower()
+        if (
+            4 <= len(line) <= 200
+            and lowered not in _GENERIC_TITLES
+            and not lowered.startswith(_METADATA_PREFIXES)
+            and (not patterns or _matches_any(line, patterns))
+        ):
+            return line
+    return ""
 
 
 def _listing_location(listing_text: str) -> str:
+    lines = _context_lines(listing_text)
+    labeled = _first_match(_LOCATION_RE, lines)
+    if labeled:
+        return labeled
     match = re.search(
         r"Job ID\s*:\s*#?\S+\s+(.+?)\s+"
         r"(?:Full Time|Part Time|Contract|Temporary)$",
@@ -239,24 +343,57 @@ def _listing_location(listing_text: str) -> str:
     return match.group(1).strip() if match else ""
 
 
+def _source_metadata(job: JobRecord, spec: SourceSpec, page_url: str) -> JobRecord:
+    agency_name = str(spec.options.get("agency_name", "")).strip()
+    if agency_name:
+        job.agency_name = agency_name
+        if (
+            spec.bool_option("replace_agency_company", False)
+            and job.company.strip().lower() == agency_name.lower()
+        ):
+            job.company = spec.company
+    for address in _EMAIL_RE.findall(job.description):
+        lowered = address.lower()
+        if any(term in lowered for term in ("noreply", "no-reply", "donotreply")):
+            continue
+        job.recruiter_email = lowered
+        job.contact_source_url = page_url
+        job.contact_confidence = "PUBLIC_UNVERIFIED"
+        break
+    return job
+
+
 def _listing_job(link: _ListingLink, spec: SourceSpec) -> JobRecord | None:
-    title = _listing_title(link.anchor_text)
+    listing_text = link.context_text or link.anchor_text
+    include_patterns = _optional_text_list(
+        spec.options.get("anchor_text_patterns"),
+        "anchor_text_patterns",
+        spec.source_id,
+    )
+    title = _listing_title(link.anchor_text, include_patterns=include_patterns)
+    if not title:
+        title = _listing_title(listing_text, include_patterns=include_patterns)
     if not title:
         return None
     job_type = ""
-    for candidate in ("Full Time", "Part Time", "Contract", "Temporary"):
-        if re.search(rf"\b{re.escape(candidate)}\b", link.anchor_text, re.IGNORECASE):
+    for candidate in ("Full Time", "Part Time", "Contract", "Temporary", "Permanent"):
+        if re.search(rf"\b{re.escape(candidate)}\b", listing_text, re.IGNORECASE):
             job_type = candidate
             break
-    return JobRecord(
-        title=title,
-        company=spec.company,
-        location=_listing_location(link.anchor_text),
-        description=link.anchor_text,
-        apply_url=link.url,
-        source_url=link.url,
-        source_name=spec.name,
-        job_type=job_type,
+    return _source_metadata(
+        JobRecord(
+            title=title,
+            company=spec.company,
+            location=_listing_location(listing_text),
+            description=listing_text,
+            apply_url=link.url,
+            source_url=link.url,
+            source_name=spec.name,
+            job_type=job_type,
+            employment_type=job_type,
+        ),
+        spec,
+        link.url,
     )
 
 
@@ -293,25 +430,32 @@ def _fallback_job(
     lines = [line.strip() for line in description.splitlines() if line.strip()]
     location = _first_match(_LOCATION_RE, lines) or _listing_location(listing_text)
     published_at = _first_match(_DATE_RE, lines)
+    closing_at = _first_match(_CLOSING_DATE_RE, lines)
     job_type = _first_match(_JOB_TYPE_RE, lines)
     salary_text = _first_match(_SALARY_RE, lines)
     if not job_type:
-        for candidate in ("Full Time", "Part Time", "Contract", "Temporary"):
+        for candidate in ("Full Time", "Part Time", "Contract", "Temporary", "Permanent"):
             if re.search(rf"\b{re.escape(candidate)}\b", listing_text, re.IGNORECASE):
                 job_type = candidate
                 break
 
-    return JobRecord(
-        title=_SPACE_RE.sub(" ", title),
-        company=spec.company,
-        location=location,
-        description=description,
-        apply_url=page_url,
-        source_url=page_url,
-        source_name=spec.name,
-        published_at=published_at,
-        job_type=job_type,
-        salary_text=salary_text,
+    return _source_metadata(
+        JobRecord(
+            title=_SPACE_RE.sub(" ", title),
+            company=spec.company,
+            location=location,
+            description=description,
+            apply_url=page_url,
+            source_url=page_url,
+            source_name=spec.name,
+            published_at=published_at,
+            closing_at=closing_at,
+            job_type=job_type,
+            employment_type=job_type,
+            salary_text=salary_text,
+        ),
+        spec,
+        page_url,
     )
 
 
@@ -323,7 +467,7 @@ def _parse_detail(
 ) -> list[JobRecord]:
     jobs = parse_job_postings(html_text, page_url, spec)
     if jobs:
-        return jobs
+        return [_source_metadata(job, spec, page_url) for job in jobs]
     fallback = _fallback_job(html_text, page_url, spec, listing_text)
     return [fallback] if fallback else []
 
@@ -441,7 +585,7 @@ def collect_public_html(
             response.text,
             response.url,
             spec,
-            link.anchor_text,
+            link.context_text or link.anchor_text,
         )
         if detail_jobs:
             jobs.extend(detail_jobs[:remaining])
