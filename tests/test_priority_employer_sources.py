@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 from typing import Mapping
 
@@ -46,8 +47,12 @@ def _production_source(source_id: str) -> SourceSpec:
     return next(source for source in config.sources if source.source_id == source_id)
 
 
+def _single_page_source(spec: SourceSpec) -> SourceSpec:
+    return replace(spec, options={**spec.options, "max_pages": 1})
+
+
 def test_bechtel_successfactors_source_filters_and_parses_jobposting() -> None:
-    spec = _production_source("bechtel_successfactors")
+    spec = _single_page_source(_production_source("bechtel_successfactors"))
     listing_url = spec.require_text("url")
     detail_url = "https://jobs.bechtel.com/job/Test-Senior-Piping-Designer/123456/"
     listing_html = f"""
