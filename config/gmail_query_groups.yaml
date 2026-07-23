@@ -1,0 +1,83 @@
+schema_version: 1
+verified_at: 2026-07-23
+
+query_groups:
+  - id: job_portals_india
+    name: India job portal alerts
+    enabled: true
+    max_messages: 300
+    query: >-
+      newer_than:30d
+      (from:linkedin.com OR from:naukri.com OR from:foundit.in OR
+      from:indeed.com OR from:glassdoor.com OR from:timesjobs.com OR
+      from:shine.com)
+      (piping OR "E3D" OR PDMS OR SP3D OR "plant layout" OR "pipe support")
+
+  - id: job_portals_gulf
+    name: Gulf and Middle East portal alerts
+    enabled: true
+    max_messages: 300
+    query: >-
+      newer_than:30d
+      (from:naukrigulf.com OR from:gulftalent.com OR from:bayt.com OR
+      from:rigzone.com OR from:energyjobline.com OR
+      from:oilandgasjobsearch.com)
+      (piping OR "E3D" OR PDMS OR SP3D OR offshore OR refinery OR LNG)
+
+  - id: india_psu_notices
+    name: India PSU and public-sector recruitment notices
+    enabled: true
+    max_messages: 250
+    query: >-
+      newer_than:45d
+      ("Engineers India" OR EIL OR ONGC OR IOCL OR "Indian Oil" OR BPCL OR
+      "Bharat Petroleum" OR HPCL OR "Hindustan Petroleum" OR GAIL OR
+      "Petronet LNG" OR NPCIL OR NTPC OR BHEL OR PDIL OR MECON)
+      (recruitment OR vacancy OR vacancies OR advertisement OR corrigendum OR career)
+
+  - id: india_epc_employers
+    name: India EPC and engineering employer alerts
+    enabled: true
+    max_messages: 300
+    query: >-
+      newer_than:30d
+      ("Tata Consulting Engineers" OR "Tata Projects" OR
+      "Reliance Industries" OR "Toyo Engineering" OR "Nuberg EPC" OR
+      WABAG OR Assystem OR AECOM OR "Mott MacDonald" OR Tractebel OR
+      Thermax OR Praj OR Egis)
+      (job OR jobs OR vacancy OR vacancies OR hiring OR career OR opportunity)
+
+  - id: worldwide_official_employers
+    name: Worldwide official employer alerts
+    enabled: true
+    max_messages: 400
+    query: >-
+      newer_than:30d
+      (McDermott OR Wood OR KBR OR AtkinsRealis OR Atkins OR Bechtel OR
+      Petrofac OR Worley OR "Technip Energies" OR Fluor OR Jacobs OR Saipem OR
+      "Aker Solutions" OR Bilfinger OR MAIRE OR Tecnimont OR Ramboll OR Hatch)
+      (job OR jobs OR vacancy OR vacancies OR hiring OR career OR opportunity)
+
+  - id: recruiters_energy_engineering
+    name: Energy and engineering recruiter alerts
+    enabled: true
+    max_messages: 400
+    query: >-
+      newer_than:30d
+      (from:airswift.com OR from:nesfircroft.com OR from:brunel.net OR
+      from:petroplan.com OR from:orionjobs.com OR from:trsstaffing.com OR
+      from:mphglobalservices.com OR from:spencer-ogden.com OR
+      from:worldwide-rs.com OR from:matchtech.com OR
+      from:firstrecruitmentgroup.com OR from:progressiverecruitment.com OR
+      from:energyresourcing.com)
+      (piping OR "E3D" OR PDMS OR SP3D OR offshore OR oil OR gas OR nuclear)
+
+  - id: nuclear_and_iter
+    name: Nuclear and ITER engineering alerts
+    enabled: true
+    max_messages: 250
+    query: >-
+      newer_than:45d
+      (ITER OR nuclear OR NPCIL OR Assystem OR AtkinsRealis OR Framatome OR
+      Westinghouse OR EDF OR Tractebel OR Amentum)
+      (piping OR mechanical OR layout OR designer OR engineer OR coordinator)
