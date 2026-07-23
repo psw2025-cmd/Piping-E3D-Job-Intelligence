@@ -2,31 +2,234 @@ locations:
   india:
     - Mumbai
     - Navi Mumbai
+    - Thane
     - Pune
     - Vadodara
     - Chennai
     - Bengaluru
-    - Delhi NCR
     - Hyderabad
+    - Delhi NCR
+    - Gurugram
+    - Noida
+    - Kolkata
+    - India
   middle_east:
-    - UAE
+    - United Arab Emirates
+    - Abu Dhabi
+    - Dubai
+    - Sharjah
     - Saudi Arabia
-    - Oman
     - Qatar
+    - Oman
     - Kuwait
     - Bahrain
-  international:
-    - Europe
+  asia_pacific:
+    - Singapore
+    - Malaysia
+    - Japan
+    - South Korea
+    - Australia
+    - New Zealand
+  europe:
     - United Kingdom
+    - Europe
     - Norway
     - Netherlands
     - France
     - Germany
-    - Singapore
-    - Malaysia
+    - Italy
+    - Spain
+    - Belgium
+    - Sweden
+    - Denmark
+    - Finland
+    - Poland
+    - Romania
+    - Czech Republic
+  americas:
+    - Canada
+    - United States
+    - Brazil
+    - Mexico
+  africa:
+    - Africa
+    - South Africa
+    - Nigeria
+    - Mozambique
+    - Egypt
+    - Algeria
+    - Angola
+  flexible:
+    - Worldwide
+    - Remote
+    - Hybrid
+    - International Assignment
+    - Rotation
+
+location_aliases:
+  mumbai:
+    city: Mumbai
+    country: India
+  bombay:
+    city: Mumbai
+    country: India
+  navi mumbai:
+    city: Navi Mumbai
+    country: India
+  new bombay:
+    city: Navi Mumbai
+    country: India
+  thane:
+    city: Thane
+    country: India
+  pune:
+    city: Pune
+    country: India
+  vadodara:
+    city: Vadodara
+    country: India
+  baroda:
+    city: Vadodara
+    country: India
+  chennai:
+    city: Chennai
+    country: India
+  madras:
+    city: Chennai
+    country: India
+  bengaluru:
+    city: Bengaluru
+    country: India
+  bangalore:
+    city: Bengaluru
+    country: India
+  hyderabad:
+    city: Hyderabad
+    country: India
+  gurugram:
+    city: Gurugram
+    country: India
+  gurgaon:
+    city: Gurugram
+    country: India
+  noida:
+    city: Noida
+    country: India
+  kolkata:
+    city: Kolkata
+    country: India
+  calcutta:
+    city: Kolkata
+    country: India
+  new delhi:
+    city: New Delhi
+    country: India
+  delhi:
+    city: Delhi
+    country: India
+  abu dhabi:
+    city: Abu Dhabi
+    country: United Arab Emirates
+  dubai:
+    city: Dubai
+    country: United Arab Emirates
+  sharjah:
+    city: Sharjah
+    country: United Arab Emirates
+  doha:
+    city: Doha
+    country: Qatar
+  muscat:
+    city: Muscat
+    country: Oman
+  kuwait city:
+    city: Kuwait City
+    country: Kuwait
+  manama:
+    city: Manama
+    country: Bahrain
+  al khobar:
+    city: Al Khobar
+    country: Saudi Arabia
+  khobar:
+    city: Al Khobar
+    country: Saudi Arabia
+  dhahran:
+    city: Dhahran
+    country: Saudi Arabia
+  riyadh:
+    city: Riyadh
+    country: Saudi Arabia
+  singapore:
+    city: Singapore
+    country: Singapore
+  kuala lumpur:
+    city: Kuala Lumpur
+    country: Malaysia
+  johor bahru:
+    city: Johor Bahru
+    country: Malaysia
+  london:
+    city: London
+    country: United Kingdom
+  aberdeen:
+    city: Aberdeen
+    country: United Kingdom
+  calgary:
+    city: Calgary
+    country: Canada
+  edmonton:
+    city: Edmonton
+    country: Canada
+  perth:
+    city: Perth
+    country: Australia
+  brisbane:
+    city: Brisbane
+    country: Australia
+  houston:
+    city: Houston
+    country: United States
+
+country_aliases:
+  india: India
+  bharat: India
+  uae: United Arab Emirates
+  united arab emirates: United Arab Emirates
+  emirates: United Arab Emirates
+  ksa: Saudi Arabia
+  saudi: Saudi Arabia
+  saudi arabia: Saudi Arabia
+  qatar: Qatar
+  oman: Oman
+  kuwait: Kuwait
+  bahrain: Bahrain
+  uk: United Kingdom
+  united kingdom: United Kingdom
+  great britain: United Kingdom
+  england: United Kingdom
+  scotland: United Kingdom
+  canada: Canada
+  australia: Australia
+  singapore: Singapore
+  malaysia: Malaysia
+  japan: Japan
+  south korea: South Korea
+  korea: South Korea
+  usa: United States
+  us: United States
+  united states: United States
+  south africa: South Africa
+  nigeria: Nigeria
+  mozambique: Mozambique
+  egypt: Egypt
+  algeria: Algeria
+  angola: Angola
 
 languages:
   - English
   - Arabic
   - French
   - German
+  - Japanese
+  - Korean
