@@ -1,21 +1,73 @@
 target_roles:
   - Lead Piping Engineer
+  - Principal Piping Engineer
   - Senior Piping Engineer
+  - Piping Engineer
   - Piping Design Engineer
-  - Senior Piping Layout Engineer
-  - Senior E3D Piping Designer
-  - Senior PDMS Piping Designer
-  - Offshore Piping Engineer
-  - Site Piping Engineer
+  - Lead Piping Design Engineer
   - Piping Layout Engineer
+  - Senior Piping Layout Engineer
+  - Senior Layout Engineer
+  - Piping Area Lead
+  - Piping Design Checker
   - Piping CAD Lead
+  - Site Piping Engineer
+  - Field Piping Engineer
+  - Offshore Piping Engineer
+  - Piping Construction Engineer
+  - Piping Walkdown Designer
+  - Senior E3D Piping Designer
+  - E3D Piping Designer
+  - AVEVA E3D Designer
+  - E3D Coordinator
+  - E3D Administrator
+  - Senior PDMS Piping Designer
+  - PDMS Piping Designer
+  - SP3D Piping Designer
+  - Plant Design Engineer
+  - Plant Layout Designer
+  - Plant Design and Piping Designer
+  - 3D Model Coordinator
+  - Mechanical Piping Designer
+  - Pipe Support Engineer
+  - Piping Stress Engineer
+  - Piping Materials Engineer
+
+discovery_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - plant design and piping
+  - AVEVA E3D
+  - E3D
+  - PDMS
+  - SP3D
+  - SmartPlant 3D
+  - piping designer
+  - piping engineer
+  - piping design
+  - piping checker
+  - piping lead
+  - piping walkdown
+  - pipe support
+  - piping stress
+  - piping materials
+  - piping field engineer
+  - piping construction
+  - 3D model coordinator
+  - model review
+  - equipment layout
 
 primary_skills:
   - AVEVA E3D
   - E3D
   - PDMS
+  - SP3D
+  - SmartPlant 3D
   - Piping Layout
   - Equipment Layout
+  - Plant Layout
   - Plot Plan
   - Piping General Arrangement
   - Isometrics
@@ -26,18 +78,30 @@ primary_skills:
   - AutoCAD
   - Model Review
   - Clash Resolution
+  - 3D Model Coordination
+  - Constructability Review
 
 engineering_skills:
   - Stress Review
   - Flexibility Review
   - Thermal Expansion
+  - Piping Materials
+  - Piping Specifications
   - Tie-in
   - Brownfield
   - Site Engineering
+  - Field Engineering
   - Punch List
   - As-built
+  - Walkdown
   - Constructability
   - Interdisciplinary Coordination
+  - Detailed Engineering
+  - FEED
+  - EPC
+  - EPCM
+  - Vendor Drawing Review
+  - Material Take-off
 
 sectors:
   - Oil and Gas
@@ -48,3 +112,10 @@ sectors:
   - Nuclear
   - Chemical
   - Power
+  - Energy
+  - Fertilizer
+  - Hydrogen
+  - Mining and Metals
+  - Pharmaceuticals
+  - Industrial Plants
+  - Carbon Capture
