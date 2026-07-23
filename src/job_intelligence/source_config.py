@@ -267,6 +267,7 @@ def _validate_source(spec: SourceSpec) -> None:
         spec.require_text("company_identifier")
         spec.bool_option("fetch_details", True)
         _validate_optional_text_list(spec, "include_terms")
+        _validate_optional_text_list(spec, "search_terms")
     else:
         _validate_public_url(spec.require_text("url"), spec.source_id)
         if spec.source_type == "sitemap":
@@ -294,6 +295,8 @@ def _merged_raw_sources(config_path: Path, loaded: dict[str, Any]) -> list[Any]:
     if not isinstance(raw_sources, list):
         raise ValueError("sources must be a list")
     merged = list(raw_sources)
+    if config_path.name != "sources.yaml":
+        return merged
     expansion_path = config_path.with_name("sources_expansion.yaml")
     if expansion_path.exists():
         expansion = _load_mapping(expansion_path)
