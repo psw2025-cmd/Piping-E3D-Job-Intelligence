@@ -1,0 +1,112 @@
+# Additive public sources loaded with config/sources.yaml.
+# Public SmartRecruiters tenants were verified from current official job postings on 2026-07-23.
+sources:
+  - id: ramboll_smartrecruiters
+    name: Ramboll official SmartRecruiters careers
+    type: smartrecruiters
+    company: Ramboll
+    company_identifier: Ramboll3
+    enabled: true
+    profile_filter: true
+    include_terms: &expanded_profile_terms
+      - piping
+      - pipe layout
+      - plant layout
+      - plant design
+      - e3d
+      - aveva e3d
+      - pdms
+      - sp3d
+      - smart 3d
+      - smartplant 3d
+      - pipe support
+      - piping stress
+      - piping materials
+      - 3d model
+    fetch_details: false
+    timeout_seconds: 30
+    rate_limit_per_minute: 30
+    max_response_bytes: 5000000
+    max_items: 500
+    max_pages: 10
+    page_size: 100
+
+  - id: assystem_smartrecruiters
+    name: Assystem official SmartRecruiters careers
+    type: smartrecruiters
+    company: Assystem
+    company_identifier: ASSYSTEM
+    enabled: true
+    profile_filter: true
+    include_terms: *expanded_profile_terms
+    fetch_details: false
+    timeout_seconds: 30
+    rate_limit_per_minute: 30
+    max_response_bytes: 5000000
+    max_items: 500
+    max_pages: 10
+    page_size: 100
+
+  - id: veolia_smartrecruiters
+    name: Veolia official SmartRecruiters careers
+    type: smartrecruiters
+    company: Veolia
+    company_identifier: VeoliaEnvironnementSA
+    enabled: true
+    profile_filter: true
+    include_terms: *expanded_profile_terms
+    fetch_details: false
+    timeout_seconds: 30
+    rate_limit_per_minute: 30
+    max_response_bytes: 5000000
+    max_items: 500
+    max_pages: 10
+    page_size: 100
+
+  - id: samsung_ena_smartrecruiters
+    name: Samsung E&A official SmartRecruiters careers
+    type: smartrecruiters
+    company: Samsung E&A
+    company_identifier: SamsungEnA
+    enabled: true
+    profile_filter: true
+    include_terms: *expanded_profile_terms
+    fetch_details: false
+    timeout_seconds: 30
+    rate_limit_per_minute: 30
+    max_response_bytes: 5000000
+    max_items: 500
+    max_pages: 10
+    page_size: 100
+
+  - id: afry_smartrecruiters
+    name: AFRY official SmartRecruiters careers
+    type: smartrecruiters
+    company: AFRY
+    company_identifier: AFRY
+    enabled: true
+    profile_filter: true
+    include_terms: *expanded_profile_terms
+    fetch_details: false
+    timeout_seconds: 30
+    rate_limit_per_minute: 30
+    max_response_bytes: 5000000
+    max_items: 500
+    max_pages: 10
+    page_size: 100
+
+  - id: segula_smartrecruiters
+    name: SEGULA Technologies official SmartRecruiters careers
+    type: smartrecruiters
+    company: SEGULA Technologies
+    company_identifier: SegulaTechnologies
+    enabled: true
+    profile_filter: true
+    include_terms: *expanded_profile_terms
+    fetch_details: false
+    timeout_seconds: 30
+    rate_limit_per_minute: 30
+    max_response_bytes: 5000000
+    max_items: 500
+    max_pages: 10
+    page_size: 100
