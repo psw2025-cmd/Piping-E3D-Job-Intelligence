@@ -11,36 +11,92 @@ import yaml
 _SPACE_RE = re.compile(r"\s+")
 _NON_ALNUM_RE = re.compile(r"[^a-z0-9]+")
 _CLOSING_PATTERNS = (
-    re.compile(r"(?:closing date|application deadline|apply by)\s*[:\-]?\s*([^\n.;]+)", re.I),
-    re.compile(r"(?:closes on|closing on)\s+([^\n.;]+)", re.I),
+    re.compile(
+        r"(?:closing date|application deadline|apply by)\s*[:\-]?\s*([^\n.;]+)",
+        re.IGNORECASE,
+    ),
+    re.compile(r"(?:closes on|closing on)\s+([^\n.;]+)", re.IGNORECASE),
 )
 
 _ROLE_RULES = (
-    ("Lead/Principal Piping Engineer", ("lead piping engineer", "principal piping engineer")),
+    (
+        "Lead/Principal Piping Engineer",
+        ("lead piping engineer", "principal piping engineer"),
+    ),
     ("Senior Piping Engineer", ("senior piping engineer",)),
     ("Piping Engineer", ("piping engineer", "piping design engineer")),
-    ("Piping Layout Engineer", ("piping layout engineer", "plant layout engineer")),
-    ("Senior E3D/PDMS/SP3D Designer", ("senior e3d", "senior pdms", "senior sp3d")),
-    ("E3D/PDMS/SP3D Piping Designer", ("e3d piping", "pdms piping", "sp3d piping")),
-    ("Plant Design/Piping Designer", ("plant design", "plant layout designer", "piping designer")),
+    (
+        "Piping Layout Engineer",
+        ("piping layout engineer", "plant layout engineer"),
+    ),
+    (
+        "Senior E3D/PDMS/SP3D Designer",
+        ("senior e3d", "senior pdms", "senior sp3d"),
+    ),
+    (
+        "E3D/PDMS/SP3D Piping Designer",
+        ("e3d piping", "pdms piping", "sp3d piping"),
+    ),
+    (
+        "Plant Design/Piping Designer",
+        ("plant design", "plant layout designer", "piping designer"),
+    ),
     ("Piping Stress Engineer", ("piping stress", "stress engineer")),
-    ("Pipe Support Engineer", ("pipe support engineer", "piping support engineer")),
-    ("Piping Materials Engineer", ("piping materials", "material engineer piping")),
-    ("Site/Field Piping Engineer", ("site piping", "field piping", "piping field")),
+    (
+        "Pipe Support Engineer",
+        ("pipe support engineer", "piping support engineer"),
+    ),
+    (
+        "Piping Materials Engineer",
+        ("piping materials", "material engineer piping"),
+    ),
+    (
+        "Site/Field Piping Engineer",
+        ("site piping", "field piping", "piping field"),
+    ),
     ("Offshore Piping Engineer", ("offshore piping",)),
     ("Piping Construction Engineer", ("piping construction",)),
-    ("3D Model Coordinator", ("3d model coordinator", "e3d coordinator", "model coordinator")),
+    (
+        "3D Model Coordinator",
+        ("3d model coordinator", "e3d coordinator", "model coordinator"),
+    ),
 )
 
 _COUNTRY_RULES = (
-    ("India", ("india", "mumbai", "pune", "vadodara", "chennai", "bengaluru", "hyderabad", "gurugram", "noida", "delhi", "dahej", "hazira", "jamnagar")),
-    ("United Arab Emirates", ("united arab emirates", "uae", "abu dhabi", "dubai", "sharjah")),
-    ("Saudi Arabia", ("saudi arabia", "al khobar", "khobar", "dammam", "riyadh")),
+    (
+        "India",
+        (
+            "india",
+            "mumbai",
+            "pune",
+            "vadodara",
+            "chennai",
+            "bengaluru",
+            "hyderabad",
+            "gurugram",
+            "noida",
+            "delhi",
+            "dahej",
+            "hazira",
+            "jamnagar",
+        ),
+    ),
+    (
+        "United Arab Emirates",
+        ("united arab emirates", "uae", "abu dhabi", "dubai", "sharjah"),
+    ),
+    (
+        "Saudi Arabia",
+        ("saudi arabia", "al khobar", "khobar", "dammam", "riyadh"),
+    ),
     ("Qatar", ("qatar", "doha")),
     ("Oman", ("oman", "muscat")),
     ("Kuwait", ("kuwait",)),
     ("Bahrain", ("bahrain",)),
-    ("United Kingdom", ("united kingdom", "uk", "england", "scotland", "wales")),
+    (
+        "United Kingdom",
+        ("united kingdom", "uk", "england", "scotland", "wales"),
+    ),
     ("Canada", ("canada",)),
     ("United States", ("united states", "usa", "u.s.")),
     ("Australia", ("australia",)),
@@ -62,9 +118,15 @@ _SECTOR_RULES = (
     ("Nuclear", ("nuclear", "fusion", "iter")),
     ("Offshore", ("offshore", "subsea", "fpso", "platform")),
     ("LNG", ("lng", "liquefied natural gas")),
-    ("Refinery/Petrochemical", ("refinery", "petrochemical", "hydrocarbon", "chemical plant")),
+    (
+        "Refinery/Petrochemical",
+        ("refinery", "petrochemical", "hydrocarbon", "chemical plant"),
+    ),
     ("Oil & Gas", ("oil and gas", "oil & gas", "upstream", "downstream")),
-    ("Power/Energy", ("power plant", "energy", "renewable", "hydrogen", "carbon capture")),
+    (
+        "Power/Energy",
+        ("power plant", "energy", "renewable", "hydrogen", "carbon capture"),
+    ),
     ("Mining & Metals", ("mining", "metals", "mineral processing")),
     ("Pharmaceutical", ("pharma", "pharmaceutical")),
     ("Industrial", ("industrial plant", "manufacturing facility")),
@@ -80,6 +142,19 @@ _SOFTWARE_RULES = (
     ("SmartPlant Review", ("smartplant review", "spr")),
     ("CAESAR II", ("caesar ii", "caesar 2")),
 )
+
+_ENRICHED_COLUMNS = (
+    "normalized_role",
+    "country",
+    "sector",
+    "software",
+    "closing_date",
+    "employment_type",
+    "remote_type",
+    "source_category",
+    "duplicate_group",
+)
+_AGGREGATE_COLUMNS = ("source_count", "duplicate_sources", "all_apply_urls")
 
 
 def _text(value: Any) -> str:
@@ -102,7 +177,10 @@ def _searchable(row: pd.Series) -> str:
     ).lower()
 
 
-def _first_rule(text: str, rules: tuple[tuple[str, tuple[str, ...]], ...]) -> str:
+def _first_rule(
+    text: str,
+    rules: tuple[tuple[str, tuple[str, ...]], ...],
+) -> str:
     padded = f" {text} "
     for label, terms in rules:
         if any(term in padded for term in terms):
@@ -110,7 +188,10 @@ def _first_rule(text: str, rules: tuple[tuple[str, tuple[str, ...]], ...]) -> st
     return ""
 
 
-def _all_rules(text: str, rules: tuple[tuple[str, tuple[str, ...]], ...]) -> str:
+def _all_rules(
+    text: str,
+    rules: tuple[tuple[str, tuple[str, ...]], ...],
+) -> str:
     padded = f" {text} "
     found = [label for label, terms in rules if any(term in padded for term in terms)]
     return "; ".join(dict.fromkeys(found))
@@ -128,11 +209,21 @@ def _source_category(source_name: str) -> str:
     lowered = source_name.lower()
     if lowered.startswith("private:") or "gmail" in lowered or "email" in lowered:
         return "Private/Authorized Alert"
-    if any(term in lowered for term in ("airswift", "nes fircroft", "brunel", "petroplan")):
+    recruiter_terms = ("airswift", "nes fircroft", "brunel", "petroplan")
+    if any(term in lowered for term in recruiter_terms):
         return "Recruiter"
     if lowered == "manual":
         return "Manual"
     return "Official Employer"
+
+
+def _remote_type(text: str) -> str:
+    padded = f" {text} "
+    if " remote " in padded:
+        return "Remote"
+    if " hybrid " in padded:
+        return "Hybrid"
+    return "On-site/Unspecified"
 
 
 def _normalize(value: str) -> str:
@@ -153,52 +244,70 @@ def duplicate_group(row: pd.Series) -> str:
 def enrich_jobs_frame(frame: pd.DataFrame) -> pd.DataFrame:
     enriched = frame.copy()
     if enriched.empty:
-        for column in (
-            "normalized_role",
-            "country",
-            "sector",
-            "software",
-            "closing_date",
-            "employment_type",
-            "remote_type",
-            "source_category",
-            "duplicate_group",
-        ):
+        for column in _ENRICHED_COLUMNS:
             enriched[column] = pd.Series(dtype="string")
         return enriched
 
     searchable = enriched.apply(_searchable, axis=1)
-    enriched["normalized_role"] = searchable.map(lambda text: _first_rule(text, _ROLE_RULES))
-    enriched["country"] = searchable.map(lambda text: _first_rule(text, _COUNTRY_RULES))
-    enriched["sector"] = searchable.map(lambda text: _first_rule(text, _SECTOR_RULES))
-    enriched["software"] = searchable.map(lambda text: _all_rules(text, _SOFTWARE_RULES))
-    enriched["closing_date"] = searchable.map(_closing_date)
-    enriched["employment_type"] = enriched.get("job_type", pd.Series(dtype="string"))
-    enriched["remote_type"] = searchable.map(
-        lambda text: "Remote" if " remote " in f" {text} " else "Hybrid" if " hybrid " in f" {text} " else "On-site/Unspecified"
+    enriched["normalized_role"] = searchable.map(
+        lambda text: _first_rule(text, _ROLE_RULES)
     )
-    enriched["source_category"] = enriched.get(
-        "source_name", pd.Series(dtype="string")
-    ).fillna("").astype(str).map(_source_category)
+    enriched["country"] = searchable.map(
+        lambda text: _first_rule(text, _COUNTRY_RULES)
+    )
+    enriched["sector"] = searchable.map(
+        lambda text: _first_rule(text, _SECTOR_RULES)
+    )
+    enriched["software"] = searchable.map(
+        lambda text: _all_rules(text, _SOFTWARE_RULES)
+    )
+    enriched["closing_date"] = searchable.map(_closing_date)
+    enriched["employment_type"] = enriched.get(
+        "job_type",
+        pd.Series(dtype="string"),
+    )
+    enriched["remote_type"] = searchable.map(_remote_type)
+    enriched["source_category"] = (
+        enriched.get("source_name", pd.Series(dtype="string"))
+        .fillna("")
+        .astype(str)
+        .map(_source_category)
+    )
     enriched["duplicate_group"] = enriched.apply(duplicate_group, axis=1)
     return enriched
+
+
+def _empty_deduplicated(enriched: pd.DataFrame) -> pd.DataFrame:
+    empty = enriched.copy()
+    empty["source_count"] = pd.Series(dtype="int64")
+    empty["duplicate_sources"] = pd.Series(dtype="string")
+    empty["all_apply_urls"] = pd.Series(dtype="string")
+    return empty
 
 
 def deduplicate_worldwide(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     enriched = enrich_jobs_frame(frame)
     if enriched.empty:
-        return enriched.copy(), enriched.copy()
+        return _empty_deduplicated(enriched), enriched.copy()
 
-    counts = enriched.groupby("duplicate_group", dropna=False).size().rename("source_count")
-    source_names = enriched.groupby("duplicate_group", dropna=False)["source_name"].agg(
-        lambda values: "; ".join(sorted({str(value) for value in values if str(value)}))
+    grouped = enriched.groupby("duplicate_group", dropna=False)
+    counts = grouped.size().rename("source_count")
+    source_names = grouped["source_name"].agg(
+        lambda values: "; ".join(
+            sorted({str(value) for value in values if str(value)})
+        )
     ).rename("duplicate_sources")
-    source_urls = enriched.groupby("duplicate_group", dropna=False)["apply_url"].agg(
-        lambda values: "\n".join(dict.fromkeys(str(value) for value in values if str(value)))
+    source_urls = grouped["apply_url"].agg(
+        lambda values: "\n".join(
+            dict.fromkeys(str(value) for value in values if str(value))
+        )
     ).rename("all_apply_urls")
 
     ranked = enriched.copy()
-    ranked["_score"] = pd.to_numeric(ranked.get("match_score", 0), errors="coerce").fillna(0)
+    ranked["_score"] = pd.to_numeric(
+        ranked.get("match_score", 0),
+        errors="coerce",
+    ).fillna(0)
     ranked["_published"] = ranked.get("published_at", "").fillna("").astype(str)
     ranked = ranked.sort_values(
         ["duplicate_group", "_score", "_published", "last_seen_at"],
@@ -218,11 +327,15 @@ def deduplicate_worldwide(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFra
     duplicate_groups = set(counts[counts > 1].index)
     variants = enriched[enriched["duplicate_group"].isin(duplicate_groups)].copy()
     variants = variants.join(counts, on="duplicate_group")
-    variants = variants.sort_values(["duplicate_group", "source_name", "company", "title"])
+    variants = variants.sort_values(
+        ["duplicate_group", "source_name", "company", "title"]
+    )
     return deduplicated, variants
 
 
-def registry_frames(config_dir: str | Path = "config") -> tuple[pd.DataFrame, pd.DataFrame]:
+def registry_frames(
+    config_dir: str | Path = "config",
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     root = Path(config_dir)
 
     def load_rows(name: str, key: str) -> pd.DataFrame:
@@ -239,20 +352,39 @@ def registry_frames(config_dir: str | Path = "config") -> tuple[pd.DataFrame, pd
     )
 
 
+def _series(frame: pd.DataFrame, column: str) -> pd.Series:
+    return frame.get(column, pd.Series(dtype="string"))
+
+
 def daily_summary_frame(
     jobs: pd.DataFrame,
     deduplicated: pd.DataFrame,
     source_health: pd.DataFrame,
 ) -> pd.DataFrame:
+    high_priority = int(
+        _series(deduplicated, "priority").isin(["critical", "high"]).sum()
+    )
+    countries = int(
+        _series(deduplicated, "country").replace("", pd.NA).nunique()
+    )
+    employers = int(
+        _series(deduplicated, "company").replace("", pd.NA).nunique()
+    )
+    passing = int(
+        _series(source_health, "status")
+        .isin(["pass", "pass_with_warnings"])
+        .sum()
+    )
+    failing = int(_series(source_health, "status").eq("fail").sum())
     metrics = [
         ("Generated UTC", pd.Timestamp.now(tz="UTC").isoformat()),
         ("Raw active rows", len(jobs)),
         ("Worldwide deduplicated jobs", len(deduplicated)),
         ("Duplicate variants removed", max(len(jobs) - len(deduplicated), 0)),
-        ("Critical/high priority", int(deduplicated.get("priority", pd.Series(dtype="string")).isin(["critical", "high"]).sum())),
-        ("Countries represented", int(deduplicated.get("country", pd.Series(dtype="string")).replace("", pd.NA).nunique())),
-        ("Employers represented", int(deduplicated.get("company", pd.Series(dtype="string")).replace("", pd.NA).nunique())),
-        ("Sources passing", int(source_health.get("status", pd.Series(dtype="string")).isin(["pass", "pass_with_warnings"]).sum())),
-        ("Sources failing", int(source_health.get("status", pd.Series(dtype="string")).eq("fail").sum())),
+        ("Critical/high priority", high_priority),
+        ("Countries represented", countries),
+        ("Employers represented", employers),
+        ("Sources passing", passing),
+        ("Sources failing", failing),
     ]
     return pd.DataFrame(metrics, columns=["metric", "value"])
