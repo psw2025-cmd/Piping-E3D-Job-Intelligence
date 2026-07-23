@@ -5,6 +5,11 @@ on:
     - cron: "0 9 * * *"
       timezone: "Asia/Kolkata"
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/daily-live-job-intelligence.yml"
 
 permissions:
   contents: read
@@ -15,6 +20,7 @@ concurrency:
 
 jobs:
   collect:
+    if: github.event_name != 'pull_request' || github.head_ref == 'audit/live-worldwide-20260723'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
