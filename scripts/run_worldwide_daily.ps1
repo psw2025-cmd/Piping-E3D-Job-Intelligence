@@ -7,7 +7,16 @@ param(
     [string]$GmailCredentials = "private-input/gmail_credentials.json",
     [string]$GmailToken = "private-output/gmail/token.json",
     [string]$GmailEvidence = "private-output/gmail/evidence",
-    [int]$GmailMaxMessages = 200,
+    [string]$GmailQuery = "newer_than:45d -from:github.com -from:cursor.com " +
+        "{from:jobalerts-noreply@linkedin.com from:jobs-noreply@linkedin.com " +
+        "from:indeed.com from:gulftalent.com from:jobstreet.com from:naukri.com " +
+        "from:bayt.com from:naukrigulf.com from:rigzone.com " +
+        "from:energyjobline.com from:oilandgasjobsearch.com " +
+        "subject:`"job alert`" subject:`"jobs for you`" subject:`"is hiring`" " +
+        "subject:vacancy subject:recruiting} " +
+        "{piping e3d aveva pdms sp3d `"smart 3d`" `"plant layout`" " +
+        "`"pipe support`" `"piping stress`" `"piping designer`"}",
+    [int]$GmailMaxMessages = 500,
     [switch]$SkipGmail
 )
 
@@ -30,8 +39,8 @@ Invoke-Checked --db $Database collect `
 if (-not $SkipGmail -and (Test-Path $GmailCredentials)) {
     Invoke-Checked --db $Database gmail-import `
         --credentials $GmailCredentials --token $GmailToken `
-        --max-messages $GmailMaxMessages --evidence-dir $GmailEvidence `
-        --output $Workbook --no-export
+        --query $GmailQuery --max-messages $GmailMaxMessages `
+        --evidence-dir $GmailEvidence --output $Workbook --no-export
 } else {
     Write-Host "Gmail skipped. Add $GmailCredentials to enable read-only alerts."
 }
