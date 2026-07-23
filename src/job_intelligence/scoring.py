@@ -9,6 +9,7 @@ from typing import Any
 import yaml
 
 from .models import JobRecord
+from .normalization import enrich_job
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,16 +49,19 @@ _DEFAULT_WEIGHTS = {
 }
 _DEFAULT_THRESHOLDS = {"critical": 85, "high": 70, "normal": 50}
 _DEFAULT_TERMS = {
-    "e3d_pdms": ("aveva e3d", "e3d", "pdms"),
+    "e3d_pdms": ("aveva e3d", "e3d", "pdms", "sp3d", "smartplant 3d"),
     "piping_layout": (
         "piping layout",
         "equipment layout",
+        "plant layout",
         "plot plan",
         "general arrangement",
+        "3d model coordination",
     ),
     "experience": ("10 years", "12 years", "15 years", "senior", "lead"),
     "site_offshore": (
         "site engineering",
+        "field engineering",
         "site experience",
         "brownfield",
         "punch list",
@@ -73,6 +77,7 @@ _DEFAULT_ROLES = (
     "piping layout engineer",
     "e3d piping designer",
     "pdms piping designer",
+    "sp3d piping designer",
     "offshore piping engineer",
     "site piping engineer",
 )
@@ -222,7 +227,10 @@ def score_job(
     config_dir: str | Path | None = None,
     profile: ScoringProfile | None = None,
 ) -> MatchResult:
-    active = profile or load_scoring_profile(config_dir)
+    resolved = _resolve_config_dir(config_dir)
+    if resolved is not None:
+        enrich_job(job, config_dir=resolved)
+    active = profile or load_scoring_profile(resolved)
     text = job.searchable_text
     score = 0
     reasons: list[str] = []
@@ -230,35 +238,38 @@ def score_job(
 
     if _contains_any(text, active.target_roles):
         score += active.weights["target_role"]
-        reasons.append("Target piping/E3D role alignment")
+        reasons.append(
+            f"Target role alignment: {job.normalized_role or job.title}"
+        )
     else:
         gaps.append("Target role wording not detected")
 
     if _contains_any(text, active.e3d_pdms_terms):
         score += active.weights["e3d_pdms"]
-        reasons.append("AVEVA E3D or PDMS requirement detected")
+        reasons.append("AVEVA E3D, PDMS, SP3D or related 3D requirement detected")
     else:
-        gaps.append("E3D/PDMS requirement not stated")
+        gaps.append("E3D/PDMS/SP3D requirement not stated")
 
     if _contains_any(text, active.layout_terms):
         score += active.weights["piping_layout"]
-        reasons.append("Piping or equipment layout scope detected")
+        reasons.append("Piping, equipment or plant-layout scope detected")
 
     if _contains_any(text, active.sector_terms):
         score += active.weights["sector"]
-        reasons.append("Relevant EPC process-industry sector detected")
+        reasons.append(f"Relevant sector detected: {job.sector or 'EPC process industry'}")
 
     if _contains_any(text, active.experience_terms):
         score += active.weights["experience"]
-        reasons.append("Senior experience level appears compatible")
+        reasons.append("Senior or lead experience level appears compatible")
 
     if _contains_any(text, active.preferred_locations):
         score += active.weights["preferred_location"]
-        reasons.append("Preferred location detected")
+        location = ", ".join(part for part in (job.city, job.country) if part)
+        reasons.append(f"Preferred location detected: {location or job.location}")
 
     if _contains_any(text, active.site_offshore_terms):
         score += active.weights["site_offshore"]
-        reasons.append("Site, brownfield or offshore experience valued")
+        reasons.append("Site, field, brownfield or offshore experience valued")
 
     if _contains_any(text, active.diploma_terms):
         score += active.weights["diploma_eligible"]
