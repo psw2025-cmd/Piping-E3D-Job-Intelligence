@@ -17,6 +17,7 @@ from .collectors.common import EvidenceArtifact
 from .collectors.http_client import HttpClient, SafeHttpClient
 from .database import connect, record_source_health, upsert_jobs
 from .models import JobRecord
+from .profile_enrichment import record_job_observations
 from .proof import finish_run, record_evidence, start_run
 from .scoring import score_job
 from .source_config import SourceSpec, load_source_config
@@ -203,6 +204,18 @@ def collect_sources(
             _prepare_jobs(spec, result.jobs, config_path.parent)
             stage = "upsert"
             new_jobs, updated_jobs = upsert_jobs(db_path, result.jobs)
+            try:
+                record_job_observations(
+                    db_path,
+                    result.jobs,
+                    source_id=spec.source_id,
+                    source_type=spec.source_type,
+                )
+            except Exception as observation_exc:
+                result.warnings.append(
+                    "job observation ledger failed: "
+                    f"{type(observation_exc).__name__}: {observation_exc}"
+                )
             stage = "health"
             warning_message = " | ".join(result.warnings)
             source_status = (
