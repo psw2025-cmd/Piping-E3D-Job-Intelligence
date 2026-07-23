@@ -1,4 +1,4 @@
-# Public-source registry.
+# Worldwide public-source registry.
 # Never place credentials, private portals, cookies, CV data or recruiter lists here.
 # Enabled sources must be official, public, read-only and protected by profile filtering.
 sources:
@@ -10,7 +10,7 @@ sources:
     site_number: CX_1
     enabled: true
     profile_filter: true
-    include_terms:
+    include_terms: &global_profile_terms
       - piping
       - pipe layout
       - plant layout
@@ -41,20 +41,7 @@ sources:
     site_number: CX_1
     enabled: true
     profile_filter: true
-    include_terms:
-      - piping
-      - pipe layout
-      - plant layout
-      - plant design
-      - e3d
-      - aveva e3d
-      - pdms
-      - sp3d
-      - smartplant 3d
-      - pipe support
-      - piping stress
-      - piping materials
-      - 3d model
+    include_terms: *global_profile_terms
     location_terms: []
     timeout_seconds: 30
     rate_limit_per_minute: 60
@@ -64,10 +51,11 @@ sources:
     max_pages: 50
     page_size: 100
 
-  - id: petrofac_public_html
+  - id: petrofac_selectminds_html
     name: Petrofac official SelectMinds careers
     type: public_html
     company: Petrofac
+    platform: selectminds
     url: https://petrofac.referrals.selectminds.com/latest-jobs
     enabled: true
     profile_filter: true
@@ -75,15 +63,7 @@ sources:
       - petrofac.referrals.selectminds.com
     job_link_patterns:
       - /jobs/
-    anchor_text_patterns:
-      - piping
-      - pipe support
-      - plant layout
-      - plant design
-      - e3d
-      - pdms
-      - sp3d
-      - 3d model
+    anchor_text_patterns: *global_profile_terms
     exclude_anchor_text_patterns:
       - sign up
       - login
@@ -96,10 +76,11 @@ sources:
     max_items: 100
     max_pages: 1
 
-  - id: bechtel_engineering_html
-    name: Bechtel official engineering careers
+  - id: bechtel_successfactors_html
+    name: Bechtel official SuccessFactors careers
     type: public_html
     company: Bechtel
+    platform: successfactors
     url: https://jobs.bechtel.com/go/Engineering/399431
     enabled: true
     profile_filter: true
@@ -107,15 +88,7 @@ sources:
       - jobs.bechtel.com
     job_link_patterns:
       - /job/
-    anchor_text_patterns:
-      - piping
-      - pipe support
-      - plant design
-      - plant layout
-      - layout designer
-      - e3d
-      - pdms
-      - sp3d
+    anchor_text_patterns: *global_profile_terms
     page_url_template: https://jobs.bechtel.com/go/Engineering/399431/{page}/?q=&sortColumn=referencedate&sortDirection=desc
     page_start: 0
     page_step: 25
@@ -126,6 +99,146 @@ sources:
     max_response_bytes: 5000000
     max_items: 150
     max_pages: 12
+
+  - id: worley_eightfold_html
+    name: Worley official Eightfold careers
+    type: public_html
+    company: Worley
+    platform: eightfold
+    url: https://jobs.worley.com/careers?query=piping&start=0
+    enabled: true
+    profile_filter: true
+    allowed_domains:
+      - jobs.worley.com
+    job_link_patterns:
+      - /careers/job/
+    anchor_text_patterns: *global_profile_terms
+    page_url_template: https://jobs.worley.com/careers?query=piping&start={page}
+    page_start: 0
+    page_step: 20
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 12
+    max_response_bytes: 8000000
+    max_items: 250
+    max_pages: 20
+
+  # Fully configured priority sources below remain disabled until a source-specific
+  # live proof confirms listing extraction, pagination, detail parsing and evidence.
+  - id: kbr_phenom_html
+    name: KBR official Phenom careers
+    type: public_html
+    company: KBR
+    platform: phenom
+    url: https://careers.kbr.com/us/en/search-results?keywords=piping
+    enabled: false
+    profile_filter: true
+    allowed_domains:
+      - careers.kbr.com
+    job_link_patterns:
+      - /us/en/job/
+    anchor_text_patterns: *global_profile_terms
+    page_url_template: https://careers.kbr.com/us/en/search-results?keywords=piping&from={page}&s=1
+    page_start: 0
+    page_step: 10
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_response_bytes: 8000000
+    max_items: 200
+    max_pages: 30
+
+  - id: atkinsrealis_public_html
+    name: AtkinsRealis official careers
+    type: public_html
+    company: AtkinsRealis
+    platform: rendered_public_html
+    url: https://careers.atkinsrealis.com/en/jobs
+    enabled: false
+    profile_filter: true
+    allowed_domains:
+      - careers.atkinsrealis.com
+    job_link_patterns:
+      - /en/jobs/
+      - /job/
+    anchor_text_patterns: *global_profile_terms
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_response_bytes: 8000000
+    max_items: 250
+    max_pages: 1
+
+  - id: fluor_eightfold_html
+    name: Fluor official Eightfold careers
+    type: public_html
+    company: Fluor
+    platform: eightfold
+    url: https://careers.fluor.com/careers?query=piping
+    enabled: false
+    profile_filter: true
+    allowed_domains:
+      - careers.fluor.com
+    job_link_patterns:
+      - /careers/job/
+    anchor_text_patterns: *global_profile_terms
+    page_url_template: https://careers.fluor.com/careers?query=piping&start={page}
+    page_start: 0
+    page_step: 20
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_response_bytes: 10000000
+    max_items: 250
+    max_pages: 30
+
+  - id: technip_energies_public_html
+    name: Technip Energies official careers
+    type: public_html
+    company: Technip Energies
+    platform: rendered_public_html
+    url: https://careers.technipenergies.com/
+    enabled: false
+    profile_filter: true
+    allowed_domains:
+      - careers.technipenergies.com
+    job_link_patterns:
+      - /job/
+      - /jobs/
+    anchor_text_patterns: *global_profile_terms
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_response_bytes: 8000000
+    max_items: 250
+    max_pages: 1
+
+  - id: jacobs_public_html
+    name: Jacobs official careers
+    type: public_html
+    company: Jacobs
+    platform: rendered_public_html
+    url: https://careers.jacobs.com/
+    enabled: false
+    profile_filter: true
+    allowed_domains:
+      - careers.jacobs.com
+    job_link_patterns:
+      - /job/
+      - /jobs/
+    anchor_text_patterns: *global_profile_terms
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_response_bytes: 8000000
+    max_items: 250
+    max_pages: 1
 
   - id: example_greenhouse
     name: Example Greenhouse board
