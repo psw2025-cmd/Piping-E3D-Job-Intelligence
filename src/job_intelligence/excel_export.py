@@ -10,17 +10,25 @@ from openpyxl.styles import Font
 
 from .database import JOB_COLUMNS, connect, fetch_jobs
 from .private_import import init_private_import_tables
+from .worldwide_views import deduplicate_worldwide, registry_frames, summary_by
 
 REQUIRED_SHEETS = (
     "New_Today",
     "High_Priority",
+    "Worldwide_Dedup",
     "All_Active",
+    "All_Source_Rows",
+    "Duplicate_Variants",
     "Manual_Review",
     "Applied",
     "Follow_Up",
     "Rejected",
     "Expired",
     "Recruiter_Contacts",
+    "Country_Summary",
+    "Company_Summary",
+    "Employer_Coverage",
+    "Recruiter_Coverage",
     "Source_Health",
     "Source_Evidence",
     "Private_Imports",
@@ -51,6 +59,12 @@ REQUIRED_JOB_COLUMNS = (
     "contact_confidence",
     "duplicate_status",
     "application_status",
+)
+REQUIRED_DEDUP_COLUMNS = (
+    "duplicate_group",
+    "source_count",
+    "duplicate_sources",
+    "all_apply_urls",
 )
 _FORMULA_PREFIXES = ("=", "+", "-", "@")
 
@@ -96,6 +110,7 @@ def _daily_summary(
     new_today: pd.DataFrame,
     high_priority: pd.DataFrame,
     active: pd.DataFrame,
+    duplicate_variants: pd.DataFrame,
     manual_review: pd.DataFrame,
     applied: pd.DataFrame,
     follow_up: pd.DataFrame,
@@ -105,12 +120,17 @@ def _daily_summary(
     source_health: pd.DataFrame,
 ) -> pd.DataFrame:
     source_status = source_health.get("status", pd.Series(dtype="string"))
+    countries = active.get("country", pd.Series(dtype="string"))
+    companies = active.get("company", pd.Series(dtype="string"))
     metrics = (
         ("generated_at", datetime.now(UTC).replace(microsecond=0).isoformat()),
-        ("total_jobs", len(jobs)),
+        ("raw_source_rows", len(jobs)),
+        ("worldwide_deduplicated_jobs", len(active)),
+        ("duplicate_variant_rows", len(duplicate_variants)),
         ("new_today", len(new_today)),
         ("high_priority", len(high_priority)),
-        ("active", len(active)),
+        ("countries", int(countries.replace("", pd.NA).nunique())),
+        ("companies", int(companies.replace("", pd.NA).nunique())),
         ("manual_review", len(manual_review)),
         ("applied", len(applied)),
         ("follow_up", len(follow_up)),
@@ -151,6 +171,11 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
             connection,
         )
 
+    statuses = jobs.get("application_status", pd.Series(dtype="string"))
+    active_source_rows = jobs[~statuses.isin(["expired", "rejected"])]
+    active, duplicate_variants = deduplicate_worldwide(active_source_rows)
+    employer_coverage, recruiter_coverage = registry_frames()
+
     review_job_keys = set(
         private_imports.loc[
             private_imports.get("review_required", pd.Series(dtype="int64")).eq(1),
@@ -158,12 +183,11 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
         ].astype(str)
     )
     today = datetime.now(UTC).date().isoformat()
-    found_dates = jobs.get("found_at", pd.Series(dtype="string")).astype(str)
-    new_today = jobs[found_dates.str.startswith(today, na=False)]
-    priorities = jobs.get("priority", pd.Series(dtype="string"))
-    high_priority = jobs[priorities.isin(["critical", "high"])]
-    statuses = jobs.get("application_status", pd.Series(dtype="string"))
-    active = jobs[~statuses.isin(["expired", "rejected"])]
+    found_dates = active.get("found_at", pd.Series(dtype="string")).astype(str)
+    new_today = active[found_dates.str.startswith(today, na=False)]
+    priorities = active.get("priority", pd.Series(dtype="string"))
+    high_priority = active[priorities.isin(["critical", "high"])]
+
     confidence = jobs.get("contact_confidence", pd.Series(dtype="string"))
     job_keys = jobs.get("job_key", pd.Series(dtype="string")).astype(str)
     manual_review = jobs[
@@ -177,11 +201,14 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
     expired = jobs[statuses.eq("expired")]
     emails = jobs.get("recruiter_email", pd.Series(dtype="string"))
     contacts = jobs[emails.fillna("").astype(str).str.len() > 0]
+    country_summary = summary_by(active, "country")
+    company_summary = summary_by(active, "company")
     daily_summary = _daily_summary(
         jobs=jobs,
         new_today=new_today,
         high_priority=high_priority,
         active=active,
+        duplicate_variants=duplicate_variants,
         manual_review=manual_review,
         applied=applied,
         follow_up=follow_up,
@@ -194,13 +221,20 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
     sheets = {
         "New_Today": new_today,
         "High_Priority": high_priority,
+        "Worldwide_Dedup": active,
         "All_Active": active,
+        "All_Source_Rows": active_source_rows,
+        "Duplicate_Variants": duplicate_variants,
         "Manual_Review": manual_review,
         "Applied": applied,
         "Follow_Up": follow_up,
         "Rejected": rejected,
         "Expired": expired,
         "Recruiter_Contacts": contacts,
+        "Country_Summary": country_summary,
+        "Company_Summary": company_summary,
+        "Employer_Coverage": employer_coverage,
+        "Recruiter_Coverage": recruiter_coverage,
         "Source_Health": source_health,
         "Source_Evidence": source_evidence,
         "Private_Imports": private_imports,
@@ -239,4 +273,7 @@ def verify_excel(path: str | Path) -> list[str]:
         missing_columns = [column for column in REQUIRED_JOB_COLUMNS if column not in headers]
         if missing_columns:
             errors.append(f"Missing job columns: {', '.join(missing_columns)}")
+        missing_dedup = [column for column in REQUIRED_DEDUP_COLUMNS if column not in headers]
+        if missing_dedup:
+            errors.append(f"Missing dedup columns: {', '.join(missing_dedup)}")
     return errors
