@@ -1,66 +1,244 @@
-schema_version: 1
+schema_version: 2
 verified_at: 2026-07-23
 
 status_definitions:
   active_supported: Verified public source configured and enabled.
-  official_site_verified: Official employer careers site verified; connector research remains.
-  connector_planned: Public job portal verified; a constrained connector is planned.
-  restricted_endpoint_not_used: A platform endpoint exists but is not documented for public third-party use.
+  official_site_verified: Official careers site verified; source-specific proof remains.
+  connector_planned: Official public job portal recorded; connector implementation remains.
+  restricted_endpoint_not_used: Undocumented or restricted platform endpoints will not be used.
+  email_alert_ingestion_planned: Source should enter through user-authorized email alerts.
 
 employers:
   - company: McDermott
     priority: 1
     official_careers_url: https://www.mcdermott.com/careers/search-apply
     public_job_host: edsv.fa.us2.oraclecloud.com
+    platform: oracle_hcm
     status: active_supported
     source_ids:
       - mcdermott_oracle
-    notes: Verified public Oracle Candidate Experience requisition source with role and location filters.
+    notes: Worldwide public Oracle requisitions filtered by the global piping/E3D profile.
 
   - company: Wood
     priority: 1
     official_careers_url: https://careers.woodplc.com/
     public_job_host: ehif.fa.em2.oraclecloud.com
+    platform: oracle_hcm
     status: active_supported
     source_ids:
       - wood_oracle
-    notes: Verified public Oracle Candidate Experience requisition source with role and location filters.
+    notes: Worldwide public Oracle requisitions filtered by the global piping/E3D profile.
+
+  - company: Petrofac
+    priority: 1
+    official_careers_url: https://www.petrofac.com/careers/find-a-job-at-petrofac
+    public_job_url: https://petrofac.referrals.selectminds.com/latest-jobs
+    platform: selectminds_public_html
+    status: active_supported
+    source_ids:
+      - petrofac_public_html
+    notes: Official public SelectMinds listing and detail pages with profile filtering.
+
+  - company: Bechtel
+    priority: 1
+    official_careers_url: https://www.bechtel.com/careers/
+    public_job_url: https://jobs.bechtel.com/go/Engineering/399431
+    platform: successfactors_public_html
+    status: active_supported
+    source_ids:
+      - bechtel_engineering_html
+    notes: Official public engineering pages with bounded pagination and profile filtering.
 
   - company: Worley
     priority: 1
     official_careers_url: https://www.worley.com/en/careers
     public_job_url: https://jobs.worley.com/careers
+    platform: eightfold
     status: connector_planned
     source_ids: []
-    notes: Official public job search verified; connector must use documented and permitted public access only.
-
-  - company: Bechtel
-    priority: 1
-    official_careers_url: https://www.bechtel.com/careers/
-    public_job_url: https://jobs.bechtel.com/us/en
-    status: connector_planned
-    source_ids: []
-    notes: Official public professional-job portal verified; connector remains disabled pending proof.
+    notes: Public job detail pages are visible; a permitted Eightfold listing connector is required.
 
   - company: KBR
     priority: 1
     official_careers_url: https://careers.kbr.com/us/en
     public_job_url: https://careers.kbr.com/us/en/search-results
+    platform: phenom_or_public_html
     status: connector_planned
     source_ids: []
-    notes: Official public careers portal verified; platform-specific connector remains disabled.
-
-  - company: Petrofac
-    priority: 1
-    official_careers_url: https://www.petrofac.com/careers/find-a-job-at-petrofac
-    public_job_url: https://petrofac.referrals.selectminds.com/
-    status: connector_planned
-    source_ids: []
-    notes: Official application portal verified; collector remains disabled pending proof.
+    notes: Official portal verified; listing access must be proven without private APIs.
 
   - company: Technip Energies
     priority: 1
     official_careers_url: https://careers.technipenergies.com/
+    platform: restricted_or_rendered_public
     status: restricted_endpoint_not_used
     source_ids: []
-    notes: Public rendered pages may be supported later; undocumented internal APIs will not be used.
+    notes: Use only rendered public pages or a documented public interface.
+
+  - company: L&T Energy Hydrocarbon
+    priority: 1
+    official_careers_url: https://www.larsentoubro.com/corporate/careers/
+    platform: research_required
+    status: connector_planned
+    source_ids: []
+    notes: India and Gulf piping/E3D roles are high priority.
+
+  - company: Saipem
+    priority: 1
+    official_careers_url: https://www.saipem.com/en/people/careers
+    platform: research_required
+    status: connector_planned
+    source_ids: []
+    notes: Prioritize offshore, EPC and piping design vacancies.
+
+  - company: Fluor
+    priority: 1
+    official_careers_url: https://www.fluor.com/careers
+    platform: research_required
+    status: connector_planned
+    source_ids: []
+    notes: Prioritize plant design, piping and field engineering roles.
+
+  - company: Jacobs
+    priority: 1
+    official_careers_url: https://careers.jacobs.com/
+    platform: research_required
+    status: connector_planned
+    source_ids: []
+    notes: Prioritize nuclear, advanced facilities and piping design roles.
+
+  - company: AtkinsRealis
+    priority: 1
+    official_careers_url: https://careers.atkinsrealis.com/
+    platform: research_required
+    status: connector_planned
+    source_ids: []
+    notes: Prioritize nuclear, energy and plant design vacancies.
+
+  - company: Kent
+    priority: 2
+    official_careers_url: https://kentplc.com/careers/
+    platform: research_required
+    status: connector_planned
+    source_ids: []
+    notes: Prioritize Gulf and global energy engineering roles.
+
+  - company: Aker Solutions
+    priority: 2
+    official_careers_url: https://www.akersolutions.com/careers/
+    platform: research_required
+    status: connector_planned
+    source_ids: []
+    notes: Prioritize offshore and energy-transition piping roles.
+
+  - company: JGC
+    priority: 2
+    official_careers_url: https://www.jgc.com/en/recruit/
+    platform: research_required
+    status: connector_planned
+    source_ids: []
+    notes: Prioritize global EPC and LNG opportunities.
+
+  - company: Samsung E&A
+    priority: 2
+    official_careers_url: https://www.samsungena.com/en/careers
+    platform: research_required
+    status: connector_planned
+    source_ids: []
+    notes: Prioritize Middle East EPC and plant design opportunities.
+
+  - company: NPCC
+    priority: 2
+    official_careers_url: https://www.npcc.ae/careers
+    platform: research_required
+    status: connector_planned
+    source_ids: []
+    notes: Prioritize Abu Dhabi offshore piping and design roles.
+
+  - company: Penspen
+    priority: 2
+    official_careers_url: https://www.penspen.com/careers/
+    platform: research_required
+    status: connector_planned
+    source_ids: []
+    notes: Prioritize pipeline, piping and asset-integrity roles.
+
+  - company: MAIRE Tecnimont
+    priority: 2
+    official_careers_url: https://www.groupmaire.com/en/careers/
+    platform: research_required
+    status: connector_planned
+    source_ids: []
+    notes: Prioritize India, Europe and Middle East EPC vacancies.
+
+  - company: Airswift
+    priority: 2
+    official_careers_url: https://www.airswift.com/jobs
+    platform: recruiter_portal
+    status: connector_planned
+    source_ids: []
+    notes: Recruiter source; use public pages or authorized email alerts.
+
+  - company: NES Fircroft
+    priority: 2
+    official_careers_url: https://www.nesfircroft.com/job-search/
+    platform: recruiter_portal
+    status: connector_planned
+    source_ids: []
+    notes: Recruiter source; use public pages or authorized email alerts.
+
+  - company: Brunel
+    priority: 2
+    official_careers_url: https://www.brunel.net/en/jobs
+    platform: recruiter_portal
+    status: connector_planned
+    source_ids: []
+    notes: Recruiter source; prioritize oil, gas, offshore and engineering roles.
+
+  - company: Petroplan
+    priority: 2
+    official_careers_url: https://www.petroplan.com/jobs
+    platform: recruiter_portal
+    status: connector_planned
+    source_ids: []
+    notes: Recruiter source; use public pages or authorized email alerts.
+
+  - company: LinkedIn Job Alerts
+    priority: 1
+    official_careers_url: https://www.linkedin.com/jobs/
+    platform: authorized_email_alerts
+    status: email_alert_ingestion_planned
+    source_ids: []
+    notes: Do not scrape authenticated pages; ingest user-authorized job-alert emails.
+
+  - company: Naukri Job Alerts
+    priority: 1
+    official_careers_url: https://www.naukri.com/
+    platform: authorized_email_alerts
+    status: email_alert_ingestion_planned
+    source_ids: []
+    notes: Do not bypass login or anti-bot controls; ingest user-authorized alerts.
+
+  - company: Indeed Job Alerts
+    priority: 1
+    official_careers_url: https://www.indeed.com/
+    platform: authorized_email_alerts
+    status: email_alert_ingestion_planned
+    source_ids: []
+    notes: Use user-authorized job-alert emails where direct automation is restricted.
+
+  - company: GulfTalent Job Alerts
+    priority: 1
+    official_careers_url: https://www.gulftalent.com/
+    platform: authorized_email_alerts
+    status: email_alert_ingestion_planned
+    source_ids: []
+    notes: Use user-authorized alerts for Gulf vacancies.
+
+  - company: Bayt Job Alerts
+    priority: 1
+    official_careers_url: https://www.bayt.com/
+    platform: authorized_email_alerts
+    status: email_alert_ingestion_planned
+    source_ids: []
+    notes: Use user-authorized alerts for Middle East vacancies.
