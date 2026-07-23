@@ -351,12 +351,9 @@ def _copy_evidence(source: Path, evidence_root: Path, digest: str) -> tuple[Path
     return destination, True
 
 
-def _remove_stale_import(db_path: str | Path, digest: str) -> None:
+def _remove_recoverable_import(db_path: str | Path, digest: str) -> None:
     with connect(db_path) as connection:
-        connection.execute(
-            "DELETE FROM private_imports WHERE sha256=? AND status='staged'",
-            (digest,),
-        )
+        connection.execute("DELETE FROM private_imports WHERE sha256=?", (digest,))
 
 
 def import_private_file(
@@ -379,11 +376,17 @@ def import_private_file(
     init_private_import_tables(db_path)
     with connect(db_path) as connection:
         existing = connection.execute(
-            "SELECT job_key, stored_path, review_required, warnings, status "
-            "FROM private_imports WHERE sha256=?",
+            """
+            SELECT imports.job_key, imports.stored_path, imports.review_required,
+                   imports.warnings, imports.status,
+                   CASE WHEN jobs.job_key IS NULL THEN 0 ELSE 1 END AS job_exists
+            FROM private_imports AS imports
+            LEFT JOIN jobs ON jobs.job_key = imports.job_key
+            WHERE imports.sha256=?
+            """,
             (digest,),
         ).fetchone()
-    if existing and existing["status"] == "complete":
+    if existing and existing["status"] == "complete" and existing["job_exists"]:
         return PrivateImportResult(
             input_path=str(source),
             status="duplicate",
@@ -393,8 +396,8 @@ def import_private_file(
             review_required=bool(existing["review_required"]),
             warnings=tuple(filter(None, str(existing["warnings"]).split(" | "))),
         )
-    if existing and existing["status"] == "staged":
-        _remove_stale_import(db_path, digest)
+    if existing and existing["status"] in {"complete", "staged"}:
+        _remove_recoverable_import(db_path, digest)
     elif existing:
         raise ValueError(f"unsupported prior import state: {existing['status']}")
 
