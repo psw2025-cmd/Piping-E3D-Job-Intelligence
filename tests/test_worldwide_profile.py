@@ -41,6 +41,7 @@ def test_worldwide_profile_enrichment_and_cross_source_duplicate(tmp_path: Path)
         source_id="official_epc",
         source_type="workday",
     )
+    job.source_name = "Recruiter alert"
     record_job_observations(
         db_path,
         [job],
