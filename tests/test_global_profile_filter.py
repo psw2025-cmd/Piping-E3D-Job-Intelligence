@@ -45,6 +45,12 @@ def test_profile_filter_uses_actual_title_discipline() -> None:
             description="Telecommunications commissioning role.",
         ),
         JobRecord(
+            title="Lead Commissioning Engineer - Telecom – "
+            "(WHT's Subsea Cable & Piping",
+            company="Example EPC",
+            description="Telecommunications commissioning role.",
+        ),
+        JobRecord(
             title="Specialist Planning & Cost Engineer - "
             "(WHT's Subsea Cable & Piping)",
             company="Example EPC",
