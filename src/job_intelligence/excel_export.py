@@ -72,24 +72,6 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
     if jobs.empty:
         jobs = _empty_jobs_frame()
 
-    today = datetime.now(UTC).date().isoformat()
-    found_dates = jobs.get("found_at", pd.Series(dtype="string")).astype(str)
-    new_today = jobs[found_dates.str.startswith(today, na=False)]
-    priorities = jobs.get("priority", pd.Series(dtype="string"))
-    high_priority = jobs[priorities.isin(["critical", "high"])]
-    statuses = jobs.get("application_status", pd.Series(dtype="string"))
-    active = jobs[~statuses.isin(["expired", "rejected"])]
-    confidence = jobs.get("contact_confidence", pd.Series(dtype="string"))
-    manual_review = jobs[
-        confidence.isin(["PUBLIC_UNVERIFIED", "PATTERN_SUGGESTION"])
-        | statuses.eq("review_required")
-    ]
-    applied = jobs[statuses.eq("applied")]
-    follow_up = jobs[statuses.eq("follow_up")]
-    expired = jobs[statuses.eq("expired")]
-    emails = jobs.get("recruiter_email", pd.Series(dtype="string"))
-    contacts = jobs[emails.fillna("").astype(str).str.len() > 0]
-
     with connect(db_path) as connection:
         source_health = pd.read_sql_query(
             "SELECT * FROM source_health ORDER BY last_attempt_at DESC",
@@ -107,6 +89,32 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
             "SELECT * FROM runs ORDER BY started_at DESC",
             connection,
         )
+
+    review_job_keys = set(
+        private_imports.loc[
+            private_imports.get("review_required", pd.Series(dtype="int64")).eq(1),
+            "job_key",
+        ].astype(str)
+    )
+    today = datetime.now(UTC).date().isoformat()
+    found_dates = jobs.get("found_at", pd.Series(dtype="string")).astype(str)
+    new_today = jobs[found_dates.str.startswith(today, na=False)]
+    priorities = jobs.get("priority", pd.Series(dtype="string"))
+    high_priority = jobs[priorities.isin(["critical", "high"])]
+    statuses = jobs.get("application_status", pd.Series(dtype="string"))
+    active = jobs[~statuses.isin(["expired", "rejected"])]
+    confidence = jobs.get("contact_confidence", pd.Series(dtype="string"))
+    job_keys = jobs.get("job_key", pd.Series(dtype="string")).astype(str)
+    manual_review = jobs[
+        confidence.isin(["PUBLIC_UNVERIFIED", "PATTERN_SUGGESTION"])
+        | statuses.eq("review_required")
+        | job_keys.isin(review_job_keys)
+    ]
+    applied = jobs[statuses.eq("applied")]
+    follow_up = jobs[statuses.eq("follow_up")]
+    expired = jobs[statuses.eq("expired")]
+    emails = jobs.get("recruiter_email", pd.Series(dtype="string"))
+    contacts = jobs[emails.fillna("").astype(str).str.len() > 0]
 
     sheets = {
         "New_Today": new_today,
