@@ -181,6 +181,26 @@ def _write_bundle(output_dir: Path) -> None:
     archive_path.replace(destination)
 
 
+def _write_status_files(
+    output_dir: Path,
+    db_path: Path,
+    status: dict[str, Any],
+    log_lines: list[str],
+) -> str:
+    status["generated_at"] = _now()
+    (output_dir / "run.log").write_text(
+        "\n".join(log_lines) + "\n",
+        encoding="utf-8",
+    )
+    (output_dir / "status.json").write_text(
+        json.dumps(status, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    summary_text = _build_summary(db_path, status)
+    (output_dir / "SUMMARY.md").write_text(summary_text, encoding="utf-8")
+    return summary_text
+
+
 def run(args: argparse.Namespace) -> int:
     output_dir = Path(args.output)
     shutil.rmtree(output_dir, ignore_errors=True)
@@ -230,28 +250,23 @@ def run(args: argparse.Namespace) -> int:
         export_excel(db_path, workbook_path)
         verification_errors = _verify_database(str(db_path)) + verify_excel(workbook_path)
         if verification_errors:
-            set_run_export_status(
-                db_path,
-                collection.run_id,
-                "fail",
-                " | ".join(verification_errors),
-            )
             raise ValueError(" | ".join(verification_errors))
-        set_run_export_status(db_path, collection.run_id, "pass")
-        status["verified"] = True
-        log_lines.append(f"{_now()} database, evidence and workbook verification PASS")
 
         acceptable_statuses = {"pass"}
         if args.allow_no_sources:
             acceptable_statuses.add("no_sources")
         if collection.status not in acceptable_statuses:
             raise RuntimeError(f"collection finished with status {collection.status}")
+
+        set_run_export_status(db_path, collection.run_id, "pass")
+        status["verified"] = True
         status["exit_code"] = 0
+        log_lines.append(f"{_now()} database, evidence and workbook verification PASS")
     except Exception as exc:
         status["error"] = f"{type(exc).__name__}: {exc}"
         log_lines.append(f"{_now()} ERROR {status['error']}")
         log_lines.append(traceback.format_exc())
-        if collection is not None and not status["verified"]:
+        if collection is not None:
             try:
                 set_run_export_status(
                     db_path,
@@ -265,18 +280,36 @@ def run(args: argparse.Namespace) -> int:
                     f"{type(proof_exc).__name__}: {proof_exc}"
                 )
     finally:
-        status["generated_at"] = _now()
-        (output_dir / "run.log").write_text(
-            "\n".join(log_lines) + "\n",
-            encoding="utf-8",
-        )
-        (output_dir / "status.json").write_text(
-            json.dumps(status, indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
-        summary_text = _build_summary(db_path, status)
-        (output_dir / "SUMMARY.md").write_text(summary_text, encoding="utf-8")
-        _write_bundle(output_dir)
+        summary_text = _write_status_files(output_dir, db_path, status, log_lines)
+        try:
+            _write_bundle(output_dir)
+        except Exception as bundle_exc:
+            status["exit_code"] = 2
+            status["verified"] = False
+            bundle_error = f"{type(bundle_exc).__name__}: {bundle_exc}"
+            previous_error = str(status.get("error") or "").strip()
+            status["error"] = (
+                f"{previous_error} | Bundle failure: {bundle_error}"
+                if previous_error
+                else bundle_error
+            )
+            log_lines.append(f"{_now()} ERROR {bundle_error}")
+            log_lines.append(traceback.format_exc())
+            (output_dir / "Piping_E3D_Daily_Bundle.zip").unlink(missing_ok=True)
+            if collection is not None:
+                try:
+                    set_run_export_status(
+                        db_path,
+                        collection.run_id,
+                        "fail",
+                        status["error"],
+                    )
+                except Exception as proof_exc:
+                    log_lines.append(
+                        f"{_now()} ERROR recording bundle failure: "
+                        f"{type(proof_exc).__name__}: {proof_exc}"
+                    )
+            summary_text = _write_status_files(output_dir, db_path, status, log_lines)
         print(summary_text)
 
     return int(status["exit_code"])
