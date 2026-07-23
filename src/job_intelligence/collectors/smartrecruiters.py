@@ -127,7 +127,7 @@ def collect_smartrecruiters(spec: SourceSpec, client: HttpClient) -> CollectionR
             page_fingerprint = hashlib.sha256(page_bytes).hexdigest()
             if page_fingerprint in seen_pages:
                 raise ValueError(
-                    f"source {spec.source_id!r} repeated pagination page "
+                    f"source {spec.source_id!r} repeated a pagination page "
                     f"for query {query!r}"
                 )
             seen_pages.add(page_fingerprint)
