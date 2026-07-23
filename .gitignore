@@ -18,6 +18,11 @@ htmlcov/
 .venv/
 venv/
 env/
+credentials.json
+token.json
+gmail_credentials*.json
+gmail_token*.json
+private-config/
 
 # IDE and operating system
 .vscode/
