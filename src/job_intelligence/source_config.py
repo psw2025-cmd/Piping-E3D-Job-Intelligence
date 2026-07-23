@@ -10,6 +10,7 @@ from urllib.parse import urlsplit
 import yaml
 
 _SUPPORTED_TYPES = {
+    "card_html",
     "greenhouse",
     "lever",
     "oracle_hcm",
@@ -147,9 +148,7 @@ def _validate_optional_text_list(spec: SourceSpec, key: str) -> None:
         )
 
 
-def _validate_public_html(spec: SourceSpec) -> None:
-    base_url = spec.require_text("url")
-    _validate_public_url(base_url, spec.source_id)
+def _validated_domains(spec: SourceSpec, base_url: str) -> set[str]:
     root_host = (urlsplit(base_url).hostname or "").lower()
     domains = _require_text_list(spec, "allowed_domains")
     normalized_domains = {domain.lower() for domain in domains}
@@ -168,33 +167,63 @@ def _validate_public_html(spec: SourceSpec) -> None:
             raise ValueError(
                 f"source {spec.source_id!r} has invalid allowed domain {domain!r}"
             )
+    return normalized_domains
+
+
+def _validate_page_template(
+    spec: SourceSpec,
+    normalized_domains: set[str],
+) -> None:
+    template = str(spec.options.get("page_url_template", "")).strip()
+    if not template:
+        return
+    if "{page}" not in template:
+        raise ValueError(
+            f"source {spec.source_id!r} page_url_template must contain "
+            "'{page}'"
+        )
+    try:
+        rendered = template.format(page=0)
+    except (KeyError, ValueError) as exc:
+        raise ValueError(
+            f"source {spec.source_id!r} has invalid page_url_template"
+        ) from exc
+    _validate_public_url(rendered, spec.source_id, "page_url_template")
+    rendered_host = (urlsplit(rendered).hostname or "").lower()
+    if rendered_host not in normalized_domains:
+        raise ValueError(
+            f"source {spec.source_id!r} page_url_template is outside "
+            "allowed_domains"
+        )
+
+
+def _validate_public_html(spec: SourceSpec) -> None:
+    base_url = spec.require_text("url")
+    _validate_public_url(base_url, spec.source_id)
+    domains = _validated_domains(spec, base_url)
     _require_text_list(spec, "job_link_patterns")
     _validate_optional_text_list(spec, "anchor_text_patterns")
     _validate_optional_text_list(spec, "required_anchor_text_patterns")
     _validate_optional_text_list(spec, "exclude_anchor_text_patterns")
-    template = str(spec.options.get("page_url_template", "")).strip()
-    if template:
-        if "{page}" not in template:
-            raise ValueError(
-                f"source {spec.source_id!r} page_url_template must contain "
-                "'{page}'"
-            )
-        try:
-            rendered = template.format(page=0)
-        except (KeyError, ValueError) as exc:
-            raise ValueError(
-                f"source {spec.source_id!r} has invalid page_url_template"
-            ) from exc
-        _validate_public_url(rendered, spec.source_id, "page_url_template")
-        rendered_host = (urlsplit(rendered).hostname or "").lower()
-        if rendered_host not in normalized_domains:
-            raise ValueError(
-                f"source {spec.source_id!r} page_url_template is outside "
-                "allowed_domains"
-            )
+    _validate_page_template(spec, domains)
     spec.int_option("page_start", 0, minimum=0)
     spec.int_option("page_step", 1)
     spec.bool_option("fetch_details", True)
+    spec.bool_option("deny_on_robots_error", True)
+
+
+def _validate_card_html(spec: SourceSpec) -> None:
+    base_url = spec.require_text("url")
+    _validate_public_url(base_url, spec.source_id)
+    domains = _validated_domains(spec, base_url)
+    _require_text_list(spec, "job_link_patterns")
+    _require_text_list(spec, "include_terms")
+    _validate_optional_text_list(spec, "location_terms")
+    _validate_optional_text_list(spec, "exclude_terms")
+    _validate_optional_text_list(spec, "closed_text_patterns")
+    _validate_page_template(spec, domains)
+    spec.int_option("page_start", 0, minimum=0)
+    spec.int_option("page_step", 1)
     spec.bool_option("deny_on_robots_error", True)
 
 
@@ -248,7 +277,9 @@ def _validate_source(spec: SourceSpec) -> None:
         raise ValueError(
             f"source {spec.source_id!r} has unsupported type {spec.source_type!r}"
         )
-    if spec.source_type == "greenhouse":
+    if spec.source_type == "card_html":
+        _validate_card_html(spec)
+    elif spec.source_type == "greenhouse":
         spec.require_text("board_token")
     elif spec.source_type == "lever":
         spec.require_text("site")
