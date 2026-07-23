@@ -85,6 +85,33 @@ def test_staged_import_is_recovered_automatically(tmp_path: Path) -> None:
     assert rows[0]["status"] == "complete"
 
 
+def test_complete_import_recreates_deleted_linked_job(tmp_path: Path) -> None:
+    source = tmp_path / "vacancy.txt"
+    source.write_text(_vacancy_text(), encoding="utf-8")
+    db_path = tmp_path / "jobs.db"
+    evidence = tmp_path / "evidence"
+    first = import_private_file(db_path, source, evidence)
+    with connect(db_path) as connection:
+        connection.execute(
+            "DELETE FROM job_identity_aliases WHERE job_key=?",
+            (first.job_key,),
+        )
+        connection.execute("DELETE FROM jobs WHERE job_key=?", (first.job_key,))
+
+    recovered = import_private_file(db_path, source, evidence)
+
+    assert recovered.status == "created"
+    assert len(fetch_jobs(db_path)) == 1
+    with connect(db_path) as connection:
+        rows = connection.execute(
+            "SELECT status, job_key FROM private_imports WHERE sha256=?",
+            (recovered.sha256,),
+        ).fetchall()
+    assert len(rows) == 1
+    assert rows[0]["status"] == "complete"
+    assert rows[0]["job_key"] == recovered.job_key
+
+
 def test_review_required_updates_existing_new_job(tmp_path: Path) -> None:
     source = tmp_path / "vacancy.txt"
     text = _vacancy_text()
