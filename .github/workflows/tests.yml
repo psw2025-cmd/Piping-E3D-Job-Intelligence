@@ -41,6 +41,20 @@ jobs:
             --sources config/sources.ci.yaml \
             --evidence-dir tmp/raw \
             --no-export
+          mkdir -p tmp/private-input
+          cat > tmp/private-input/vacancy.txt <<'EOF'
+          Job Title: Senior E3D Piping Designer
+          Company: Example EPC
+          Location: Mumbai
+          AVEVA E3D refinery piping layout role.
+          EOF
+          job-intel --db tmp/jobs.db import-file \
+            --file tmp/private-input/vacancy.txt \
+            --title "Senior E3D Piping Designer" \
+            --company "Example EPC" \
+            --location "Mumbai" \
+            --evidence-dir tmp/private-evidence \
+            --no-export
           job-intel --db tmp/jobs.db export \
             --output tmp/Piping_E3D_Jobs.xlsx
           job-intel --db tmp/jobs.db verify \
