@@ -1,0 +1,663 @@
+schema_version: 1
+verified_at: 2026-07-23
+
+status_definitions:
+  ACTIVE_DIRECT: Verified public collector is enabled.
+  ACTIVE_GMAIL_ALERT: Official or portal alerts are ingested through user-authorized Gmail.
+  ACTIVE_PUBLIC_NOTICE: Official recruitment notices, advertisements, corrigenda and PDFs are monitored.
+  ACTIVE_MANUAL_IMPORT: Official vacancies are retained through PDF, Word, EML, text or image import.
+  STAGED_NEEDS_LIVE_PROOF: Official source is identified but automated extraction is not enabled until live proof passes.
+  BLOCKED_RESTRICTED: Source exists but safe permitted automation is unavailable.
+  NO_SOURCE_FOUND: No reliable official vacancy source has been identified.
+
+companies:
+  - company_id: mcdermott
+    company: McDermott
+    country: Global
+    regions: [India, Middle East, Asia Pacific, Europe, Americas]
+    local_entities: [McDermott International]
+    company_aliases: [McDermott, CB&I]
+    employer_type: EPC contractor
+    sectors: [Oil and Gas, Offshore, LNG, Petrochemical]
+    official_careers_url: https://www.mcdermott.com/careers/search-apply
+    job_host: edsv.fa.us2.oraclecloud.com
+    ats_family: Oracle HCM
+    source_mode: direct
+    source_ids: [mcdermott_oracle]
+    alert_supported: true
+    priority: 1
+    status: ACTIVE_DIRECT
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: wood
+    company: Wood
+    country: Global
+    regions: [India, Middle East, Asia Pacific, Europe, Americas]
+    local_entities: [John Wood Group]
+    company_aliases: [Wood, Wood PLC, John Wood Group]
+    employer_type: Engineering consultancy
+    sectors: [Oil and Gas, Refinery, Petrochemical, Energy, Mining]
+    official_careers_url: https://careers.woodplc.com/
+    job_host: ehif.fa.em2.oraclecloud.com
+    ats_family: Oracle HCM
+    source_mode: direct
+    source_ids: [wood_oracle]
+    alert_supported: true
+    priority: 1
+    status: ACTIVE_DIRECT
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: kbr
+    company: KBR
+    country: Global
+    regions: [India, Middle East, Asia Pacific, Europe, Americas]
+    local_entities: [KBR Inc]
+    company_aliases: [KBR, Kellogg Brown and Root]
+    employer_type: EPC contractor
+    sectors: [Oil and Gas, LNG, Chemicals, Government, Energy]
+    official_careers_url: https://careers.kbr.com/us/en
+    job_host: kbr.wd5.myworkdayjobs.com
+    ats_family: Workday
+    source_mode: direct
+    source_ids: [kbr_workday]
+    alert_supported: true
+    priority: 1
+    status: ACTIVE_DIRECT
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: atkinsrealis
+    company: AtkinsRealis
+    country: Global
+    regions: [India, Middle East, Asia Pacific, Europe, Americas]
+    local_entities: [AtkinsRéalis, Atkins, SNC-Lavalin]
+    company_aliases: [AtkinsRealis, AtkinsRéalis, Atkins, SNC Lavalin]
+    employer_type: Engineering consultancy
+    sectors: [Nuclear, Infrastructure, Energy, Oil and Gas, Water]
+    official_careers_url: https://careers.atkinsrealis.com/
+    job_host: slihrms.wd3.myworkdayjobs.com
+    ats_family: Workday
+    source_mode: direct
+    source_ids: [atkinsrealis_workday]
+    alert_supported: true
+    priority: 1
+    status: ACTIVE_DIRECT
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: bechtel
+    company: Bechtel
+    country: Global
+    regions: [India, Middle East, Asia Pacific, Europe, Americas]
+    local_entities: [Bechtel Corporation]
+    company_aliases: [Bechtel, Bechtel India]
+    employer_type: EPC contractor
+    sectors: [Oil and Gas, LNG, Nuclear, Infrastructure, Mining]
+    official_careers_url: https://www.bechtel.com/careers/
+    job_host: jobs.bechtel.com
+    ats_family: SAP SuccessFactors
+    source_mode: direct
+    source_ids: [bechtel_successfactors]
+    alert_supported: true
+    priority: 1
+    status: ACTIVE_DIRECT
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: petrofac
+    company: Petrofac
+    country: Global
+    regions: [India, Middle East, Asia Pacific, Europe]
+    local_entities: [Petrofac International]
+    company_aliases: [Petrofac]
+    employer_type: EPC contractor
+    sectors: [Oil and Gas, Offshore, Refinery, Petrochemical]
+    official_careers_url: https://www.petrofac.com/careers/find-a-job-at-petrofac
+    job_host: petrofac.referrals.selectminds.com
+    ats_family: SelectMinds
+    source_mode: direct
+    source_ids: [petrofac_latest_selectminds, petrofac_hot_selectminds, petrofac_india_selectminds]
+    alert_supported: true
+    priority: 1
+    status: ACTIVE_DIRECT
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: engineers_india
+    company: Engineers India Limited
+    country: India
+    regions: [India, Middle East]
+    local_entities: [EIL]
+    company_aliases: [Engineers India, Engineers India Limited, EIL]
+    employer_type: Public-sector engineering consultancy
+    sectors: [Oil and Gas, Refinery, Petrochemical, Pipelines, Infrastructure]
+    official_careers_url: https://engineersindia.com/careers
+    job_host: engineersindia.com
+    ats_family: Public recruitment notice
+    source_mode: public_notice
+    source_ids: []
+    alert_supported: false
+    priority: 1
+    status: ACTIVE_PUBLIC_NOTICE
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: tata_consulting_engineers
+    company: Tata Consulting Engineers
+    country: India
+    regions: [India, Middle East, Europe, Asia Pacific]
+    local_entities: [Tata Consulting Engineers Limited]
+    company_aliases: [Tata Consulting Engineers, TCE]
+    employer_type: Engineering consultancy
+    sectors: [Power, Nuclear, Metals, Infrastructure, Industrial]
+    official_careers_url: https://www.tataconsultingengineers.com/careers/
+    job_host: careers.tataconsultingengineers.com
+    ats_family: Public careers portal
+    source_mode: staged_direct
+    source_ids: []
+    alert_supported: true
+    priority: 1
+    status: STAGED_NEEDS_LIVE_PROOF
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: tata_projects
+    company: Tata Projects
+    country: India
+    regions: [India, Middle East, Africa, Asia Pacific]
+    local_entities: [Tata Projects Limited]
+    company_aliases: [Tata Projects, TPL]
+    employer_type: EPC contractor
+    sectors: [Infrastructure, Power, Oil and Gas, Industrial, Water]
+    official_careers_url: https://tataprojects.com/careers
+    job_host: tataprojects.com
+    ats_family: Corporate careers page
+    source_mode: gmail_alert
+    source_ids: []
+    alert_supported: true
+    priority: 1
+    status: ACTIVE_GMAIL_ALERT
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: reliance_industries
+    company: Reliance Industries
+    country: India
+    regions: [India]
+    local_entities: [Reliance Industries Limited, Reliance New Energy]
+    company_aliases: [Reliance Industries, RIL, Reliance New Energy]
+    employer_type: Owner and operator
+    sectors: [Refinery, Petrochemical, Oil and Gas, New Energy, Manufacturing]
+    official_careers_url: https://careers.ril.com/rilcareers/frmjobsearch.Aspx
+    job_host: careers.ril.com
+    ats_family: Public careers listing
+    source_mode: staged_direct
+    source_ids: []
+    alert_supported: true
+    priority: 1
+    status: STAGED_NEEDS_LIVE_PROOF
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: toyo_engineering_india
+    company: Toyo Engineering India
+    country: India
+    regions: [India, Asia Pacific, Middle East]
+    local_entities: [Toyo Engineering India Private Limited, TOYO MODEC OFS India]
+    company_aliases: [Toyo India, Toyo Engineering India, TOYO MODEC OFS India]
+    employer_type: EPC contractor
+    sectors: [Oil and Gas, Refinery, Petrochemical, Offshore, Chemicals]
+    official_careers_url: https://www.toyo-eng.com/in/en/careers/
+    job_host: www.toyoindia.com
+    ats_family: Login-based recruitment portal
+    source_mode: manual_import
+    source_ids: []
+    alert_supported: false
+    priority: 1
+    status: ACTIVE_MANUAL_IMPORT
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: Public vacancy portal requires candidate login; official vacancy files and emails can be imported locally.
+
+  - company_id: nuberg_epc
+    company: Nuberg EPC
+    country: India
+    regions: [India, Middle East, Africa, Asia Pacific]
+    local_entities: [Nuberg Engineering Limited]
+    company_aliases: [Nuberg EPC, Nuberg Engineering, Nuberg]
+    employer_type: EPC contractor
+    sectors: [Chemicals, Fertilizer, Refinery, Petrochemical, Oil and Gas]
+    official_careers_url: https://www.nubergepc.com/career.html
+    job_host: www.nubergepc.com
+    ats_family: Public rendered careers page
+    source_mode: staged_direct
+    source_ids: []
+    alert_supported: true
+    priority: 1
+    status: STAGED_NEEDS_LIVE_PROOF
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: va_tech_wabag
+    company: VA Tech Wabag
+    country: India
+    regions: [India, Middle East, Europe, Africa, Asia Pacific]
+    local_entities: [VA Tech Wabag Limited]
+    company_aliases: [WABAG, VA Tech Wabag]
+    employer_type: Water EPC contractor
+    sectors: [Water, Wastewater, Desalination, Industrial]
+    official_careers_url: https://www.wabag.com/careers/
+    job_host: www.wabag.com
+    ats_family: Public rendered careers page
+    source_mode: staged_direct
+    source_ids: []
+    alert_supported: true
+    priority: 1
+    status: STAGED_NEEDS_LIVE_PROOF
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: ongc
+    company: ONGC
+    country: India
+    regions: [India]
+    local_entities: [Oil and Natural Gas Corporation]
+    company_aliases: [ONGC, Oil and Natural Gas Corporation]
+    employer_type: Public-sector owner and operator
+    sectors: [Oil and Gas, Offshore, Pipelines, Petrochemical]
+    official_careers_url: https://ongcindia.com/web/eng/career/recruitment-notice
+    job_host: ongcindia.com
+    ats_family: Public recruitment notice
+    source_mode: public_notice
+    source_ids: []
+    alert_supported: false
+    priority: 1
+    status: ACTIVE_PUBLIC_NOTICE
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: indian_oil
+    company: Indian Oil Corporation
+    country: India
+    regions: [India]
+    local_entities: [IndianOil]
+    company_aliases: [IOCL, Indian Oil, IndianOil, Indian Oil Corporation]
+    employer_type: Public-sector owner and operator
+    sectors: [Refinery, Petrochemical, Pipelines, Oil and Gas]
+    official_careers_url: https://iocl.com/latest-job-opening
+    job_host: iocl.com
+    ats_family: Public recruitment notice
+    source_mode: public_notice
+    source_ids: []
+    alert_supported: false
+    priority: 1
+    status: ACTIVE_PUBLIC_NOTICE
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: bpcl
+    company: Bharat Petroleum Corporation
+    country: India
+    regions: [India]
+    local_entities: [BPCL, Bharat PetroResources]
+    company_aliases: [BPCL, Bharat Petroleum, Bharat Petroleum Corporation]
+    employer_type: Public-sector owner and operator
+    sectors: [Refinery, Petrochemical, Oil and Gas, Renewables]
+    official_careers_url: https://www.bharatpetroleum.in/careers/job-openings.aspx
+    job_host: www.bharatpetroleum.in
+    ats_family: Public recruitment notice
+    source_mode: public_notice
+    source_ids: []
+    alert_supported: false
+    priority: 1
+    status: ACTIVE_PUBLIC_NOTICE
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: hpcl
+    company: Hindustan Petroleum Corporation
+    country: India
+    regions: [India]
+    local_entities: [HPCL]
+    company_aliases: [HPCL, Hindustan Petroleum, Hindustan Petroleum Corporation]
+    employer_type: Public-sector owner and operator
+    sectors: [Refinery, Petrochemical, Pipelines, Oil and Gas]
+    official_careers_url: https://www.hindustanpetroleum.com/job-openings
+    job_host: www.hindustanpetroleum.com
+    ats_family: Public recruitment notice
+    source_mode: public_notice
+    source_ids: []
+    alert_supported: false
+    priority: 1
+    status: ACTIVE_PUBLIC_NOTICE
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: gail
+    company: GAIL India
+    country: India
+    regions: [India]
+    local_entities: [GAIL India Limited]
+    company_aliases: [GAIL, GAIL India, GAIL India Limited]
+    employer_type: Public-sector owner and operator
+    sectors: [Gas, Pipelines, Petrochemical, LNG]
+    official_careers_url: https://www.gailonline.com/Vacancies.html
+    job_host: www.gailonline.com
+    ats_family: Public recruitment notice
+    source_mode: public_notice
+    source_ids: []
+    alert_supported: false
+    priority: 1
+    status: ACTIVE_PUBLIC_NOTICE
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: petronet_lng
+    company: Petronet LNG
+    country: India
+    regions: [India]
+    local_entities: [Petronet LNG Limited]
+    company_aliases: [Petronet LNG, PLL]
+    employer_type: Owner and operator
+    sectors: [LNG, Gas, Terminals, Petrochemical]
+    official_careers_url: https://www.petronetlng.in/openings
+    job_host: www.petronetlng.in
+    ats_family: Public recruitment notice
+    source_mode: public_notice
+    source_ids: []
+    alert_supported: false
+    priority: 1
+    status: ACTIVE_PUBLIC_NOTICE
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: npcil
+    company: Nuclear Power Corporation of India
+    country: India
+    regions: [India]
+    local_entities: [NPCIL]
+    company_aliases: [NPCIL, Nuclear Power Corporation of India]
+    employer_type: Public-sector nuclear operator
+    sectors: [Nuclear, Power]
+    official_careers_url: https://www.npcil.nic.in/content/289_1_Opportunities.aspx
+    job_host: www.npcil.nic.in
+    ats_family: Public recruitment notice
+    source_mode: public_notice
+    source_ids: []
+    alert_supported: false
+    priority: 1
+    status: ACTIVE_PUBLIC_NOTICE
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: ntpc
+    company: NTPC
+    country: India
+    regions: [India]
+    local_entities: [NTPC Limited, NTPC Green Energy]
+    company_aliases: [NTPC, NTPC Limited, NTPC Green Energy]
+    employer_type: Public-sector power operator
+    sectors: [Power, Renewables, Hydrogen, Infrastructure]
+    official_careers_url: https://ntpc.co.in/jobs-ntpc
+    job_host: careers.ntpc.co.in
+    ats_family: Public recruitment notice
+    source_mode: public_notice
+    source_ids: []
+    alert_supported: false
+    priority: 1
+    status: ACTIVE_PUBLIC_NOTICE
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: bhel
+    company: Bharat Heavy Electricals
+    country: India
+    regions: [India]
+    local_entities: [BHEL]
+    company_aliases: [BHEL, Bharat Heavy Electricals, Bharat Heavy Electricals Limited]
+    employer_type: Public-sector engineering manufacturer
+    sectors: [Power, Nuclear, Industrial, Infrastructure]
+    official_careers_url: https://www.bhel.com/recruitment
+    job_host: www.bhel.com
+    ats_family: Public recruitment notice
+    source_mode: public_notice
+    source_ids: []
+    alert_supported: false
+    priority: 1
+    status: ACTIVE_PUBLIC_NOTICE
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: assystem_india
+    company: Assystem India
+    country: India
+    regions: [India, Middle East, Europe]
+    local_entities: [Assystem STUP]
+    company_aliases: [Assystem India, Assystem STUP, Assystem]
+    employer_type: Engineering consultancy
+    sectors: [Nuclear, Power, Transportation, Infrastructure]
+    official_careers_url: https://jobs.assystem.com/
+    job_host: jobs.assystem.com
+    ats_family: Public careers portal
+    source_mode: staged_direct
+    source_ids: []
+    alert_supported: true
+    priority: 1
+    status: STAGED_NEEDS_LIVE_PROOF
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: aecom_india
+    company: AECOM India
+    country: India
+    regions: [India, Global]
+    local_entities: [AECOM India Private Limited]
+    company_aliases: [AECOM India, AECOM]
+    employer_type: Engineering consultancy
+    sectors: [Infrastructure, Water, Energy, Environment]
+    official_careers_url: https://aecom.com/careers/
+    job_host: aecom.com
+    ats_family: Public careers portal
+    source_mode: gmail_alert
+    source_ids: []
+    alert_supported: true
+    priority: 1
+    status: ACTIVE_GMAIL_ALERT
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: mott_macdonald_india
+    company: Mott MacDonald India
+    country: India
+    regions: [India, Global]
+    local_entities: [Mott MacDonald India]
+    company_aliases: [Mott MacDonald India, Mott MacDonald]
+    employer_type: Engineering consultancy
+    sectors: [Infrastructure, Water, Energy, Nuclear, Transportation]
+    official_careers_url: https://www.mottmac.com/careers/
+    job_host: www.mottmac.com
+    ats_family: Public careers portal
+    source_mode: gmail_alert
+    source_ids: []
+    alert_supported: true
+    priority: 1
+    status: ACTIVE_GMAIL_ALERT
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: tractebel_india
+    company: Tractebel India
+    country: India
+    regions: [India, Middle East, Europe, Africa]
+    local_entities: [Tractebel Engineering India]
+    company_aliases: [Tractebel India, Tractebel]
+    employer_type: Engineering consultancy
+    sectors: [Nuclear, Power, Water, Infrastructure]
+    official_careers_url: https://tractebel-engie.com/en/careers
+    job_host: tractebel-engie.com
+    ats_family: Public careers portal
+    source_mode: gmail_alert
+    source_ids: []
+    alert_supported: true
+    priority: 1
+    status: ACTIVE_GMAIL_ALERT
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: thermax
+    company: Thermax
+    country: India
+    regions: [India, Middle East, Asia Pacific, Europe, Africa]
+    local_entities: [Thermax Limited]
+    company_aliases: [Thermax, Thermax Limited]
+    employer_type: Engineering manufacturer and EPC contractor
+    sectors: [Energy, Environment, Water, Chemicals, Industrial]
+    official_careers_url: https://www.thermaxglobal.com/careers/
+    job_host: www.thermaxglobal.com
+    ats_family: Public careers portal
+    source_mode: staged_direct
+    source_ids: []
+    alert_supported: true
+    priority: 1
+    status: STAGED_NEEDS_LIVE_PROOF
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: praj_industries
+    company: Praj Industries
+    country: India
+    regions: [India, Global]
+    local_entities: [Praj Industries Limited]
+    company_aliases: [Praj, Praj Industries]
+    employer_type: Engineering and technology company
+    sectors: [Bioenergy, Process Plants, Water, Chemicals]
+    official_careers_url: https://www.praj.net/careers/
+    job_host: www.praj.net
+    ats_family: Public careers portal
+    source_mode: staged_direct
+    source_ids: []
+    alert_supported: true
+    priority: 1
+    status: STAGED_NEEDS_LIVE_PROOF
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: pdil
+    company: Projects and Development India
+    country: India
+    regions: [India]
+    local_entities: [PDIL]
+    company_aliases: [PDIL, Projects and Development India]
+    employer_type: Public-sector engineering consultancy
+    sectors: [Fertilizer, Chemicals, Oil and Gas, Infrastructure]
+    official_careers_url: https://pdilin.com/careers
+    job_host: pdilin.com
+    ats_family: Public recruitment notice
+    source_mode: public_notice
+    source_ids: []
+    alert_supported: false
+    priority: 1
+    status: ACTIVE_PUBLIC_NOTICE
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: mecon
+    company: MECON
+    country: India
+    regions: [India]
+    local_entities: [MECON Limited]
+    company_aliases: [MECON, MECON Limited]
+    employer_type: Public-sector engineering consultancy
+    sectors: [Metals, Mining, Power, Oil and Gas, Infrastructure]
+    official_careers_url: https://www.meconlimited.co.in/careers
+    job_host: www.meconlimited.co.in
+    ats_family: Public recruitment notice
+    source_mode: public_notice
+    source_ids: []
+    alert_supported: false
+    priority: 1
+    status: ACTIVE_PUBLIC_NOTICE
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
+
+  - company_id: egis_india
+    company: Egis India
+    country: India
+    regions: [India, Middle East, Europe, Asia Pacific]
+    local_entities: [Egis India Consulting Engineers]
+    company_aliases: [Egis India, Egis]
+    employer_type: Engineering consultancy
+    sectors: [Infrastructure, Nuclear, Transportation, Water, Buildings]
+    official_careers_url: https://careers.egis-group.com/
+    job_host: careers.egis-group.com
+    ats_family: Public careers portal
+    source_mode: gmail_alert
+    source_ids: []
+    alert_supported: true
+    priority: 1
+    status: ACTIVE_GMAIL_ALERT
+    verified_at: 2026-07-23
+    last_success_at: ''
+    last_job_seen_at: ''
+    blocked_reason: ''
