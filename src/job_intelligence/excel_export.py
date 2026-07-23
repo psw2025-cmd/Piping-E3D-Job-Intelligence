@@ -18,12 +18,39 @@ REQUIRED_SHEETS = (
     "Manual_Review",
     "Applied",
     "Follow_Up",
+    "Rejected",
     "Expired",
     "Recruiter_Contacts",
     "Source_Health",
     "Source_Evidence",
     "Private_Imports",
     "Run_Proof",
+    "Daily_Summary",
+)
+REQUIRED_JOB_COLUMNS = (
+    "title",
+    "normalized_role",
+    "company",
+    "location",
+    "city",
+    "country",
+    "apply_url",
+    "source_name",
+    "source_url",
+    "published_at",
+    "closing_at",
+    "experience_text",
+    "software_text",
+    "sector",
+    "employment_type",
+    "match_score",
+    "match_reasons",
+    "gaps",
+    "recruiter_email",
+    "contact_source_url",
+    "contact_confidence",
+    "duplicate_status",
+    "application_status",
 )
 _FORMULA_PREFIXES = ("=", "+", "-", "@")
 
@@ -61,6 +88,40 @@ def _format_workbook(path: Path) -> None:
             width = min(max(maximum + 2, 10), 55)
             sheet.column_dimensions[column_cells[0].column_letter].width = width
     workbook.save(path)
+
+
+def _daily_summary(
+    *,
+    jobs: pd.DataFrame,
+    new_today: pd.DataFrame,
+    high_priority: pd.DataFrame,
+    active: pd.DataFrame,
+    manual_review: pd.DataFrame,
+    applied: pd.DataFrame,
+    follow_up: pd.DataFrame,
+    rejected: pd.DataFrame,
+    expired: pd.DataFrame,
+    contacts: pd.DataFrame,
+    source_health: pd.DataFrame,
+) -> pd.DataFrame:
+    source_status = source_health.get("status", pd.Series(dtype="string"))
+    metrics = (
+        ("generated_at", datetime.now(UTC).replace(microsecond=0).isoformat()),
+        ("total_jobs", len(jobs)),
+        ("new_today", len(new_today)),
+        ("high_priority", len(high_priority)),
+        ("active", len(active)),
+        ("manual_review", len(manual_review)),
+        ("applied", len(applied)),
+        ("follow_up", len(follow_up)),
+        ("rejected", len(rejected)),
+        ("expired", len(expired)),
+        ("recruiter_contacts", len(contacts)),
+        ("sources_total", len(source_health)),
+        ("sources_passing", int(source_status.isin(["pass", "pass_with_warnings"]).sum())),
+        ("sources_failing", int(source_status.eq("fail").sum())),
+    )
+    return pd.DataFrame(metrics, columns=("metric", "value"))
 
 
 def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
@@ -106,15 +167,29 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
     confidence = jobs.get("contact_confidence", pd.Series(dtype="string"))
     job_keys = jobs.get("job_key", pd.Series(dtype="string")).astype(str)
     manual_review = jobs[
-        confidence.isin(["PUBLIC_UNVERIFIED", "PATTERN_SUGGESTION"])
+        confidence.isin(["PUBLIC_UNVERIFIED", "PATTERN_SUGGESTION", "ALERT_SUPPLIED"])
         | statuses.eq("review_required")
         | job_keys.isin(review_job_keys)
     ]
     applied = jobs[statuses.eq("applied")]
     follow_up = jobs[statuses.eq("follow_up")]
+    rejected = jobs[statuses.eq("rejected")]
     expired = jobs[statuses.eq("expired")]
     emails = jobs.get("recruiter_email", pd.Series(dtype="string"))
     contacts = jobs[emails.fillna("").astype(str).str.len() > 0]
+    daily_summary = _daily_summary(
+        jobs=jobs,
+        new_today=new_today,
+        high_priority=high_priority,
+        active=active,
+        manual_review=manual_review,
+        applied=applied,
+        follow_up=follow_up,
+        rejected=rejected,
+        expired=expired,
+        contacts=contacts,
+        source_health=source_health,
+    )
 
     sheets = {
         "New_Today": new_today,
@@ -123,12 +198,14 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
         "Manual_Review": manual_review,
         "Applied": applied,
         "Follow_Up": follow_up,
+        "Rejected": rejected,
         "Expired": expired,
         "Recruiter_Contacts": contacts,
         "Source_Health": source_health,
         "Source_Evidence": source_evidence,
         "Private_Imports": private_imports,
         "Run_Proof": run_proof,
+        "Daily_Summary": daily_summary,
     }
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         for sheet_name, frame in sheets.items():
@@ -154,4 +231,12 @@ def verify_excel(path: str | Path) -> list[str]:
     missing = [sheet for sheet in REQUIRED_SHEETS if sheet not in workbook.sheetnames]
     if missing:
         errors.append(f"Missing sheets: {', '.join(missing)}")
+    if "All_Active" in workbook.sheetnames:
+        headers = {
+            str(cell.value or "").strip()
+            for cell in next(workbook["All_Active"].iter_rows(min_row=1, max_row=1))
+        }
+        missing_columns = [column for column in REQUIRED_JOB_COLUMNS if column not in headers]
+        if missing_columns:
+            errors.append(f"Missing job columns: {', '.join(missing_columns)}")
     return errors

@@ -13,25 +13,35 @@ def utc_now_iso() -> str:
 class JobRecord:
     title: str
     company: str
+    normalized_role: str = ""
     location: str = ""
+    city: str = ""
+    country: str = ""
     description: str = ""
     apply_url: str = ""
     source_url: str = ""
     source_name: str = "manual"
     published_at: str = ""
+    closing_at: str = ""
     found_at: str = field(default_factory=utc_now_iso)
     last_seen_at: str = field(default_factory=utc_now_iso)
     job_type: str = ""
+    employment_type: str = ""
     salary_text: str = ""
     experience_text: str = ""
     skills_text: str = ""
+    software_text: str = ""
+    sector: str = ""
+    agency_name: str = ""
     recruiter_name: str = ""
     recruiter_email: str = ""
+    contact_source_url: str = ""
     contact_confidence: str = ""
     match_score: int = 0
     match_reasons: str = ""
     gaps: str = ""
     priority: str = "normal"
+    duplicate_status: str = "unique"
     application_status: str = "new"
     job_key: str = ""
 
@@ -44,11 +54,17 @@ class JobRecord:
             part
             for part in (
                 self.title,
+                self.normalized_role,
                 self.company,
                 self.location,
+                self.city,
+                self.country,
                 self.description,
                 self.skills_text,
+                self.software_text,
                 self.experience_text,
+                self.sector,
+                self.employment_type,
             )
             if part
         ).lower()
