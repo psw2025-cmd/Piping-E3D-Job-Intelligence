@@ -8,7 +8,7 @@ from .greenhouse import collect_greenhouse
 from .http_client import HttpClient
 from .lever import collect_lever
 from .oracle_hcm import collect_oracle_hcm
-from .public_html import collect_public_html
+from .public_html_secure import collect_public_html
 from .public_notice_adaptive import collect_public_notice_adaptive
 from .rss import collect_rss
 from .sitemap import collect_sitemap

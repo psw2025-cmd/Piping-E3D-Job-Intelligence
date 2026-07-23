@@ -86,6 +86,7 @@ def _source_result(
             "rate_limit_per_minute", 10
         ),
         max_redirects=proof_source.int_option("max_redirects", 5, minimum=0),
+        allowed_domains=proof_source.text_list_option("allowed_domains") or None,
     )
     try:
         collector = COLLECTORS[proof_source.source_type]

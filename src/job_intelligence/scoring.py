@@ -227,7 +227,11 @@ def score_job(
     config_dir: str | Path | None = None,
     profile: ScoringProfile | None = None,
 ) -> MatchResult:
-    resolved = _resolve_config_dir(config_dir)
+    resolved = (
+        None
+        if profile is not None and config_dir is None
+        else _resolve_config_dir(config_dir)
+    )
     if resolved is not None:
         enrich_job(job, config_dir=resolved)
     active = profile or load_scoring_profile(resolved)

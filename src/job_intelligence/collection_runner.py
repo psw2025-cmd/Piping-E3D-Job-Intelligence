@@ -167,6 +167,7 @@ def collect_sources(
                 ),
                 rate_limit_per_minute=source.int_option("rate_limit_per_minute", 30),
                 max_redirects=source.int_option("max_redirects", 5, minimum=0),
+                allowed_domains=source.text_list_option("allowed_domains") or None,
             )
         )
         result = None

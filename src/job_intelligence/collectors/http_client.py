@@ -4,6 +4,7 @@ import ipaddress
 import json
 import socket
 import time
+from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol
 from urllib.parse import urljoin, urlsplit
@@ -104,6 +105,7 @@ class SafeHttpClient:
         user_agent: str = DEFAULT_USER_AGENT,
         rate_limit_per_minute: int = 30,
         max_redirects: int = 5,
+        allowed_domains: Iterable[str] | None = None,
         session: requests.Session | None = None,
     ) -> None:
         if timeout_seconds < 1:
@@ -118,6 +120,11 @@ class SafeHttpClient:
         self.max_response_bytes = max_response_bytes
         self.user_agent = user_agent
         self.max_redirects = max_redirects
+        self.allowed_domains = frozenset(
+            str(domain).strip().lower()
+            for domain in (allowed_domains or ())
+            if str(domain).strip()
+        )
         self.minimum_interval = 60.0 / rate_limit_per_minute
         self._last_request_at = 0.0
         self.session = session or requests.Session()
@@ -139,6 +146,10 @@ class SafeHttpClient:
 
     def _validate_target(self, url: str) -> None:
         validate_public_http_url(url)
+        parsed = urlsplit(url)
+        host = (parsed.hostname or "").lower()
+        if self.allowed_domains and host not in self.allowed_domains:
+            raise ValueError(f"URL host is outside allowed domains: {url}")
         _validate_resolved_host(url)
 
     def _read_limited_content(self, response: requests.Response) -> bytes:
