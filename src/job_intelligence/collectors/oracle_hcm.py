@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 from typing import Any
 from urllib.parse import urljoin
 
@@ -63,8 +64,16 @@ def _page_fingerprint(rows: list[dict[str, Any]]) -> str:
     return hashlib.sha256(json_bytes(identities)).hexdigest()
 
 
+def _contains_phrase(text: str, term: str) -> bool:
+    cleaned = " ".join(term.casefold().split())
+    if not cleaned:
+        return False
+    pattern = re.escape(cleaned).replace(r"\ ", r"\s+")
+    return re.search(rf"(?<![a-z0-9]){pattern}(?![a-z0-9])", text.casefold()) is not None
+
+
 def _matches_terms(text: str, terms: tuple[str, ...]) -> bool:
-    return not terms or any(term in text for term in terms)
+    return not terms or any(_contains_phrase(text, term) for term in terms)
 
 
 def _job_from_row(
@@ -94,7 +103,7 @@ def _job_from_row(
     location_terms = spec.text_list_option("location_terms")
     if not _matches_terms(searchable, include_terms):
         return None
-    if not _matches_terms(location.lower(), location_terms):
+    if not _matches_terms(location, location_terms):
         return None
 
     apply_url = urljoin(
