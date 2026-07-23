@@ -60,13 +60,15 @@ jobs:
           job-intel --db tmp/jobs.db verify \
             --output tmp/Piping_E3D_Jobs.xlsx
 
-      - name: Cloud daily runner offline proof
+      - name: Cloud daily runner and coverage bundle offline proof
         shell: bash
         run: |
           python scripts/run_cloud_daily.py \
             --sources config/sources.ci.yaml \
             --output tmp/cloud-daily \
             --allow-no-sources
+          python scripts/append_daily_coverage.py \
+            --output tmp/cloud-daily
           test -f tmp/cloud-daily/SUMMARY.md
           test -f tmp/cloud-daily/status.json
           test -f tmp/cloud-daily/run.log
@@ -75,12 +77,21 @@ jobs:
           test -f tmp/cloud-daily/Piping_E3D_Daily_Bundle.zip
           python - <<'PY'
           import json
+          import zipfile
           from pathlib import Path
 
+          output = Path("tmp/cloud-daily")
           status = json.loads(
-              Path("tmp/cloud-daily/status.json").read_text(encoding="utf-8")
+              (output / "status.json").read_text(encoding="utf-8")
           )
           assert status["exit_code"] == 0
           assert status["verified"] is True
+          assert status["coverage_verified"] is True
           assert status["collection_status"] == "no_sources"
+          assert status["coverage_company_count"] >= 31
+          with zipfile.ZipFile(output / "Piping_E3D_Daily_Bundle.zip") as archive:
+              names = set(archive.namelist())
+              assert any(name.endswith("Piping_E3D_Jobs.xlsx") for name in names)
+              assert any(name.endswith("status.json") for name in names)
+              assert any(name.endswith("SUMMARY.md") for name in names)
           PY
