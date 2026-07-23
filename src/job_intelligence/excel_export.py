@@ -100,7 +100,8 @@ def _format_workbook(path: Path) -> None:
             values = [str(cell.value or "") for cell in list(column_cells)[:200]]
             maximum = max((len(value) for value in values), default=0)
             sheet.column_dimensions[column_cells[0].column_letter].width = min(
-                max(maximum + 2, 10), 55
+                max(maximum + 2, 10),
+                55,
             )
     workbook.save(path)
 
@@ -125,6 +126,8 @@ def _daily_summary(
     gmail_status = gmail_alerts.get("status", pd.Series(dtype="string"))
     countries = active.get("country", pd.Series(dtype="string"))
     companies = active.get("company", pd.Series(dtype="string"))
+    source_passes = source_status.isin(["pass", "pass_with_warnings"])
+    gmail_complete = gmail_status.str.startswith("complete", na=False)
     metrics = (
         ("generated_at", datetime.now(UTC).replace(microsecond=0).isoformat()),
         ("raw_source_rows", len(jobs)),
@@ -141,10 +144,10 @@ def _daily_summary(
         ("expired", len(expired)),
         ("recruiter_contacts", len(contacts)),
         ("sources_total", len(source_health)),
-        ("sources_passing", int(source_status.isin(["pass", "pass_with_warnings"]).sum())),
+        ("sources_passing", int(source_passes.sum())),
         ("sources_failing", int(source_status.eq("fail").sum())),
         ("gmail_messages", len(gmail_alerts)),
-        ("gmail_complete", int(gmail_status.str.startswith("complete", na=False).sum())),
+        ("gmail_complete", int(gmail_complete.sum())),
         ("gmail_failed", int(gmail_status.eq("failed").sum())),
     )
     return pd.DataFrame(metrics, columns=("metric", "value"))
@@ -161,23 +164,28 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
 
     with connect(db_path) as connection:
         source_health = pd.read_sql_query(
-            "SELECT * FROM source_health ORDER BY last_attempt_at DESC", connection
+            "SELECT * FROM source_health ORDER BY last_attempt_at DESC",
+            connection,
         )
         source_evidence = pd.read_sql_query(
-            "SELECT * FROM source_evidence ORDER BY fetched_at DESC", connection
+            "SELECT * FROM source_evidence ORDER BY fetched_at DESC",
+            connection,
         )
         private_imports = pd.read_sql_query(
-            "SELECT * FROM private_imports ORDER BY imported_at DESC", connection
+            "SELECT * FROM private_imports ORDER BY imported_at DESC",
+            connection,
         )
         gmail_alerts = pd.read_sql_query(
-            "SELECT * FROM gmail_alert_messages ORDER BY imported_at DESC", connection
+            "SELECT * FROM gmail_alert_messages ORDER BY imported_at DESC",
+            connection,
         )
         gmail_alert_jobs = pd.read_sql_query(
             "SELECT * FROM gmail_alert_jobs ORDER BY message_id, candidate_index",
             connection,
         )
         run_proof = pd.read_sql_query(
-            "SELECT * FROM runs ORDER BY started_at DESC", connection
+            "SELECT * FROM runs ORDER BY started_at DESC",
+            connection,
         )
 
     statuses = jobs.get("application_status", pd.Series(dtype="string"))
@@ -199,8 +207,11 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
 
     confidence = jobs.get("contact_confidence", pd.Series(dtype="string"))
     job_keys = jobs.get("job_key", pd.Series(dtype="string")).astype(str)
+    uncertain_contacts = confidence.isin(
+        ["PUBLIC_UNVERIFIED", "PATTERN_SUGGESTION", "ALERT_SUPPLIED"]
+    )
     manual_review = jobs[
-        confidence.isin(["PUBLIC_UNVERIFIED", "PATTERN_SUGGESTION", "ALERT_SUPPLIED"])
+        uncertain_contacts
         | statuses.eq("review_required")
         | job_keys.isin(review_job_keys)
     ]
@@ -256,7 +267,9 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         for sheet_name, frame in sheets.items():
             _safe_excel_frame(frame).to_excel(
-                writer, sheet_name=sheet_name, index=False
+                writer,
+                sheet_name=sheet_name,
+                index=False,
             )
     _format_workbook(output)
     return output
@@ -279,10 +292,14 @@ def verify_excel(path: str | Path) -> list[str]:
             str(cell.value or "").strip()
             for cell in next(workbook["All_Active"].iter_rows(min_row=1, max_row=1))
         }
-        missing_columns = [column for column in REQUIRED_JOB_COLUMNS if column not in headers]
+        missing_columns = [
+            column for column in REQUIRED_JOB_COLUMNS if column not in headers
+        ]
         if missing_columns:
             errors.append(f"Missing job columns: {', '.join(missing_columns)}")
-        missing_dedup = [column for column in REQUIRED_DEDUP_COLUMNS if column not in headers]
+        missing_dedup = [
+            column for column in REQUIRED_DEDUP_COLUMNS if column not in headers
+        ]
         if missing_dedup:
             errors.append(f"Missing dedup columns: {', '.join(missing_dedup)}")
     return errors
