@@ -17,9 +17,12 @@ _SUPPORTED_TYPES = {
     "smartrecruiters",
     "rss",
     "sitemap",
+    "workday",
 }
 _SOURCE_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9_-]{1,63}$")
 _SITE_NUMBER_PATTERN = re.compile(r"^[A-Za-z0-9_-]{1,80}$")
+_WORKDAY_IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z0-9_.-]{1,100}$")
+_LOCALE_PATTERN = re.compile(r"^[a-z]{2}(?:-[A-Z]{2})?$")
 _DOMAIN_PATTERN = re.compile(r"^[a-z0-9.-]+$", re.IGNORECASE)
 _POLICY_DEFAULTS = {
     "respect_robots_txt": True,
@@ -195,14 +198,19 @@ def _validate_public_html(spec: SourceSpec) -> None:
     spec.bool_option("deny_on_robots_error", True)
 
 
-def _validate_oracle_source(spec: SourceSpec) -> None:
-    base_url = spec.require_text("base_url")
-    _validate_public_url(base_url, spec.source_id, "base_url")
+def _validate_https_origin(spec: SourceSpec, field: str) -> str:
+    base_url = spec.require_text(field)
+    _validate_public_url(base_url, spec.source_id, field)
     parsed = urlsplit(base_url)
     if parsed.scheme != "https" or parsed.path not in {"", "/"}:
         raise ValueError(
-            f"source {spec.source_id!r} base_url must be an HTTPS origin"
+            f"source {spec.source_id!r} {field} must be an HTTPS origin"
         )
+    return base_url
+
+
+def _validate_oracle_source(spec: SourceSpec) -> None:
+    _validate_https_origin(spec, "base_url")
     site_number = spec.require_text("site_number")
     if not _SITE_NUMBER_PATTERN.fullmatch(site_number):
         raise ValueError(
@@ -211,6 +219,24 @@ def _validate_oracle_source(spec: SourceSpec) -> None:
     spec.text_list_option("include_terms")
     spec.text_list_option("location_terms")
     spec.int_option("max_scan_items", 2500)
+
+
+def _validate_workday_source(spec: SourceSpec) -> None:
+    _validate_https_origin(spec, "base_url")
+    for field in ("tenant", "site"):
+        value = spec.require_text(field)
+        if not _WORKDAY_IDENTIFIER_PATTERN.fullmatch(value):
+            raise ValueError(
+                f"source {spec.source_id!r} {field} contains invalid characters"
+            )
+    locale = str(spec.options.get("locale", "en-US")).strip()
+    if not _LOCALE_PATTERN.fullmatch(locale):
+        raise ValueError(f"source {spec.source_id!r} has invalid locale {locale!r}")
+    _require_text_list(spec, "search_terms")
+    _require_text_list(spec, "include_terms")
+    _validate_optional_text_list(spec, "location_terms")
+    spec.int_option("page_size", 20)
+    spec.int_option("max_scan_items", 3000)
 
 
 def _validate_source(spec: SourceSpec) -> None:
@@ -233,6 +259,8 @@ def _validate_source(spec: SourceSpec) -> None:
             )
     elif spec.source_type == "oracle_hcm":
         _validate_oracle_source(spec)
+    elif spec.source_type == "workday":
+        _validate_workday_source(spec)
     elif spec.source_type == "public_html":
         _validate_public_html(spec)
     elif spec.source_type == "smartrecruiters":
