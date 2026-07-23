@@ -1,6 +1,6 @@
 # Public-source registry.
 # Never place credentials, private portals, cookies, CV data or recruiter lists here.
-# McDermott, Wood, Bechtel and Petrofac sources were verified read-only on 2026-07-23.
+# Enabled sources are verified public read-only employer career sources.
 sources:
   - id: mcdermott_oracle
     name: McDermott official Oracle careers
@@ -75,6 +75,130 @@ sources:
     max_scan_items: 3000
     max_pages: 30
     page_size: 100
+
+  - id: technip_energies_oracle
+    name: Technip Energies official Oracle careers
+    type: oracle_hcm
+    company: Technip Energies
+    base_url: https://hcxg.fa.em2.oraclecloud.com
+    site_number: CX_1
+    enabled: true
+    include_terms:
+      - piping
+      - pipe layout
+      - plant layout
+      - e3d
+      - pdms
+      - sp3d
+      - smart 3d
+      - pipe support
+      - field piping
+      - offshore piping
+    location_terms:
+      - india
+      - united arab emirates
+      - qatar
+      - saudi arabia
+      - oman
+      - kuwait
+      - bahrain
+      - malaysia
+      - singapore
+      - united kingdom
+      - france
+      - italy
+      - netherlands
+      - canada
+      - australia
+      - united states
+    timeout_seconds: 30
+    rate_limit_per_minute: 45
+    max_response_bytes: 5000000
+    max_items: 300
+    max_scan_items: 4000
+    max_pages: 40
+    page_size: 100
+
+  - id: fluor_successfactors
+    name: Fluor official engineering and design careers
+    type: public_html
+    company: Fluor
+    url: https://thrivecareers.fluor.com/go/Engineering-%26-Design/9791200/
+    page_url_template: https://thrivecareers.fluor.com/go/Engineering-%26-Design/9791200/{page}/?q=&sortColumn=referencedate&sortDirection=desc
+    page_start: 0
+    page_step: 100
+    max_pages: 12
+    allowed_domains:
+      - thrivecareers.fluor.com
+    job_link_patterns:
+      - /job/
+    anchor_text_patterns:
+      - piping
+      - pipe support
+      - piping design
+      - piping designer
+      - plant design
+      - plant layout
+      - e3d
+      - pdms
+      - sp3d
+      - smart 3d
+    exclude_anchor_text_patterns:
+      - pipefitter
+      - welder
+      - craft
+      - laborer
+    fetch_details: true
+    deny_on_robots_error: true
+    enabled: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 20
+    max_response_bytes: 5000000
+    max_items: 250
+    max_redirects: 5
+
+  - id: saipem_card_board
+    name: Saipem official global job board
+    type: card_html
+    company: Saipem
+    url: https://jobs.saipem.com/
+    allowed_domains:
+      - jobs.saipem.com
+    job_link_patterns:
+      - weekdayjduid=
+    include_terms:
+      - piping
+      - pipe layout
+      - piping designer
+      - piping engineer
+      - piping supervisor
+      - piping lead
+      - piping flexibility
+      - piping material
+      - piping quantity
+      - piping draftsman
+      - draftsman (piping)
+      - e3d
+      - pdms
+      - sp3d
+      - smart 3d
+      - plant layout
+      - pipe support
+    location_terms: []
+    exclude_terms:
+      - electrical piping
+    closed_text_patterns:
+      - position is no longer available
+      - job is no longer available
+      - vacancy has been closed
+    deny_on_robots_error: true
+    enabled: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 15
+    max_response_bytes: 8000000
+    max_items: 250
+    max_pages: 1
+    max_redirects: 5
 
   - id: bechtel_successfactors
     name: Bechtel official SAP SuccessFactors careers
