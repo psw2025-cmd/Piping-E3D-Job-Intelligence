@@ -36,6 +36,9 @@ role_families:
     - designer - piping
     - piping draughtsman
     - piping draftsman
+    - dessinateur projeteur e3d
+    - dessinateur projeteur pdms
+    - dessinateur projeteur e3d pdms
   Piping Modeller:
     - piping modeller
     - piping modeler
@@ -81,11 +84,13 @@ role_families:
   Specialist Piping Engineer:
     - specialist piping engineer
     - principal engineer piping
+    - responsable delivery piping
   3D Modelling Manager:
     - 3d modelling engineering manager
     - 3d modeling engineering manager
     - 3d model manager
     - plant model manager
+    - catalogue manager e3d
 
 locations:
   india_priority:
@@ -161,30 +166,35 @@ location_aliases:
   Yanbu: {country: Saudi Arabia, aliases: [yanbu]}
 
 country_aliases:
-  Argentina: [argentina]
+  Argentina: [argentina, ar]
   Azerbaijan: [azerbaijan]
   Iraq: [iraq]
-  Mexico: [mexico]
-  Brazil: [brazil]
-  Chile: [chile]
-  Peru: [peru]
-  Colombia: [colombia]
-  Indonesia: [indonesia]
-  Thailand: [thailand]
-  Vietnam: [vietnam]
-  Philippines: [philippines]
-  Belgium: [belgium]
-  Sweden: [sweden]
-  Denmark: [denmark]
-  Finland: [finland]
-  Poland: [poland]
-  Romania: [romania]
-  New Zealand: [new zealand]
-  Taiwan: [taiwan]
-  Brunei: [brunei]
-  Algeria: [algeria]
-  Morocco: [morocco]
-  Namibia: [namibia]
+  Mexico: [mexico, mx]
+  Brazil: [brazil, br]
+  Chile: [chile, cl]
+  Peru: [peru, pe]
+  Colombia: [colombia, co]
+  Indonesia: [indonesia, id]
+  Thailand: [thailand, th]
+  Vietnam: [vietnam, vn]
+  Philippines: [philippines, ph]
+  Belgium: [belgium, be]
+  Sweden: [sweden, se]
+  Denmark: [denmark, dk]
+  Finland: [finland, fi]
+  Poland: [poland, pl]
+  Romania: [romania, ro]
+  France: [france, fr]
+  Norway: [norway, no]
+  Qatar: [qatar, qa]
+  Saudi Arabia: [saudi arabia, ksa, sa]
+  United Arab Emirates: [united arab emirates, uae, ae]
+  New Zealand: [new zealand, nz]
+  Taiwan: [taiwan, tw]
+  Brunei: [brunei, bn]
+  Algeria: [algeria, dz]
+  Morocco: [morocco, ma]
+  Namibia: [namibia, na]
 
 workday_country_codes:
   US: United States
