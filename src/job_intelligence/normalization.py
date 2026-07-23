@@ -49,18 +49,6 @@ def _terms(value: Any) -> tuple[str, ...]:
     )
 
 
-def _alias_groups(value: Any) -> tuple[tuple[str, tuple[str, ...]], ...]:
-    if not isinstance(value, dict):
-        return ()
-    groups: list[tuple[str, tuple[str, ...]]] = []
-    for canonical, aliases in value.items():
-        canonical_text = str(canonical).strip()
-        values = _terms(aliases)
-        if canonical_text and values:
-            groups.append((canonical_text, values))
-    return tuple(groups)
-
-
 def _combined_alias_groups(*values: Any) -> tuple[tuple[str, tuple[str, ...]], ...]:
     combined: dict[str, list[str]] = {}
     order: list[str] = []
@@ -152,12 +140,19 @@ def load_profile_taxonomy(config_dir: str | Path) -> ProfileTaxonomy:
     )
 
 
+def _normalized_phrase(value: str) -> str:
+    value = re.sub(r"\bsr\.?\b", "senior", value.lower())
+    value = re.sub(r"\bjr\.?\b", "junior", value)
+    return " ".join(re.sub(r"[^a-z0-9]+", " ", value).split())
+
+
 def _contains_phrase(text: str, phrase: str) -> bool:
-    cleaned = " ".join(phrase.lower().split())
+    cleaned = _normalized_phrase(phrase)
+    haystack = _normalized_phrase(text)
     if not cleaned:
         return False
     pattern = re.escape(cleaned).replace(r"\ ", r"\s+")
-    return re.search(rf"(?<![a-z0-9]){pattern}(?![a-z0-9])", text) is not None
+    return re.search(rf"(?<![a-z0-9]){pattern}(?![a-z0-9])", haystack) is not None
 
 
 def _first_match(
@@ -168,7 +163,7 @@ def _first_match(
     for order, (canonical, aliases) in enumerate(groups):
         for alias in aliases:
             if _contains_phrase(text, alias):
-                candidates.append((len(alias), -order, canonical))
+                candidates.append((len(_normalized_phrase(alias)), -order, canonical))
     return max(candidates, default=(0, 0, ""))[2]
 
 
@@ -184,7 +179,7 @@ def _all_matches(
 
 
 def normalize_title_role(title: str, taxonomy: ProfileTaxonomy) -> str:
-    title_text = " ".join(title.lower().split())
+    title_text = _normalized_phrase(title)
     if any(_contains_phrase(title_text, term) for term in taxonomy.negative_role_terms):
         return ""
     return _first_match(title_text, taxonomy.role_families)
@@ -194,7 +189,7 @@ def normalize_role(job: JobRecord, taxonomy: ProfileTaxonomy) -> str:
     title_match = normalize_title_role(job.title, taxonomy)
     if title_match:
         return title_match
-    title_text = " ".join(job.title.lower().split())
+    title_text = _normalized_phrase(job.title)
     context = f"{title_text} {job.description[:2000].lower()}"
     return _first_match(context, taxonomy.role_families)
 
