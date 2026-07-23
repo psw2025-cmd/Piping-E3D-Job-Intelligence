@@ -59,7 +59,7 @@ def _production_source(source_id: str) -> SourceSpec:
 def test_fluor_source_filters_craft_role_and_parses_public_job() -> None:
     production = _production_source("fluor_successfactors")
     spec = replace(production, options={**production.options, "max_pages": 1})
-    listing_url = spec.require_text("url")
+    listing_url = spec.require_text("page_url_template").format(page=0)
     detail_url = (
         "https://thrivecareers.fluor.com/job/Greenville-"
         "Design-Engineer-II-Piping-SC/1370488600/"
@@ -136,9 +136,7 @@ def test_saipem_card_source_filters_on_card_context_and_parses_detail() -> None:
         "datePosted": "2026-06-03",
         "validThrough": "2026-12-31",
         "hiringOrganization": {"name": "Saipem"},
-        "jobLocation": {
-            "address": {"addressCountry": "Offshore"}
-        },
+        "jobLocation": {"address": {"addressCountry": "Offshore"}},
         "url": detail_url,
     }
     detail_html = (
@@ -148,7 +146,13 @@ def test_saipem_card_source_filters_on_card_context_and_parses_detail() -> None:
     )
     client = FakeClient(
         {
-            robots_url: [response(robots_url, "User-agent: *\nAllow: /", content_type="text/plain")],
+            robots_url: [
+                response(
+                    robots_url,
+                    "User-agent: *\nAllow: /",
+                    content_type="text/plain",
+                )
+            ],
             listing_url: [response(listing_url, listing_html)],
             detail_url: [response(detail_url, detail_html)],
         }
