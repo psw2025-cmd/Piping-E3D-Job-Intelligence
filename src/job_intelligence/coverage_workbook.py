@@ -7,6 +7,7 @@ import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.styles import Font
 
+from .coverage_overrides import apply_worldwide_company_overrides
 from .coverage_proof import apply_coverage_proof
 from .coverage_registry import coverage_frames
 from .database import connect, fetch_jobs, init_database
@@ -81,9 +82,13 @@ def append_coverage_sheets(
             "SELECT * FROM source_health ORDER BY source_id",
             connection,
         )
-    frames = apply_coverage_proof(
-        coverage_frames(jobs, source_health, config_dir=config_dir)
+    frames = coverage_frames(jobs, source_health, config_dir=config_dir)
+    frames = apply_worldwide_company_overrides(
+        frames,
+        source_health,
+        config_dir=config_dir,
     )
+    frames = apply_coverage_proof(frames)
     with pd.ExcelWriter(
         workbook,
         engine="openpyxl",
