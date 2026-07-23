@@ -1,6 +1,6 @@
-# Public-source registry.
+# Worldwide public-source registry.
 # Never place credentials, private portals, cookies, CV data or recruiter lists here.
-# McDermott, Wood, Bechtel, Petrofac, KBR and AtkinsRealis sources were verified read-only on 2026-07-23.
+# McDermott, Wood, KBR, AtkinsRealis, Bechtel and Petrofac were verified read-only on 2026-07-23.
 sources:
   - id: mcdermott_oracle
     name: McDermott official Oracle careers
@@ -9,34 +9,29 @@ sources:
     base_url: https://edsv.fa.us2.oraclecloud.com
     site_number: CX_1
     enabled: true
-    include_terms:
+    profile_filter: true
+    include_terms: &global_profile_terms
       - piping
+      - pipe layout
+      - plant layout
+      - plant design
       - e3d
+      - aveva e3d
       - pdms
       - sp3d
-      - plant layout
+      - smart 3d
+      - smartplant 3d
       - pipe support
-    location_terms:
-      - india
-      - united arab emirates
-      - qatar
-      - saudi arabia
-      - oman
-      - kuwait
-      - bahrain
-      - malaysia
-      - singapore
-      - united kingdom
-      - europe
-      - canada
-      - australia
-      - united states
+      - piping stress
+      - piping materials
+      - 3d model
+    location_terms: []
     timeout_seconds: 30
     rate_limit_per_minute: 60
     max_response_bytes: 5000000
-    max_items: 250
-    max_scan_items: 3000
-    max_pages: 30
+    max_items: 300
+    max_scan_items: 5000
+    max_pages: 50
     page_size: 100
 
   - id: wood_oracle
@@ -46,34 +41,15 @@ sources:
     base_url: https://ehif.fa.em2.oraclecloud.com
     site_number: CX_1
     enabled: true
-    include_terms:
-      - piping
-      - e3d
-      - pdms
-      - sp3d
-      - plant layout
-      - pipe support
-    location_terms:
-      - india
-      - united arab emirates
-      - qatar
-      - saudi arabia
-      - oman
-      - kuwait
-      - bahrain
-      - malaysia
-      - singapore
-      - united kingdom
-      - europe
-      - canada
-      - australia
-      - united states
+    profile_filter: true
+    include_terms: *global_profile_terms
+    location_terms: []
     timeout_seconds: 30
     rate_limit_per_minute: 60
     max_response_bytes: 5000000
-    max_items: 250
-    max_scan_items: 3000
-    max_pages: 30
+    max_items: 300
+    max_scan_items: 5000
+    max_pages: 50
     page_size: 100
 
   - id: kbr_workday
@@ -92,18 +68,10 @@ sources:
       - smart 3d
       - plant layout
       - pipe support
-    include_terms:
-      - piping
-      - pipe layout
-      - e3d
-      - pdms
-      - sp3d
-      - smart 3d
-      - smartplant 3d
-      - plant layout
-      - pipe support
+    include_terms: *global_profile_terms
     location_terms: []
     enabled: true
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 30
     max_response_bytes: 5000000
@@ -129,18 +97,10 @@ sources:
       - smart 3d
       - plant layout
       - pipe support
-    include_terms:
-      - piping
-      - pipe layout
-      - e3d
-      - pdms
-      - sp3d
-      - smart 3d
-      - smartplant 3d
-      - plant layout
-      - pipe support
+    include_terms: *global_profile_terms
     location_terms: []
     enabled: true
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 30
     max_response_bytes: 5000000
@@ -163,17 +123,7 @@ sources:
       - jobs.bechtel.com
     job_link_patterns:
       - /job/
-    anchor_text_patterns:
-      - piping
-      - pipe
-      - s3d
-      - smart 3d
-      - smart3d
-      - e3d
-      - pdms
-      - plant layout
-      - model coordinator
-      - pipe support
+    anchor_text_patterns: *global_profile_terms
     exclude_anchor_text_patterns:
       - electrical
       - civil
@@ -182,6 +132,7 @@ sources:
     fetch_details: true
     deny_on_robots_error: true
     enabled: true
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 30
     max_response_bytes: 5000000
@@ -197,16 +148,7 @@ sources:
       - petrofac.referrals.selectminds.com
     job_link_patterns:
       - /jobs/
-    anchor_text_patterns:
-      - piping
-      - pipe
-      - e3d
-      - pdms
-      - sp3d
-      - plant layout
-      - mechanical designer
-      - model coordinator
-      - pipe support
+    anchor_text_patterns: *global_profile_terms
     exclude_anchor_text_patterns:
       - civil
       - structural
@@ -215,6 +157,7 @@ sources:
     fetch_details: true
     deny_on_robots_error: true
     enabled: true
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 20
     max_response_bytes: 5000000
@@ -231,16 +174,7 @@ sources:
       - petrofac.referrals.selectminds.com
     job_link_patterns:
       - /jobs/
-    anchor_text_patterns:
-      - piping
-      - pipe
-      - e3d
-      - pdms
-      - sp3d
-      - plant layout
-      - mechanical designer
-      - model coordinator
-      - pipe support
+    anchor_text_patterns: *global_profile_terms
     exclude_anchor_text_patterns:
       - civil
       - structural
@@ -249,6 +183,7 @@ sources:
     fetch_details: true
     deny_on_robots_error: true
     enabled: true
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 20
     max_response_bytes: 5000000
@@ -265,16 +200,7 @@ sources:
       - petrofac.referrals.selectminds.com
     job_link_patterns:
       - /jobs/
-    anchor_text_patterns:
-      - piping
-      - pipe
-      - e3d
-      - pdms
-      - sp3d
-      - plant layout
-      - mechanical designer
-      - model coordinator
-      - pipe support
+    anchor_text_patterns: *global_profile_terms
     exclude_anchor_text_patterns:
       - civil
       - structural
@@ -283,6 +209,7 @@ sources:
     fetch_details: true
     deny_on_robots_error: true
     enabled: true
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 20
     max_response_bytes: 5000000
@@ -290,12 +217,102 @@ sources:
     max_pages: 1
     max_redirects: 5
 
+  # Configured but disabled until source-specific live proof passes.
+  - id: worley_eightfold_html
+    name: Worley official Eightfold careers
+    type: public_html
+    company: Worley
+    url: https://jobs.worley.com/careers?query=piping&start=0
+    enabled: false
+    profile_filter: true
+    allowed_domains:
+      - jobs.worley.com
+    job_link_patterns:
+      - /careers/job/
+    anchor_text_patterns: *global_profile_terms
+    page_url_template: https://jobs.worley.com/careers?query=piping&start={page}
+    page_start: 0
+    page_step: 20
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 12
+    max_response_bytes: 8000000
+    max_items: 250
+    max_pages: 20
+
+  - id: fluor_eightfold_html
+    name: Fluor official Eightfold careers
+    type: public_html
+    company: Fluor
+    url: https://careers.fluor.com/careers?query=piping
+    enabled: false
+    profile_filter: true
+    allowed_domains:
+      - careers.fluor.com
+    job_link_patterns:
+      - /careers/job/
+    anchor_text_patterns: *global_profile_terms
+    page_url_template: https://careers.fluor.com/careers?query=piping&start={page}
+    page_start: 0
+    page_step: 20
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_response_bytes: 10000000
+    max_items: 250
+    max_pages: 30
+
+  - id: technip_energies_public_html
+    name: Technip Energies official careers
+    type: public_html
+    company: Technip Energies
+    url: https://careers.technipenergies.com/
+    enabled: false
+    profile_filter: true
+    allowed_domains:
+      - careers.technipenergies.com
+    job_link_patterns:
+      - /job/
+      - /jobs/
+    anchor_text_patterns: *global_profile_terms
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_response_bytes: 8000000
+    max_items: 250
+    max_pages: 1
+
+  - id: jacobs_public_html
+    name: Jacobs official careers
+    type: public_html
+    company: Jacobs
+    url: https://careers.jacobs.com/
+    enabled: false
+    profile_filter: true
+    allowed_domains:
+      - careers.jacobs.com
+    job_link_patterns:
+      - /job/
+      - /jobs/
+    anchor_text_patterns: *global_profile_terms
+    fetch_details: true
+    deny_on_robots_error: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+    max_response_bytes: 8000000
+    max_items: 250
+    max_pages: 1
+
   - id: example_greenhouse
     name: Example Greenhouse board
     type: greenhouse
     company: Example EPC
     board_token: replace-with-public-board-token
     enabled: false
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 20
     max_items: 500
@@ -307,6 +324,7 @@ sources:
     site: replace-with-public-site-name
     region: global
     enabled: false
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 20
     max_items: 500
@@ -318,6 +336,7 @@ sources:
     company: Example EPC
     company_identifier: replace-with-public-company-identifier
     enabled: false
+    profile_filter: true
     fetch_details: true
     timeout_seconds: 30
     rate_limit_per_minute: 20
@@ -331,6 +350,7 @@ sources:
     url: https://example.com/jobs.rss
     location: ""
     enabled: false
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 10
     max_items: 500
@@ -346,6 +366,7 @@ sources:
       - /careers/
       - /jobs/
     enabled: false
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 10
     max_items: 300
