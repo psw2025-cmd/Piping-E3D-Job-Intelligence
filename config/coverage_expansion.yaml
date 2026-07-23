@@ -185,7 +185,7 @@ country_aliases:
   Poland: [poland, pl]
   Romania: [romania, ro]
   France: [france, fr]
-  Norway: [norway, no]
+  Norway: [norway, "no"]
   Qatar: [qatar, qa]
   Saudi Arabia: [saudi arabia, ksa, sa]
   United Arab Emirates: [united arab emirates, uae, ae]
@@ -226,7 +226,7 @@ workday_country_codes:
   ZA: South Africa
   NG: Nigeria
   EG: Egypt
-  NO: Norway
+  "NO": Norway
   NL: Netherlands
   FR: France
   DE: Germany
