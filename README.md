@@ -1,8 +1,8 @@
 # Piping-E3D-Job-Intelligence
 
-Local-first job intelligence, matching and tracking for piping, AVEVA E3D, PDMS, offshore, refinery, nuclear and EPC opportunities.
+Worldwide, local-first job intelligence, matching and tracking for piping engineering, AVEVA E3D, PDMS, SP3D, offshore, refinery, nuclear and EPC opportunities.
 
-> **Current status:** verified public-source collection runs automatically in GitHub every day at 09:00 Asia/Kolkata. The private import layer supports text, PDF, Word, `.eml` email and review-required image OCR while keeping personal source files and evidence outside Git.
+> **Current status:** worldwide profile and workbook foundation is implemented. This Batch B2 branch expands verified official coverage to seven employers through nine public source definitions. The system still remains **limited verified employer coverage** until recruiter sources, additional EPC employers, authorized Gmail alerts and production reliability proof are completed.
 
 ## Safety boundaries
 
@@ -11,24 +11,34 @@ Local-first job intelligence, matching and tracking for piping, AVEVA E3D, PDMS,
 - Never bypass CAPTCHAs, login walls or access controls.
 - Never commit CVs, application records, recruiter lists, databases, evidence or credentials.
 - Public-source GitHub automation and private local imports remain separate.
-- Detected email addresses are stored only as `PUBLIC_UNVERIFIED`.
+- Detected email addresses are stored only as `PUBLIC_UNVERIFIED` unless independently verified through an allowed source.
 - OCR and inferred vacancy fields always require review.
+- Missing salary, employer, location, closing date, experience or contact data remains blank.
 - SQLite is the source of truth. Excel is a review and tracking output.
 
 ## Implemented capabilities
 
 - SQLite jobs, identity aliases, source health, evidence, private-import and run-proof tables
+- Additive worldwide job schema with normalized role, city, country, sector, software, employment type, closing date and duplicate status
+- Worldwide role, keyword and location alias matrices
 - Stable duplicate handling and transactional source upserts
 - Preservation of user-managed application and recruiter fields
 - Explainable YAML-controlled 0–100 piping/E3D match scoring
-- Verified McDermott and Wood Oracle career sources
-- Greenhouse, Lever, SmartRecruiters, RSS/Atom and sitemap collectors
-- Disabled-by-default constrained public employer HTML collector
-- Safe HTTP validation, redirects, response limits, robots handling and evidence hashing
+- Verified public sources for:
+  - McDermott — Oracle HCM
+  - Wood — Oracle HCM
+  - Technip Energies — Oracle HCM
+  - Fluor — public SAP SuccessFactors pages
+  - Saipem — context-aware official job board
+  - Bechtel — public SAP SuccessFactors pages
+  - Petrofac — three public SelectMinds listings
+- Greenhouse, Lever, SmartRecruiters, RSS/Atom and sitemap collector foundations
+- Constrained public HTML and context-aware card collectors
+- Safe HTTP validation, redirect validation, response limits, robots handling and evidence hashing
 - Daily GitHub Actions collection at 09:00 Asia/Kolkata with verified artifacts
 - Text, PDF, Word, `.eml` and image-OCR private imports
 - SHA-256 duplicate-file protection and private evidence verification
-- Multi-sheet Excel export including source and private-import proof
+- Multi-sheet worldwide Excel export with application, source, evidence and daily-summary proof
 - Windows private-folder runner and Task Scheduler installer
 
 ## Quick start on Windows
@@ -98,30 +108,35 @@ The generated workbook contains:
 4. `Manual_Review`
 5. `Applied`
 6. `Follow_Up`
-7. `Expired`
-8. `Recruiter_Contacts`
-9. `Source_Health`
-10. `Source_Evidence`
-11. `Private_Imports`
-12. `Run_Proof`
+7. `Rejected`
+8. `Expired`
+9. `Recruiter_Contacts`
+10. `Source_Health`
+11. `Source_Evidence`
+12. `Private_Imports`
+13. `Run_Proof`
+14. `Daily_Summary`
+
+Core vacancy columns include exact title, normalized role, company, location, city, country, apply/source URL, published and closing dates, experience, software, sector, employment type, score, explanation, gaps, public contact confidence, duplicate status and application status.
 
 ## Repository layout
 
 ```text
 config/                     Roles, locations, sources, employer registry and scoring
-src/job_intelligence/       Application, collectors and private imports
+src/job_intelligence/       Application, collectors, normalization and private imports
 tests/                      Unit, migration, fixture and end-to-end tests
 scripts/                    Windows and GitHub execution helpers
 docs/                       Operation, safety and import guides
-.github/workflows/          CI and scheduled collection
+.github/workflows/          Automated tests and scheduled collection
 ```
 
-## Next controlled phases
+## Remaining controlled phases
 
-1. Gmail job-alert ingestion through user-authorized Google access.
-2. Optional email or Telegram high-priority notifications.
-3. Application follow-up controls and local dashboard.
-4. Additional live-proven priority EPC employer connectors.
-5. Local Task Scheduler installation and recovery proof on the user's Windows computer.
+1. Add additional official EPC employers and ATS families in small verified batches.
+2. Add public recruiter and engineering-consultancy sources.
+3. Add user-authorized Gmail ingestion for LinkedIn, Naukri, Indeed, GulfTalent, Bayt, recruiter and employer alerts.
+4. Add optional email or Telegram high-priority notifications.
+5. Complete 7–14 day production reliability, backup/restore and scheduler-recovery proof.
+6. Install and prove local Windows Task Scheduler and OCR dependencies on the user's computer.
 
-No fixed coverage percentage is promised. The objective is verifiable coverage of selected official sources plus one auditable tracker for privately discovered opportunities.
+No fixed worldwide coverage percentage is promised. The objective is broad, evidence-backed public-source coverage plus one auditable tracker for authorized alerts and privately discovered opportunities.
