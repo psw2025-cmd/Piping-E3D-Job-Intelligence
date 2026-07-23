@@ -18,6 +18,11 @@ htmlcov/
 .venv/
 venv/
 env/
+credentials*.json
+*credentials*.json
+token*.json
+*token*.json
+client_secret*.json
 
 # IDE and operating system
 .vscode/
@@ -33,6 +38,7 @@ data/raw/
 data/logs/
 private-input/
 private-output/
+output/daily/
 *.db
 *.sqlite
 *.sqlite3
