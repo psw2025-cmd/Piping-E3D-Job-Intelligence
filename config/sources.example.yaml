@@ -2,6 +2,58 @@
 # employer ownership, public accessibility and conservative request limits.
 
 sources:
+  - id: example_oracle_hcm
+    name: Example Oracle Candidate Experience source
+    type: oracle_hcm
+    company: Example EPC
+    base_url: https://example.fa.oraclecloud.com
+    site_number: CX_1
+    include_terms: [piping, e3d, pdms]
+    location_terms: [india, united arab emirates]
+    enabled: false
+    page_size: 100
+    max_pages: 20
+    max_scan_items: 2000
+    max_items: 200
+    timeout_seconds: 30
+    rate_limit_per_minute: 30
+
+  - id: example_successfactors
+    name: Example SAP SuccessFactors source
+    type: successfactors
+    company: Example EPC
+    page_url_template: https://jobs.example.com/search/?q=piping&startrow={offset}
+    job_link_pattern: /job/
+    include_terms: [piping, e3d, plant layout]
+    location_terms: []
+    closed_text_patterns:
+      - position is no longer available
+      - job has been filled
+    enabled: false
+    page_size: 25
+    max_pages: 10
+    max_items: 200
+    timeout_seconds: 30
+    rate_limit_per_minute: 15
+
+  - id: example_selectminds
+    name: Example SelectMinds source
+    type: selectminds
+    company: Example EPC
+    url: https://example.referrals.selectminds.com/latest-jobs
+    additional_urls:
+      - https://example.referrals.selectminds.com/hot-jobs
+    job_link_pattern: /jobs/
+    include_terms: [piping, e3d, pdms]
+    location_terms: []
+    closed_text_patterns:
+      - unfortunately this position has been closed
+      - position is no longer available
+    enabled: false
+    max_items: 200
+    timeout_seconds: 30
+    rate_limit_per_minute: 15
+
   - id: example_greenhouse
     name: Example Greenhouse board
     type: greenhouse
