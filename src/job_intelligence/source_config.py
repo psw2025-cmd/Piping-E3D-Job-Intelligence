@@ -14,6 +14,7 @@ _SUPPORTED_TYPES = {
     "lever",
     "oracle_hcm",
     "public_html",
+    "public_notice",
     "smartrecruiters",
     "rss",
     "sitemap",
@@ -147,16 +148,12 @@ def _validate_optional_text_list(spec: SourceSpec, key: str) -> None:
         )
 
 
-def _validate_public_html(spec: SourceSpec) -> None:
-    base_url = spec.require_text("url")
-    _validate_public_url(base_url, spec.source_id)
-    root_host = (urlsplit(base_url).hostname or "").lower()
+def _validate_domains(spec: SourceSpec, root_host: str) -> set[str]:
     domains = _require_text_list(spec, "allowed_domains")
     normalized_domains = {domain.lower() for domain in domains}
     if root_host not in normalized_domains:
         raise ValueError(
-            f"source {spec.source_id!r} allowed_domains must include "
-            "the listing host"
+            f"source {spec.source_id!r} allowed_domains must include the listing host"
         )
     for domain in normalized_domains:
         if (
@@ -168,6 +165,14 @@ def _validate_public_html(spec: SourceSpec) -> None:
             raise ValueError(
                 f"source {spec.source_id!r} has invalid allowed domain {domain!r}"
             )
+    return normalized_domains
+
+
+def _validate_public_html(spec: SourceSpec) -> None:
+    base_url = spec.require_text("url")
+    _validate_public_url(base_url, spec.source_id)
+    root_host = (urlsplit(base_url).hostname or "").lower()
+    normalized_domains = _validate_domains(spec, root_host)
     _require_text_list(spec, "job_link_patterns")
     _validate_optional_text_list(spec, "anchor_text_patterns")
     _validate_optional_text_list(spec, "required_anchor_text_patterns")
@@ -196,6 +201,19 @@ def _validate_public_html(spec: SourceSpec) -> None:
     spec.int_option("page_step", 1)
     spec.bool_option("fetch_details", True)
     spec.bool_option("deny_on_robots_error", True)
+
+
+def _validate_public_notice(spec: SourceSpec) -> None:
+    base_url = spec.require_text("url")
+    _validate_public_url(base_url, spec.source_id)
+    root_host = (urlsplit(base_url).hostname or "").lower()
+    _validate_domains(spec, root_host)
+    _require_text_list(spec, "notice_link_patterns")
+    _validate_optional_text_list(spec, "include_notice_terms")
+    _validate_optional_text_list(spec, "exclude_notice_terms")
+    spec.bool_option("include_followup_notices", False)
+    spec.bool_option("deny_on_robots_error", True)
+    spec.int_option("max_pdf_pages", 40)
 
 
 def _validate_https_origin(spec: SourceSpec, field: str) -> str:
@@ -263,6 +281,8 @@ def _validate_source(spec: SourceSpec) -> None:
         _validate_workday_source(spec)
     elif spec.source_type == "public_html":
         _validate_public_html(spec)
+    elif spec.source_type == "public_notice":
+        _validate_public_notice(spec)
     elif spec.source_type == "smartrecruiters":
         spec.require_text("company_identifier")
         spec.bool_option("fetch_details", True)
