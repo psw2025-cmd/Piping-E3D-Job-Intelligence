@@ -1,4 +1,4 @@
-# Verified public recruiter sources. Agency and end-client identity remain separate.
+# Recruiter sources. Enable only after exact live contract proof passes.
 sources:
   - id: airswift_global_public
     name: Airswift official global jobs
@@ -82,7 +82,7 @@ sources:
       - pipe fitter
     fetch_details: true
     deny_on_robots_error: true
-    enabled: true
+    enabled: false
     profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 30
@@ -122,7 +122,7 @@ sources:
       - pipe fitter
     fetch_details: true
     deny_on_robots_error: true
-    enabled: true
+    enabled: false
     profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 20
