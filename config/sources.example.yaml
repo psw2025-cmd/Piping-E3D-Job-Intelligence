@@ -2,12 +2,77 @@
 # employer ownership, public accessibility and conservative request limits.
 
 sources:
+  - id: example_oracle_hcm
+    name: Example Oracle Candidate Experience source
+    type: oracle_hcm
+    company: Example EPC
+    base_url: https://example.fa.oraclecloud.com
+    site_number: CX_1
+    include_terms: [piping, e3d, pdms]
+    location_terms: []
+    profile_filter: true
+    enabled: false
+    page_size: 100
+    max_pages: 20
+    max_scan_items: 2000
+    max_items: 200
+    timeout_seconds: 30
+    rate_limit_per_minute: 30
+
+  - id: example_workday
+    name: Example Workday candidate source
+    type: workday
+    company: Example EPC
+    base_url: https://example.wd5.myworkdayjobs.com
+    tenant: example
+    site: Careers
+    locale: en-US
+    search_terms: [piping, e3d, pdms]
+    include_terms: [piping, e3d, pdms]
+    location_terms: []
+    profile_filter: true
+    enabled: false
+    page_size: 20
+    max_pages: 20
+    max_scan_items: 2000
+    max_items: 200
+    timeout_seconds: 30
+    rate_limit_per_minute: 20
+
+  - id: example_card_html
+    name: Example context-card public job board
+    type: card_html
+    company: Example EPC
+    url: https://jobs.example.com/
+    allowed_domains:
+      - jobs.example.com
+    job_link_patterns:
+      - jobid=
+    include_terms:
+      - piping
+      - e3d
+      - pdms
+    location_terms: []
+    exclude_terms:
+      - pipefitter
+    closed_text_patterns:
+      - position is no longer available
+      - vacancy has been closed
+    deny_on_robots_error: true
+    profile_filter: true
+    enabled: false
+    max_pages: 1
+    max_items: 200
+    timeout_seconds: 30
+    rate_limit_per_minute: 10
+
   - id: example_greenhouse
     name: Example Greenhouse board
     type: greenhouse
     company: Example EPC
     board_token: replace-with-public-board-token
     enabled: false
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 20
     max_items: 500
@@ -19,6 +84,7 @@ sources:
     site: replace-with-public-site-name
     region: global
     enabled: false
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 20
     max_items: 500
@@ -30,6 +96,7 @@ sources:
     company: Example EPC
     company_identifier: replace-with-public-company-identifier
     enabled: false
+    profile_filter: true
     fetch_details: true
     timeout_seconds: 30
     rate_limit_per_minute: 20
@@ -42,6 +109,7 @@ sources:
     company: Example EPC
     url: https://example.com/jobs.rss
     enabled: false
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 10
     max_items: 500
@@ -57,6 +125,7 @@ sources:
       - /careers/
       - /jobs/
     enabled: false
+    profile_filter: true
     timeout_seconds: 30
     rate_limit_per_minute: 10
     max_items: 300
@@ -86,6 +155,7 @@ sources:
     exclude_anchor_text_patterns:
       - Hot Job
     enabled: false
+    profile_filter: true
     fetch_details: true
     deny_on_robots_error: true
     timeout_seconds: 30
