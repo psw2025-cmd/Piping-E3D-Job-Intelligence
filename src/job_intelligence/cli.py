@@ -8,6 +8,13 @@ from pathlib import Path
 from .collection_runner import collect_sources
 from .database import connect, upsert_job
 from .excel_export import export_excel, verify_excel
+from .gmail_alerts import (
+    DEFAULT_GMAIL_QUERY,
+    authorize_gmail,
+    import_gmail_service,
+    init_gmail_tables,
+    verify_gmail_imports,
+)
 from .manual_import import create_manual_job
 from .private_import import (
     import_private_file,
@@ -29,6 +36,18 @@ DEFAULT_PRIVATE_EVIDENCE = os.getenv(
     "JOB_INTEL_PRIVATE_EVIDENCE_PATH",
     "private-output/evidence",
 )
+DEFAULT_GMAIL_EVIDENCE = os.getenv(
+    "JOB_INTEL_GMAIL_EVIDENCE_PATH",
+    "private-output/gmail-evidence",
+)
+DEFAULT_GMAIL_CREDENTIALS = os.getenv(
+    "JOB_INTEL_GMAIL_CREDENTIALS",
+    "private-config/gmail_credentials.json",
+)
+DEFAULT_GMAIL_TOKEN = os.getenv(
+    "JOB_INTEL_GMAIL_TOKEN",
+    "private-config/gmail_token.json",
+)
 
 
 def _read_text(path: str) -> str:
@@ -37,7 +56,7 @@ def _read_text(path: str) -> str:
 
 def _verify_database(db_path: str) -> list[str]:
     errors: list[str] = []
-    init_private_import_tables(db_path)
+    init_gmail_tables(db_path)
     with connect(db_path) as connection:
         duplicate_count = connection.execute(
             "SELECT COUNT(*) FROM ("
@@ -73,6 +92,7 @@ def _verify_database(db_path: str) -> list[str]:
         if digest != row["sha256"]:
             errors.append(f"Evidence hash mismatch: {evidence_path}")
     errors.extend(verify_private_imports(db_path))
+    errors.extend(verify_gmail_imports(db_path))
     return errors
 
 
@@ -83,6 +103,11 @@ def _add_private_common_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--max-bytes", type=int, default=25_000_000)
     parser.add_argument("--output", default=DEFAULT_EXPORT)
     parser.add_argument("--no-export", action="store_true")
+
+
+def _add_gmail_auth_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--credentials", default=DEFAULT_GMAIL_CREDENTIALS)
+    parser.add_argument("--token", default=DEFAULT_GMAIL_TOKEN)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -125,6 +150,23 @@ def build_parser() -> argparse.ArgumentParser:
     folder_parser.add_argument("--max-files", type=int, default=500)
     _add_private_common_arguments(folder_parser)
 
+    gmail_auth_parser = subparsers.add_parser(
+        "gmail-auth",
+        help="Authorize read-only Gmail API access using a local desktop OAuth client",
+    )
+    _add_gmail_auth_arguments(gmail_auth_parser)
+
+    gmail_import_parser = subparsers.add_parser(
+        "gmail-import",
+        help="Import user-authorized job-alert emails from Gmail",
+    )
+    _add_gmail_auth_arguments(gmail_import_parser)
+    gmail_import_parser.add_argument("--query", default=DEFAULT_GMAIL_QUERY)
+    gmail_import_parser.add_argument("--max-messages", type=int, default=200)
+    gmail_import_parser.add_argument("--evidence-dir", default=DEFAULT_GMAIL_EVIDENCE)
+    gmail_import_parser.add_argument("--output", default=DEFAULT_EXPORT)
+    gmail_import_parser.add_argument("--no-export", action="store_true")
+
     validate_parser = subparsers.add_parser(
         "validate-sources",
         help="Validate the public-source configuration without collecting",
@@ -151,7 +193,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     verify_parser = subparsers.add_parser(
         "verify",
-        help="Verify database, evidence, private imports, and Excel output",
+        help="Verify database, public/private evidence, Gmail imports, and Excel output",
     )
     verify_parser.add_argument("--output", default=DEFAULT_EXPORT)
     return parser
@@ -192,7 +234,7 @@ def main() -> int:
     args = build_parser().parse_args()
 
     if args.command == "init-db":
-        init_private_import_tables(args.db)
+        init_gmail_tables(args.db)
         print(f"PASS: database initialized at {args.db}")
         return 0
 
@@ -261,6 +303,41 @@ def main() -> int:
             return export_code
         return 1 if summary.failed else 0
 
+    if args.command == "gmail-auth":
+        authorize_gmail(
+            credentials_path=args.credentials,
+            token_path=args.token,
+        )
+        print(f"PASS: Gmail read-only authorization stored locally at {args.token}")
+        return 0
+
+    if args.command == "gmail-import":
+        service = authorize_gmail(
+            credentials_path=args.credentials,
+            token_path=args.token,
+        )
+        summary = import_gmail_service(
+            service,
+            args.db,
+            evidence_root=args.evidence_dir,
+            query=args.query,
+            max_messages=args.max_messages,
+        )
+        print(
+            "GMAIL: "
+            f"attempted={summary.attempted} processed={summary.processed} "
+            f"duplicates={summary.duplicates} no_match={summary.no_match} "
+            f"failed={summary.failed} created={summary.jobs_created} "
+            f"updated={summary.jobs_updated}"
+        )
+        for result in summary.results:
+            if result.status == "failed":
+                print(f"FAIL: Gmail {result.message_id} | {result.error_message}")
+        export_code = _export_after_import(args.db, args.output, args.no_export)
+        if export_code:
+            return export_code
+        return 1 if summary.failed else 0
+
     if args.command == "validate-sources":
         config = load_source_config(args.sources)
         enabled = sum(source.enabled for source in config.sources)
@@ -310,7 +387,7 @@ def main() -> int:
         if errors:
             print("FAIL: " + " | ".join(errors))
             return 1
-        print("PASS: database, evidence, private imports, and Excel verified")
+        print("PASS: database, evidence, private imports, Gmail imports, and Excel verified")
         return 0
 
     return 2
