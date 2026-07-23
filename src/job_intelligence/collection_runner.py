@@ -15,7 +15,8 @@ from .database import connect, record_source_health, upsert_jobs
 from .models import JobRecord
 from .proof import finish_run, record_evidence, start_run
 from .scoring import score_job
-from .source_config import SourceSpec, load_source_config
+from .source_config import SourceSpec
+from .source_registry import load_source_registry
 
 _SAFE_SUFFIX = re.compile(r"^\.[a-z0-9]{1,10}$")
 
@@ -150,7 +151,7 @@ def collect_sources(
     client_factory: Callable[[SourceSpec], HttpClient] | None = None,
 ) -> CollectionRunSummary:
     config_path = Path(source_config_path)
-    source_config = load_source_config(config_path)
+    source_config = load_source_registry(config_path)
     selected = _select_sources(source_config, only_source_ids)
     run_id = uuid.uuid4().hex
     summary = CollectionRunSummary(run_id=run_id, status="running")
