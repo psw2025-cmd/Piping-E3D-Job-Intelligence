@@ -286,8 +286,14 @@ def run(args: argparse.Namespace) -> int:
         except Exception as bundle_exc:
             status["exit_code"] = 2
             status["verified"] = False
-            status["error"] = f"{type(bundle_exc).__name__}: {bundle_exc}"
-            log_lines.append(f"{_now()} ERROR {status['error']}")
+            bundle_error = f"{type(bundle_exc).__name__}: {bundle_exc}"
+            previous_error = str(status.get("error") or "").strip()
+            status["error"] = (
+                f"{previous_error} | Bundle failure: {bundle_error}"
+                if previous_error
+                else bundle_error
+            )
+            log_lines.append(f"{_now()} ERROR {bundle_error}")
             log_lines.append(traceback.format_exc())
             (output_dir / "Piping_E3D_Daily_Bundle.zip").unlink(missing_ok=True)
             if collection is not None:
