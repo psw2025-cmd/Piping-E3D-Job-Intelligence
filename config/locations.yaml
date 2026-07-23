@@ -1,32 +1,188 @@
 locations:
-  india:
+  india_priority:
     - Mumbai
     - Navi Mumbai
+    - Thane
     - Pune
     - Vadodara
     - Chennai
     - Bengaluru
-    - Delhi NCR
     - Hyderabad
-  middle_east:
-    - UAE
+    - Delhi NCR
+    - Gurugram
+    - Noida
+    - Kolkata
+    - Raigad
+    - Panvel
+    - Taloja
+    - Uran
+    - Maharashtra
+    - India
+  gulf_middle_east:
+    - United Arab Emirates
+    - Abu Dhabi
+    - Dubai
+    - Sharjah
     - Saudi Arabia
-    - Oman
     - Qatar
+    - Oman
     - Kuwait
     - Bahrain
-  international:
-    - Europe
+  europe_uk:
     - United Kingdom
+    - Europe
     - Norway
     - Netherlands
     - France
     - Germany
+    - Italy
+    - Spain
+    - Belgium
+    - Sweden
+    - Denmark
+    - Finland
+    - Poland
+    - Romania
+  americas:
+    - Canada
+    - United States
+    - USA
+    - Mexico
+    - Brazil
+  asia_pacific:
+    - Australia
     - Singapore
     - Malaysia
+    - Japan
+    - South Korea
+    - Indonesia
+    - Thailand
+    - Vietnam
+    - Philippines
+  africa:
+    - Africa
+    - South Africa
+    - Nigeria
+    - Mozambique
+    - Angola
+    - Egypt
+  flexible:
+    - Worldwide
+    - Global
+    - Remote
+    - International Assignment
+
+location_aliases:
+  Mumbai:
+    country: India
+    aliases: [mumbai, bombay]
+  Navi Mumbai:
+    country: India
+    aliases: [navi mumbai, new bombay]
+  Thane:
+    country: India
+    aliases: [thane]
+  Pune:
+    country: India
+    aliases: [pune, poona]
+  Vadodara:
+    country: India
+    aliases: [vadodara, baroda]
+  Chennai:
+    country: India
+    aliases: [chennai, madras]
+  Bengaluru:
+    country: India
+    aliases: [bengaluru, bangalore]
+  Hyderabad:
+    country: India
+    aliases: [hyderabad]
+  Delhi NCR:
+    country: India
+    aliases: [delhi ncr, new delhi, delhi]
+  Gurugram:
+    country: India
+    aliases: [gurugram, gurgaon]
+  Noida:
+    country: India
+    aliases: [noida, greater noida]
+  Kolkata:
+    country: India
+    aliases: [kolkata, calcutta]
+  Abu Dhabi:
+    country: United Arab Emirates
+    aliases: [abu dhabi]
+  Dubai:
+    country: United Arab Emirates
+    aliases: [dubai]
+  Sharjah:
+    country: United Arab Emirates
+    aliases: [sharjah]
+  Doha:
+    country: Qatar
+    aliases: [doha]
+  Muscat:
+    country: Oman
+    aliases: [muscat]
+  Kuwait City:
+    country: Kuwait
+    aliases: [kuwait city]
+  Manama:
+    country: Bahrain
+    aliases: [manama]
+  Singapore:
+    country: Singapore
+    aliases: [singapore]
+  Kuala Lumpur:
+    country: Malaysia
+    aliases: [kuala lumpur]
+  London:
+    country: United Kingdom
+    aliases: [london]
+  Calgary:
+    country: Canada
+    aliases: [calgary]
+  Perth:
+    country: Australia
+    aliases: [perth]
+
+country_aliases:
+  India: [india, in]
+  United Arab Emirates: [united arab emirates, uae, emirates]
+  Saudi Arabia: [saudi arabia, ksa]
+  Qatar: [qatar]
+  Oman: [oman]
+  Kuwait: [kuwait]
+  Bahrain: [bahrain]
+  United Kingdom: [united kingdom, uk, great britain, england, scotland, wales]
+  Canada: [canada]
+  Australia: [australia]
+  Singapore: [singapore]
+  Malaysia: [malaysia]
+  Japan: [japan]
+  South Korea: [south korea, korea]
+  United States: [united states, usa, u.s.a., us]
+  South Africa: [south africa]
+  Nigeria: [nigeria]
+  Mozambique: [mozambique]
+  Angola: [angola]
+  Egypt: [egypt]
+  Norway: [norway]
+  Netherlands: [netherlands, holland]
+  France: [france]
+  Germany: [germany]
+  Italy: [italy]
+  Spain: [spain]
+
+region_aliases:
+  Europe: [europe, european union, eu]
+  Africa: [africa]
+  Middle East: [middle east, gulf, gcc]
+  Asia Pacific: [asia pacific, apac]
+  Worldwide: [worldwide, global, international]
+  Remote: [remote, work from home, anywhere]
 
 languages:
   - English
-  - Arabic
-  - French
-  - German
+  - Hindi
+  - Marathi
