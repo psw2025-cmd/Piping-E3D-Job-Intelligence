@@ -10,8 +10,10 @@ from .lever import collect_lever
 from .oracle_hcm import collect_oracle_hcm
 from .public_html import collect_public_html
 from .rss import collect_rss
+from .selectminds import collect_selectminds
 from .sitemap import collect_sitemap
 from .smartrecruiters import collect_smartrecruiters
+from .successfactors import collect_successfactors
 
 Collector = Callable[[SourceSpec, HttpClient], CollectionResult]
 
@@ -19,7 +21,9 @@ COLLECTORS: dict[str, Collector] = {
     "greenhouse": collect_greenhouse,
     "lever": collect_lever,
     "oracle_hcm": collect_oracle_hcm,
+    "selectminds": collect_selectminds,
     "smartrecruiters": collect_smartrecruiters,
+    "successfactors": collect_successfactors,
     "rss": collect_rss,
 }
 
