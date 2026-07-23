@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "piping-e3d-job-intelligence"
-version = "0.4.1"
-description = "Local-first job intelligence and tracking for piping, E3D, PDMS, offshore and EPC roles."
+version = "0.5.0"
+description = "Worldwide job intelligence and tracking for piping, E3D, PDMS, offshore and EPC roles."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -23,6 +23,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+gmail = [
+  "google-api-python-client>=2.170.0",
+  "google-auth-httplib2>=0.2.0",
+  "google-auth-oauthlib>=1.2.2",
+]
 dev = [
   "pytest>=8.3.2",
   "ruff>=0.6.3",
