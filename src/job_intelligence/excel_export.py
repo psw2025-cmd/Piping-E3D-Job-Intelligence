@@ -10,6 +10,13 @@ from openpyxl.styles import Font
 
 from .database import JOB_COLUMNS, connect, fetch_jobs
 from .gmail_alerts import init_gmail_tables
+from .worldwide_registry import (
+    company_alias_frame,
+    company_coverage_frame,
+    country_company_matrix,
+    coverage_gap_frame,
+    gmail_query_groups,
+)
 from .worldwide_views import deduplicate_worldwide, registry_frames, summary_by
 
 REQUIRED_SHEETS = (
@@ -29,6 +36,11 @@ REQUIRED_SHEETS = (
     "Company_Summary",
     "Employer_Coverage",
     "Recruiter_Coverage",
+    "Worldwide_Companies",
+    "Country_Company_Matrix",
+    "Coverage_Gaps",
+    "Company_Aliases",
+    "Gmail_Query_Groups",
     "Source_Health",
     "Source_Evidence",
     "Private_Imports",
@@ -121,6 +133,8 @@ def _daily_summary(
     contacts: pd.DataFrame,
     source_health: pd.DataFrame,
     gmail_alerts: pd.DataFrame,
+    worldwide_companies: pd.DataFrame,
+    coverage_gaps: pd.DataFrame,
 ) -> pd.DataFrame:
     source_status = source_health.get("status", pd.Series(dtype="string"))
     gmail_status = gmail_alerts.get("status", pd.Series(dtype="string"))
@@ -128,6 +142,9 @@ def _daily_summary(
     companies = active.get("company", pd.Series(dtype="string"))
     source_passes = source_status.isin(["pass", "pass_with_warnings"])
     gmail_complete = gmail_status.str.startswith("complete", na=False)
+    active_company_coverage = worldwide_companies.get(
+        "coverage_active", pd.Series(dtype="bool")
+    )
     metrics = (
         ("generated_at", datetime.now(UTC).replace(microsecond=0).isoformat()),
         ("raw_source_rows", len(jobs)),
@@ -149,6 +166,9 @@ def _daily_summary(
         ("gmail_messages", len(gmail_alerts)),
         ("gmail_complete", int(gmail_complete.sum())),
         ("gmail_failed", int(gmail_status.eq("failed").sum())),
+        ("target_companies", len(worldwide_companies)),
+        ("active_company_coverage", int(active_company_coverage.sum())),
+        ("company_coverage_gaps", len(coverage_gaps)),
     )
     return pd.DataFrame(metrics, columns=("metric", "value"))
 
@@ -192,6 +212,11 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
     active_source_rows = jobs[~statuses.isin(["expired", "rejected"])]
     active, duplicate_variants = deduplicate_worldwide(active_source_rows)
     employer_coverage, recruiter_coverage = registry_frames()
+    worldwide_companies = company_coverage_frame()
+    country_company_coverage = country_company_matrix()
+    coverage_gaps = coverage_gap_frame()
+    company_aliases = company_alias_frame()
+    generated_gmail_queries = gmail_query_groups()
 
     review_job_keys = set(
         private_imports.loc[
@@ -237,6 +262,8 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
         contacts=contacts,
         source_health=source_health,
         gmail_alerts=gmail_alerts,
+        worldwide_companies=worldwide_companies,
+        coverage_gaps=coverage_gaps,
     )
 
     sheets = {
@@ -256,6 +283,11 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
         "Company_Summary": company_summary,
         "Employer_Coverage": employer_coverage,
         "Recruiter_Coverage": recruiter_coverage,
+        "Worldwide_Companies": worldwide_companies,
+        "Country_Company_Matrix": country_company_coverage,
+        "Coverage_Gaps": coverage_gaps,
+        "Company_Aliases": company_aliases,
+        "Gmail_Query_Groups": generated_gmail_queries,
         "Source_Health": source_health,
         "Source_Evidence": source_evidence,
         "Private_Imports": private_imports,
