@@ -8,11 +8,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
 
-from .collectors import (
-    COLLECTORS,
-    collect_public_html,
-    collect_sitemap,
-)
+from .collectors import COLLECTORS, collect_public_html, collect_sitemap
 from .collectors.common import EvidenceArtifact
 from .collectors.http_client import HttpClient, SafeHttpClient
 from .database import connect, record_source_health, upsert_jobs
@@ -119,6 +115,12 @@ def _prepare_jobs(spec: SourceSpec, jobs: list[JobRecord], config_dir: Path) -> 
         job.gaps = "; ".join(result.gaps)
 
 
+def _filter_profile_jobs(spec: SourceSpec, jobs: list[JobRecord]) -> list[JobRecord]:
+    if not spec.bool_option("profile_filter", True):
+        return jobs
+    return [job for job in jobs if job.normalized_role or job.match_score >= 20]
+
+
 def _select_sources(source_config, only_source_ids: set[str] | None):
     if only_source_ids is not None:
         configured_ids = {source.source_id for source in source_config.sources}
@@ -131,7 +133,6 @@ def _select_sources(source_config, only_source_ids: set[str] | None):
         disabled = sorted(only_source_ids - enabled_ids)
         if disabled:
             raise ValueError(f"requested source ids are disabled: {', '.join(disabled)}")
-
     return [
         source
         for source in source_config.sources
@@ -164,9 +165,7 @@ def collect_sources(
                 max_response_bytes=source.int_option(
                     "max_response_bytes", 15_000_000
                 ),
-                rate_limit_per_minute=source.int_option(
-                    "rate_limit_per_minute", 30
-                ),
+                rate_limit_per_minute=source.int_option("rate_limit_per_minute", 30),
                 max_redirects=source.int_option("max_redirects", 5, minimum=0),
             )
         )
@@ -188,8 +187,7 @@ def collect_sources(
                     respect_robots_txt=source_config.policy["respect_robots_txt"],
                 )
             else:
-                collector = COLLECTORS[spec.source_type]
-                result = collector(spec, client)
+                result = COLLECTORS[spec.source_type](spec, client)
             if source_config.policy["retain_source_evidence"]:
                 _save_evidence(
                     db_path,
@@ -201,13 +199,12 @@ def collect_sources(
                 evidence_saved = True
             stage = "score"
             _prepare_jobs(spec, result.jobs, config_path.parent)
+            result.jobs = _filter_profile_jobs(spec, result.jobs)
             stage = "upsert"
             new_jobs, updated_jobs = upsert_jobs(db_path, result.jobs)
             stage = "health"
             warning_message = " | ".join(result.warnings)
-            source_status = (
-                "pass_with_warnings" if warning_message else "pass"
-            )
+            source_status = "pass_with_warnings" if warning_message else "pass"
             record_source_health(
                 db_path,
                 spec.source_id,
@@ -235,10 +232,7 @@ def collect_sources(
             if evidence_saved and stage == "upsert":
                 try:
                     _delete_evidence(
-                        db_path,
-                        evidence_root,
-                        run_id,
-                        spec.source_id,
+                        db_path, evidence_root, run_id, spec.source_id
                     )
                 except Exception as cleanup_exc:
                     message += (
