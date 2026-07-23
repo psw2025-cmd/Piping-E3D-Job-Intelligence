@@ -2,37 +2,34 @@
 
 Local-first job intelligence, matching and tracking for piping, AVEVA E3D, PDMS, offshore, refinery, nuclear and EPC opportunities.
 
-> **Current status:** Phase 2 public-source foundation. Tested collectors now support public Greenhouse, Lever, SmartRecruiters, RSS/Atom and sitemap-based `JobPosting` sources. All example sources remain disabled until their public identifiers, access rules and employer ownership are verified. OCR, Gmail ingestion, alerts and a user dashboard remain future work.
+> **Current status:** verified public-source collection runs automatically in GitHub every day at 09:00 Asia/Kolkata. The private import layer supports text, PDF, Word, `.eml` email and review-required image OCR while keeping personal source files and evidence outside Git.
 
 ## Safety boundaries
 
-- Use only public, permitted APIs, RSS feeds, sitemaps and career pages.
-- Respect robots.txt, conservative rate limits and platform terms.
-- Do not bypass CAPTCHAs, login walls or access controls.
-- Do not use rotating proxies for blocked sources.
-- Never commit CVs, application records, recruiter lists, databases, downloaded evidence or API keys.
-- A detected email is marked `PUBLIC_UNVERIFIED`; the system never guesses that it is valid.
+- Use only public, permitted APIs, feeds, sitemaps and employer career pages.
+- Respect robots.txt, conservative request limits and platform terms.
+- Never bypass CAPTCHAs, login walls or access controls.
+- Never commit CVs, application records, recruiter lists, databases, evidence or credentials.
+- Public-source GitHub automation and private local imports remain separate.
+- Detected email addresses are stored only as `PUBLIC_UNVERIFIED`.
+- OCR and inferred vacancy fields always require review.
 - SQLite is the source of truth. Excel is a review and tracking output.
-- Raw public source responses are retained locally with SHA-256 proof and are ignored by Git.
 
 ## Implemented capabilities
 
-- SQLite schemas and migrations for jobs, identity aliases, source health, evidence and run proof
-- Stable duplicate handling across URL enrichment, changing descriptions and repeated imports
-- Preservation of user-managed application status and recruiter data during automated refreshes
-- Explainable YAML-controlled 0–100 role-fit scoring
-- Evidence-preserving manual vacancy-text import
-- Public Greenhouse Job Board collector
-- Public Lever Postings collector with pagination
-- Public SmartRecruiters Posting collector with optional detail fetches
-- Public RSS and Atom collector
-- Robots-aware XML sitemap traversal with schema.org `JobPosting` extraction
-- Per-source timeout, rate-limit, item-limit and allowed-domain controls
-- Source failure isolation and partial-run reporting
-- Multi-sheet Excel export with source-health, evidence and run-proof sheets
-- Database, evidence-hash and Excel verification commands
-- GitHub Actions tests, lint and CLI proof flow
-- Windows PowerShell installation and daily runner
+- SQLite jobs, identity aliases, source health, evidence, private-import and run-proof tables
+- Stable duplicate handling and transactional source upserts
+- Preservation of user-managed application and recruiter fields
+- Explainable YAML-controlled 0–100 piping/E3D match scoring
+- Verified McDermott and Wood Oracle career sources
+- Greenhouse, Lever, SmartRecruiters, RSS/Atom and sitemap collectors
+- Disabled-by-default constrained public employer HTML collector
+- Safe HTTP validation, redirects, response limits, robots handling and evidence hashing
+- Daily GitHub Actions collection at 09:00 Asia/Kolkata with verified artifacts
+- Text, PDF, Word, `.eml` and image-OCR private imports
+- SHA-256 duplicate-file protection and private evidence verification
+- Multi-sheet Excel export including source and private-import proof
+- Windows private-folder runner and Task Scheduler installer
 
 ## Quick start on Windows
 
@@ -44,17 +41,40 @@ pip install -e ".[dev]"
 job-intel --db data/database/jobs.db init-db
 ```
 
-## Configure public sources
+## Automatic public collection
 
-Every template in `config/sources.yaml` is disabled. Replace only the public identifier or URL for a verified employer source, then set `enabled: true`.
+The `daily-live-job-intelligence` workflow runs every day at 09:00 Asia/Kolkata and can also be started manually from GitHub Actions. It validates enabled official sources, collects jobs, retains evidence, exports Excel, verifies all proof and uploads a 14-day portable artifact.
 
-Validate before making any network request:
+See `docs/DAILY_AUTOMATION.md`.
+
+## Private vacancy import
+
+Place private vacancy files under `private-input`, then run:
 
 ```powershell
-job-intel validate-sources --sources config/sources.yaml
+.\scripts\run_private_import.ps1
 ```
 
-Detailed source and safety instructions are in `docs/PUBLIC_SOURCES.md`.
+Supported input types:
+
+- `.txt`, `.md`, `.csv`
+- `.pdf`
+- `.docx`
+- `.eml`
+- `.png`, `.jpg`, `.jpeg`, `.webp`, `.tif`, `.tiff`, `.bmp` with OCR enabled
+
+Detailed instructions are in `docs/PRIVATE_IMPORTS.md`.
+
+## Manual text import
+
+```powershell
+job-intel --db data/database/jobs.db import-text `
+  --title "Senior E3D Piping Designer" `
+  --company "Example EPC" `
+  --location "Mumbai" `
+  --file ".\private-input\vacancy.txt" `
+  --source-url "https://example.com/jobs/123"
+```
 
 ## Collect, export and verify
 
@@ -66,25 +86,6 @@ job-intel --db data/database/jobs.db collect `
 
 job-intel --db data/database/jobs.db verify `
   --output data/exports/Piping_E3D_Jobs.xlsx
-```
-
-Collection exits with:
-
-- `0` when all selected sources pass, or when no source is enabled;
-- `1` for a partial run containing both passed and failed sources;
-- `2` when all selected sources fail or Excel export fails.
-
-## Manual vacancy import
-
-Create a UTF-8 text file containing one vacancy, then import it:
-
-```powershell
-job-intel --db data/database/jobs.db import-text `
-  --title "Senior E3D Piping Designer" `
-  --company "Example EPC" `
-  --location "Mumbai" `
-  --file ".\private-input\vacancy.txt" `
-  --source-url "https://example.com/jobs/123"
 ```
 
 ## Excel workbook
@@ -101,26 +102,26 @@ The generated workbook contains:
 8. `Recruiter_Contacts`
 9. `Source_Health`
 10. `Source_Evidence`
-11. `Run_Proof`
+11. `Private_Imports`
+12. `Run_Proof`
 
 ## Repository layout
 
 ```text
-config/                     Target roles, locations, source registry and scoring
-src/job_intelligence/       Application and collector code
+config/                     Roles, locations, sources, employer registry and scoring
+src/job_intelligence/       Application, collectors and private imports
 tests/                      Unit, migration, fixture and end-to-end tests
-scripts/                    Windows installation and daily execution helpers
-docs/                       Scope, security and source-operation guides
-.github/workflows/          Automated validation
+scripts/                    Windows and GitHub execution helpers
+docs/                       Operation, safety and import guides
+.github/workflows/          CI and scheduled collection
 ```
 
 ## Next controlled phases
 
-1. Verify and add selected EPC company source identifiers without committing personal data.
-2. Add review-required PDF and image OCR imports.
-3. Add Gmail job-alert ingestion without scraping restricted platforms.
-4. Add optional email or Telegram high-priority alerts.
-5. Add application follow-up controls and a local dashboard.
-6. Add Windows Task Scheduler setup and recovery verification.
+1. Gmail job-alert ingestion through user-authorized Google access.
+2. Optional email or Telegram high-priority notifications.
+3. Application follow-up controls and local dashboard.
+4. Additional live-proven priority EPC employer connectors.
+5. Local Task Scheduler installation and recovery proof on the user's Windows computer.
 
-No fixed coverage percentage is promised. The objective is verifiable coverage of selected public sources plus one tracker for manually discovered opportunities.
+No fixed coverage percentage is promised. The objective is verifiable coverage of selected official sources plus one auditable tracker for privately discovered opportunities.
