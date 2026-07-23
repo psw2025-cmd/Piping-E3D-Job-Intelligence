@@ -120,24 +120,22 @@ def test_generic_apply_anchor_uses_job_card_context_and_keeps_agency_separate() 
     assert client.calls == [listing_url, detail_url]
 
 
-def test_recruiter_sources_are_enabled_and_config_driven() -> None:
+def test_only_live_proven_recruiter_is_enabled() -> None:
     root = Path(__file__).resolve().parents[1]
     registry = load_source_registry(root / "config" / "sources.yaml")
     by_id = {source.source_id: source for source in registry.sources}
 
-    expected = {
-        "airswift_global_public": "Airswift",
-        "nesfircroft_piping_public": "NES Fircroft",
-        "brunel_global_public": "Brunel",
-    }
-    for source_id, agency in expected.items():
+    airswift = by_id["airswift_global_public"]
+    assert airswift.enabled is True
+    assert airswift.source_type == "public_html"
+    assert airswift.company == "Undisclosed client"
+    assert airswift.options["agency_name"] == "Airswift"
+    assert airswift.bool_option("replace_agency_company", False) is True
+    assert airswift.bool_option("fetch_details", False) is True
+    assert airswift.bool_option("deny_on_robots_error", False) is True
+
+    for source_id in ("nesfircroft_piping_public", "brunel_global_public"):
         source = by_id[source_id]
-        assert source.enabled is True
+        assert source.enabled is False
         assert source.source_type == "public_html"
         assert source.company == "Undisclosed client"
-        assert source.options["agency_name"] == agency
-        assert source.bool_option("replace_agency_company", False) is True
-        assert source.bool_option("fetch_details", False) is True
-        assert source.bool_option("deny_on_robots_error", False) is True
-        assert source.int_option("timeout_seconds", 30) <= 30
-        assert source.int_option("max_response_bytes", 5_000_000) <= 5_000_000
