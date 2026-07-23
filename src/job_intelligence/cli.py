@@ -19,7 +19,6 @@ from .manual_import import create_manual_job
 from .private_import import (
     import_private_file,
     import_private_folder,
-    init_private_import_tables,
     verify_private_imports,
 )
 from .proof import set_run_export_status
