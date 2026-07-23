@@ -1,3 +1,5 @@
 """Piping and E3D job intelligence package."""
 
-__version__ = "0.1.0"
+from . import _private_import_recovery as _private_import_recovery
+
+__version__ = "0.4.1"
