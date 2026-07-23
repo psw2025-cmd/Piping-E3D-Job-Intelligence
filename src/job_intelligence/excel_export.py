@@ -10,17 +10,25 @@ from openpyxl.styles import Font
 
 from .database import JOB_COLUMNS, connect, fetch_jobs
 from .gmail_alerts import init_gmail_tables
+from .worldwide_views import deduplicate_worldwide, registry_frames, summary_by
 
 REQUIRED_SHEETS = (
     "New_Today",
     "High_Priority",
+    "Worldwide_Dedup",
     "All_Active",
+    "All_Source_Rows",
+    "Duplicate_Variants",
     "Manual_Review",
     "Applied",
     "Follow_Up",
     "Rejected",
     "Expired",
     "Recruiter_Contacts",
+    "Country_Summary",
+    "Company_Summary",
+    "Employer_Coverage",
+    "Recruiter_Coverage",
     "Source_Health",
     "Source_Evidence",
     "Private_Imports",
@@ -54,6 +62,12 @@ REQUIRED_JOB_COLUMNS = (
     "duplicate_status",
     "application_status",
 )
+REQUIRED_DEDUP_COLUMNS = (
+    "duplicate_group",
+    "source_count",
+    "duplicate_sources",
+    "all_apply_urls",
+)
 _FORMULA_PREFIXES = ("=", "+", "-", "@")
 
 
@@ -65,9 +79,7 @@ def _safe_excel_value(value: Any) -> Any:
     if not isinstance(value, str):
         return value
     inspected = value.lstrip(" \t\r\n")
-    if inspected.startswith(_FORMULA_PREFIXES):
-        return "'" + value
-    return value
+    return "'" + value if inspected.startswith(_FORMULA_PREFIXES) else value
 
 
 def _safe_excel_frame(frame: pd.DataFrame) -> pd.DataFrame:
@@ -87,17 +99,20 @@ def _format_workbook(path: Path) -> None:
         for column_cells in sheet.columns:
             values = [str(cell.value or "") for cell in list(column_cells)[:200]]
             maximum = max((len(value) for value in values), default=0)
-            width = min(max(maximum + 2, 10), 55)
-            sheet.column_dimensions[column_cells[0].column_letter].width = width
+            sheet.column_dimensions[column_cells[0].column_letter].width = min(
+                max(maximum + 2, 10),
+                55,
+            )
     workbook.save(path)
 
 
 def _daily_summary(
     *,
     jobs: pd.DataFrame,
+    active: pd.DataFrame,
+    duplicate_variants: pd.DataFrame,
     new_today: pd.DataFrame,
     high_priority: pd.DataFrame,
-    active: pd.DataFrame,
     manual_review: pd.DataFrame,
     applied: pd.DataFrame,
     follow_up: pd.DataFrame,
@@ -109,12 +124,19 @@ def _daily_summary(
 ) -> pd.DataFrame:
     source_status = source_health.get("status", pd.Series(dtype="string"))
     gmail_status = gmail_alerts.get("status", pd.Series(dtype="string"))
+    countries = active.get("country", pd.Series(dtype="string"))
+    companies = active.get("company", pd.Series(dtype="string"))
+    source_passes = source_status.isin(["pass", "pass_with_warnings"])
+    gmail_complete = gmail_status.str.startswith("complete", na=False)
     metrics = (
         ("generated_at", datetime.now(UTC).replace(microsecond=0).isoformat()),
-        ("total_jobs", len(jobs)),
+        ("raw_source_rows", len(jobs)),
+        ("worldwide_deduplicated_jobs", len(active)),
+        ("duplicate_variant_rows", len(duplicate_variants)),
         ("new_today", len(new_today)),
         ("high_priority", len(high_priority)),
-        ("active", len(active)),
+        ("countries", int(countries.replace("", pd.NA).nunique())),
+        ("companies", int(companies.replace("", pd.NA).nunique())),
         ("manual_review", len(manual_review)),
         ("applied", len(applied)),
         ("follow_up", len(follow_up)),
@@ -122,10 +144,10 @@ def _daily_summary(
         ("expired", len(expired)),
         ("recruiter_contacts", len(contacts)),
         ("sources_total", len(source_health)),
-        ("sources_passing", int(source_status.isin(["pass", "pass_with_warnings"]).sum())),
+        ("sources_passing", int(source_passes.sum())),
         ("sources_failing", int(source_status.eq("fail").sum())),
         ("gmail_messages", len(gmail_alerts)),
-        ("gmail_complete", int(gmail_status.str.startswith("complete", na=False).sum())),
+        ("gmail_complete", int(gmail_complete.sum())),
         ("gmail_failed", int(gmail_status.eq("failed").sum())),
     )
     return pd.DataFrame(metrics, columns=("metric", "value"))
@@ -166,6 +188,11 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
             connection,
         )
 
+    statuses = jobs.get("application_status", pd.Series(dtype="string"))
+    active_source_rows = jobs[~statuses.isin(["expired", "rejected"])]
+    active, duplicate_variants = deduplicate_worldwide(active_source_rows)
+    employer_coverage, recruiter_coverage = registry_frames()
+
     review_job_keys = set(
         private_imports.loc[
             private_imports.get("review_required", pd.Series(dtype="int64")).eq(1),
@@ -173,16 +200,18 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
         ].astype(str)
     )
     today = datetime.now(UTC).date().isoformat()
-    found_dates = jobs.get("found_at", pd.Series(dtype="string")).astype(str)
-    new_today = jobs[found_dates.str.startswith(today, na=False)]
-    priorities = jobs.get("priority", pd.Series(dtype="string"))
-    high_priority = jobs[priorities.isin(["critical", "high"])]
-    statuses = jobs.get("application_status", pd.Series(dtype="string"))
-    active = jobs[~statuses.isin(["expired", "rejected"])]
+    found_dates = active.get("found_at", pd.Series(dtype="string")).astype(str)
+    new_today = active[found_dates.str.startswith(today, na=False)]
+    priorities = active.get("priority", pd.Series(dtype="string"))
+    high_priority = active[priorities.isin(["critical", "high"])]
+
     confidence = jobs.get("contact_confidence", pd.Series(dtype="string"))
     job_keys = jobs.get("job_key", pd.Series(dtype="string")).astype(str)
+    uncertain_contacts = confidence.isin(
+        ["PUBLIC_UNVERIFIED", "PATTERN_SUGGESTION", "ALERT_SUPPLIED"]
+    )
     manual_review = jobs[
-        confidence.isin(["PUBLIC_UNVERIFIED", "PATTERN_SUGGESTION", "ALERT_SUPPLIED"])
+        uncertain_contacts
         | statuses.eq("review_required")
         | job_keys.isin(review_job_keys)
     ]
@@ -192,11 +221,14 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
     expired = jobs[statuses.eq("expired")]
     emails = jobs.get("recruiter_email", pd.Series(dtype="string"))
     contacts = jobs[emails.fillna("").astype(str).str.len() > 0]
+    country_summary = summary_by(active, "country")
+    company_summary = summary_by(active, "company")
     daily_summary = _daily_summary(
         jobs=jobs,
+        active=active,
+        duplicate_variants=duplicate_variants,
         new_today=new_today,
         high_priority=high_priority,
-        active=active,
         manual_review=manual_review,
         applied=applied,
         follow_up=follow_up,
@@ -210,13 +242,20 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
     sheets = {
         "New_Today": new_today,
         "High_Priority": high_priority,
+        "Worldwide_Dedup": active,
         "All_Active": active,
+        "All_Source_Rows": active_source_rows,
+        "Duplicate_Variants": duplicate_variants,
         "Manual_Review": manual_review,
         "Applied": applied,
         "Follow_Up": follow_up,
         "Rejected": rejected,
         "Expired": expired,
         "Recruiter_Contacts": contacts,
+        "Country_Summary": country_summary,
+        "Company_Summary": company_summary,
+        "Employer_Coverage": employer_coverage,
+        "Recruiter_Coverage": recruiter_coverage,
         "Source_Health": source_health,
         "Source_Evidence": source_evidence,
         "Private_Imports": private_imports,
@@ -232,7 +271,6 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
                 sheet_name=sheet_name,
                 index=False,
             )
-
     _format_workbook(output)
     return output
 
@@ -254,7 +292,14 @@ def verify_excel(path: str | Path) -> list[str]:
             str(cell.value or "").strip()
             for cell in next(workbook["All_Active"].iter_rows(min_row=1, max_row=1))
         }
-        missing_columns = [column for column in REQUIRED_JOB_COLUMNS if column not in headers]
+        missing_columns = [
+            column for column in REQUIRED_JOB_COLUMNS if column not in headers
+        ]
         if missing_columns:
             errors.append(f"Missing job columns: {', '.join(missing_columns)}")
+        missing_dedup = [
+            column for column in REQUIRED_DEDUP_COLUMNS if column not in headers
+        ]
+        if missing_dedup:
+            errors.append(f"Missing dedup columns: {', '.join(missing_dedup)}")
     return errors
