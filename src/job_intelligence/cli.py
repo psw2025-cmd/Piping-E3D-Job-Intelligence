@@ -8,6 +8,7 @@ from pathlib import Path
 from .collection_runner import collect_sources
 from .database import connect, upsert_job
 from .excel_export import export_excel, verify_excel
+from .gmail_alerts import DEFAULT_GMAIL_QUERY, import_gmail_alerts
 from .manual_import import create_manual_job
 from .private_import import (
     import_private_file,
@@ -28,6 +29,14 @@ DEFAULT_EVIDENCE = os.getenv("JOB_INTEL_EVIDENCE_PATH", "data/raw")
 DEFAULT_PRIVATE_EVIDENCE = os.getenv(
     "JOB_INTEL_PRIVATE_EVIDENCE_PATH",
     "private-output/evidence",
+)
+DEFAULT_GMAIL_CREDENTIALS = os.getenv(
+    "JOB_INTEL_GMAIL_CREDENTIALS",
+    "private-input/gmail_credentials.json",
+)
+DEFAULT_GMAIL_TOKEN = os.getenv(
+    "JOB_INTEL_GMAIL_TOKEN",
+    "private-output/gmail/token.json",
 )
 
 
@@ -86,7 +95,7 @@ def _add_private_common_arguments(parser: argparse.ArgumentParser) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Piping/E3D job intelligence CLI")
+    parser = argparse.ArgumentParser(description="Worldwide piping/E3D job intelligence CLI")
     parser.add_argument("--db", default=DEFAULT_DB, help="SQLite database path")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -125,6 +134,19 @@ def build_parser() -> argparse.ArgumentParser:
     folder_parser.add_argument("--max-files", type=int, default=500)
     _add_private_common_arguments(folder_parser)
 
+    gmail_parser = subparsers.add_parser(
+        "import-gmail",
+        help="Import user-authorized Gmail job alerts using read-only OAuth",
+    )
+    gmail_parser.add_argument("--credentials", default=DEFAULT_GMAIL_CREDENTIALS)
+    gmail_parser.add_argument("--token", default=DEFAULT_GMAIL_TOKEN)
+    gmail_parser.add_argument("--query", default=DEFAULT_GMAIL_QUERY)
+    gmail_parser.add_argument("--max-results", type=int, default=200)
+    gmail_parser.add_argument("--max-bytes", type=int, default=25_000_000)
+    gmail_parser.add_argument("--evidence-dir", default=DEFAULT_PRIVATE_EVIDENCE)
+    gmail_parser.add_argument("--output", default=DEFAULT_EXPORT)
+    gmail_parser.add_argument("--no-export", action="store_true")
+
     validate_parser = subparsers.add_parser(
         "validate-sources",
         help="Validate the public-source configuration without collecting",
@@ -133,7 +155,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     collect_parser = subparsers.add_parser(
         "collect",
-        help="Collect all enabled public sources and update Excel",
+        help="Collect all enabled worldwide public sources and update Excel",
     )
     collect_parser.add_argument("--sources", default=DEFAULT_SOURCES)
     collect_parser.add_argument("--evidence-dir", default=DEFAULT_EVIDENCE)
@@ -249,6 +271,30 @@ def main() -> int:
         )
         print(
             "IMPORT: "
+            f"attempted={summary.attempted} created={summary.created} "
+            f"updated={summary.updated} duplicates={summary.duplicates} "
+            f"failed={summary.failed} review_required={summary.review_required}"
+        )
+        for result in summary.results:
+            if result.status == "failed":
+                print(f"FAIL: {result.input_path} | {result.error_message}")
+        export_code = _export_after_import(args.db, args.output, args.no_export)
+        if export_code:
+            return export_code
+        return 1 if summary.failed else 0
+
+    if args.command == "import-gmail":
+        summary = import_gmail_alerts(
+            args.db,
+            args.evidence_dir,
+            credentials_path=args.credentials,
+            token_path=args.token,
+            query=args.query,
+            max_results=args.max_results,
+            max_bytes=args.max_bytes,
+        )
+        print(
+            "GMAIL: "
             f"attempted={summary.attempted} created={summary.created} "
             f"updated={summary.updated} duplicates={summary.duplicates} "
             f"failed={summary.failed} review_required={summary.review_required}"
