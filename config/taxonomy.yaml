@@ -1,0 +1,134 @@
+software_aliases:
+  AVEVA E3D:
+    - aveva e3d
+    - e3d
+    - everything3d
+  AVEVA PDMS:
+    - aveva pdms
+    - pdms
+    - plant design management system
+  Hexagon Smart 3D:
+    - smart 3d
+    - smartplant 3d
+    - sp3d
+    - s3d
+  AutoCAD:
+    - autocad
+    - auto cad
+  Navisworks:
+    - navisworks
+    - navis works
+  MicroStation:
+    - microstation
+  OpenPlant:
+    - openplant
+    - open plant
+  AutoPIPE:
+    - autopipe
+    - auto pipe
+  CAESAR II:
+    - caesar ii
+    - caesar 2
+  Rohr2:
+    - rohr2
+  SolidWorks:
+    - solidworks
+  Revit:
+    - revit
+  PDS:
+    - intergraph pds
+    - pds
+
+sector_aliases:
+  Oil and Gas:
+    - oil and gas
+    - oil & gas
+    - upstream
+    - midstream
+    - downstream
+  Refinery:
+    - refinery
+    - refining
+  Petrochemical:
+    - petrochemical
+    - petrochemicals
+  Offshore:
+    - offshore
+    - topsides
+    - fixed platform
+    - fpso
+    - flng
+    - offshore platform
+  LNG:
+    - lng
+    - liquefied natural gas
+    - regasification
+  Nuclear:
+    - nuclear
+    - iter
+    - fusion
+    - reactor
+  Chemical:
+    - chemical plant
+    - chemicals
+    - chlor alkali
+  Power:
+    - power plant
+    - thermal power
+    - combined cycle
+  Fertilizer:
+    - fertilizer
+    - ammonia
+    - urea
+  Mining and Metals:
+    - mining
+    - minerals
+    - metals
+    - smelter
+  Water and Wastewater:
+    - water treatment
+    - wastewater
+    - desalination
+  Hydrogen:
+    - hydrogen
+    - green hydrogen
+  Carbon Capture:
+    - carbon capture
+    - ccs
+    - ccus
+  Pharmaceutical:
+    - pharmaceutical
+    - pharma
+  Food and Beverage:
+    - food and beverage
+
+employment_aliases:
+  Permanent:
+    - permanent
+    - regular employee
+    - full time employee
+  Contract:
+    - contract
+    - contractor
+    - fixed term
+    - temporary
+  Site Assignment:
+    - site assignment
+    - site based
+    - field assignment
+    - construction site
+  Offshore Rotation:
+    - offshore rotation
+    - rotational offshore
+    - rotation
+  Remote:
+    - remote
+    - work from home
+    - home based
+  Hybrid:
+    - hybrid
+  International Assignment:
+    - international assignment
+    - expatriate
+    - expat
+    - overseas assignment
