@@ -1,16 +1,12 @@
 # Piping-E3D-Job-Intelligence
 
-Worldwide, local-first job intelligence, matching and tracking for piping, AVEVA E3D,
-PDMS, SP3D, offshore, refinery, nuclear, energy and EPC opportunities.
+Worldwide, local-first job intelligence, matching and tracking for piping, AVEVA E3D, PDMS, SP3D, offshore, refinery, nuclear, energy and EPC opportunities.
 
-> **Current implementation:** verified public-source collection, worldwide role and
-> location taxonomies, employer and recruiter coverage registries, user-authorized Gmail
-> alerts, private document/email/OCR imports, strict database identity, non-destructive
-> cross-source workbook deduplication and one verified daily Excel tracker.
+> **Current classification:** expanded global production pilot. The repository has verified public employer collection, worldwide profile/location taxonomies, user-authorized Gmail alerts, recruiter-source support, private document/email/OCR imports, strict database identity and one daily Excel tracker. It does not claim complete access to every worldwide vacancy.
 
 ## Safety boundaries
 
-- Use only public, permitted APIs, feeds, sitemaps and employer career pages.
+- Use only public, permitted APIs, feeds, sitemaps and employer/recruiter career pages.
 - Respect robots.txt, conservative request limits and platform terms.
 - Never bypass CAPTCHAs, login walls or access controls.
 - Never commit CVs, application records, recruiter lists, databases, evidence or credentials.
@@ -20,9 +16,9 @@ PDMS, SP3D, offshore, refinery, nuclear, energy and EPC opportunities.
 - OCR and inferred vacancy fields always require review.
 - SQLite is the strict source of truth; Excel is the operating review output.
 
-## Worldwide source coverage
+## Enabled public-source coverage
 
-### Enabled and verified official sources
+### Official employers
 
 - McDermott — Oracle HCM
 - Wood — Oracle HCM
@@ -31,28 +27,19 @@ PDMS, SP3D, offshore, refinery, nuclear, energy and EPC opportunities.
 - Bechtel — SAP SuccessFactors public listings
 - Petrofac — SelectMinds new, hot and India listings
 
-### Fully configured staged sources
+### Specialist engineering recruiters
 
-- Worley — Eightfold
-- Fluor — Eightfold
-- Technip Energies — rendered public careers
-- Jacobs — rendered public careers
+- Airswift — official global vacancies
+- NES Fircroft — official piping vacancy search
+- Brunel — official global vacancies
 
-Staged sources remain disabled until their exact public listing, pagination, detail,
-evidence and failure-behavior proof passes.
+Employer and recruiter sources are loaded from `config/sources.yaml` plus validated `config/sources.d/*.yaml` fragments. A fragment cannot weaken the safety policy in the main file.
 
-### Employer and recruiter coverage
+### Staged sources
 
-The employer registry also tracks L&T Energy Hydrocarbon, Saipem, Kent, Aker Solutions,
-Samsung E&A, JGC, Chiyoda, NPCC, Penspen, Bilfinger, MAIRE Tecnimont, Black & Veatch,
-Burns & McDonnell, Hatch and Ramboll.
+Worley, Fluor, Technip Energies and Jacobs are configured but disabled until their exact public listing, pagination, detail, evidence and failure-behaviour proof passes. Additional employers and agencies remain in the coverage registries with Gmail-alert fallback where direct public collection is unavailable or unstable.
 
-The recruiter registry includes Airswift, NES Fircroft, Brunel, Petroplan, Orion, TRS,
-MPH, Spencer Ogden, WRS, Matchtech, First Recruitment Group, Progressive Recruitment,
-Energy Resourcing, Rigzone, Energy Jobline and Oil and Gas Job Search.
-
-LinkedIn, Naukri, Indeed, Bayt, GulfTalent, employer and recruiter alerts enter through
-user-authorized Gmail rather than authenticated-page scraping.
+LinkedIn, Naukri, Indeed, Glassdoor, Bayt, GulfTalent, Rigzone and similar authenticated portals enter through user-authorized Gmail alerts or saved `.eml` evidence rather than authenticated-page scraping.
 
 ## Implemented capabilities
 
@@ -60,10 +47,9 @@ user-authorized Gmail rather than authenticated-page scraping.
 - Config-driven worldwide role, software, sector and location normalization
 - Explainable YAML-controlled 0–100 piping/E3D match scoring
 - Global profile filtering before public-source insertion
-- Native Oracle HCM, Workday, Greenhouse, Lever and SmartRecruiters collectors
+- Oracle HCM, Workday, Greenhouse, Lever and SmartRecruiters collectors
 - Constrained public HTML, RSS/Atom and sitemap collectors
-- ATS/fallback registry covering SuccessFactors, SelectMinds, Eightfold, Workday,
-  iCIMS, Taleo, Teamtailor, Workable and Ashby
+- Extensible employer, recruiter, ATS and source-fragment registries
 - User-authorized Gmail API alert ingestion with multiple jobs per email
 - Text, PDF, Word, saved `.eml` and image-OCR private imports
 - SHA-256 evidence protection and verification
@@ -101,10 +87,7 @@ Install the combined daily Windows task:
 
 ## Automatic public collection
 
-The `daily-live-job-intelligence` workflow runs every day at 09:00 Asia/Kolkata and can
-also be started manually from GitHub Actions. It validates enabled official sources,
-collects jobs, retains evidence, exports Excel, verifies all proof and uploads a 14-day
-portable artifact.
+The `daily-live-job-intelligence` workflow runs every day at 09:00 Asia/Kolkata and can also be started manually from GitHub Actions. It validates enabled official sources, collects jobs, retains evidence, exports Excel, verifies proof and uploads a 14-day portable artifact.
 
 See `docs/DAILY_AUTOMATION.md`.
 
@@ -120,9 +103,7 @@ After creating a Google Desktop OAuth client and saving the credential locally:
 .\scripts\run_gmail_alerts.ps1
 ```
 
-The Gmail importer uses the read-only scope, stores hashed `.eml` evidence locally,
-extracts multiple distinct job links, deduplicates against official sources and updates
-the same workbook.
+The Gmail importer uses the read-only scope, stores hashed `.eml` evidence locally, extracts multiple distinct job links, deduplicates against official sources and updates the same workbook.
 
 See `docs/GMAIL_ALERTS.md`.
 
@@ -134,8 +115,7 @@ Place supported private vacancy files under `private-input`, then run:
 .\scripts\run_private_import.ps1
 ```
 
-Supported formats include TXT, Markdown, CSV, PDF, DOCX, EML and common image formats
-with OCR explicitly enabled.
+Supported formats include TXT, Markdown, CSV, PDF, DOCX, EML and common image formats with OCR explicitly enabled.
 
 ## Collect, export and verify
 
@@ -177,22 +157,16 @@ The generated workbook contains:
 22. `Run_Proof`
 23. `Daily_Summary`
 
-`Worldwide_Dedup` keeps the strongest representative row while preserving all source
-variants and application URLs in `All_Source_Rows` and `Duplicate_Variants`. Database
-identity remains strict and non-destructive.
+`Worldwide_Dedup` keeps the strongest representative row while preserving all source variants and application URLs in `All_Source_Rows` and `Duplicate_Variants`. Database identity remains strict and non-destructive.
 
-## Repository layout
+## Production acceptance still required
 
-```text
-config/                     Roles, locations, sources, ATS, employers, recruiters and scoring
-src/job_intelligence/       Application, collectors, Gmail/private imports and workbook logic
-tests/                      Unit, security, resilience and end-to-end tests
-scripts/                    Windows and GitHub execution helpers
-docs/                       Operation, safety and import guides
-.github/workflows/          CI and scheduled collection
-```
+The system may be labelled fully production-proven only after:
 
-See `docs/WORLDWIDE_OPERATION.md` for the complete operating model.
+- 20–50 live-proven active sources across employers, recruiters and authorized alerts;
+- backup and restore proof;
+- Windows restart and scheduler recovery proof;
+- repeated direct-link and duplicate audits;
+- 7–14 consecutive days of fail-closed daily runs.
 
-No fixed coverage percentage is promised. The system reports only evidence-backed public
-sources and authorized alerts through one auditable tracker.
+No fixed coverage percentage is promised. Internal, referral-only, private, login-only, short-lived and unpublished vacancies cannot be guaranteed.

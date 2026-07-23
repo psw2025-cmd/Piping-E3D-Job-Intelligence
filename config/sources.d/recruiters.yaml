@@ -1,0 +1,139 @@
+# Recruiter sources. Enable only after exact live contract proof passes.
+sources:
+  - id: airswift_global_public
+    name: Airswift official global jobs
+    type: public_html
+    company: Undisclosed client
+    agency_name: Airswift
+    replace_agency_company: true
+    url: https://www.airswift.com/jobs?page_num=1
+    page_url_template: https://www.airswift.com/jobs?page_num={page}
+    page_start: 1
+    page_step: 1
+    max_pages: 33
+    allowed_domains:
+      - www.airswift.com
+    job_link_patterns:
+      - /jobs/
+    anchor_text_patterns:
+      - piping engineer
+      - piping designer
+      - piping lead
+      - piping checker
+      - piping coordinator
+      - piping construction
+      - piping field
+      - e3d
+      - aveva
+      - pdms
+      - sp3d
+      - smart 3d
+      - plant layout
+      - pipe support
+    exclude_anchor_text_patterns:
+      - electrical
+      - instrumentation
+      - civil
+      - structural
+      - pipe fitter
+    fetch_details: true
+    deny_on_robots_error: true
+    enabled: true
+    profile_filter: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 30
+    max_response_bytes: 5000000
+    max_items: 150
+    max_redirects: 5
+
+  - id: nesfircroft_piping_public
+    name: NES Fircroft official piping jobs
+    type: public_html
+    company: Undisclosed client
+    agency_name: NES Fircroft
+    replace_agency_company: true
+    url: https://www.nesfircroft.com/job-search/?search%5Bquery%5D=piping&search%5Bradius%5D=50.0&page=1
+    page_url_template: https://www.nesfircroft.com/job-search/?search%5Bquery%5D=piping&search%5Bradius%5D=50.0&page={page}
+    page_start: 1
+    page_step: 1
+    max_pages: 25
+    allowed_domains:
+      - www.nesfircroft.com
+    job_link_patterns:
+      - /job/
+    anchor_text_patterns:
+      - piping engineer
+      - piping designer
+      - piping field
+      - piping lead
+      - piping checker
+      - mechanical piping
+      - e3d
+      - aveva
+      - pdms
+      - sp3d
+      - plant layout
+      - pipe support
+    exclude_anchor_text_patterns:
+      - electrical
+      - instrumentation
+      - civil
+      - structural
+      - pipe fitter
+    fetch_details: true
+    deny_on_robots_error: true
+    enabled: false
+    profile_filter: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 30
+    max_response_bytes: 5000000
+    max_items: 150
+    max_redirects: 5
+
+  - id: brunel_global_public
+    name: Brunel official global jobs
+    type: public_html
+    company: Undisclosed client
+    agency_name: Brunel
+    replace_agency_company: true
+    url: https://www.brunel.net/en/jobs
+    allowed_domains:
+      - www.brunel.net
+    job_link_patterns:
+      - /jobs/
+    anchor_text_patterns:
+      - piping engineer
+      - piping designer
+      - piping lead
+      - mechanical piping
+      - mechanical & piping
+      - piping commissioning
+      - e3d
+      - aveva
+      - pdms
+      - sp3d
+      - plant layout
+      - pipe support
+    exclude_anchor_text_patterns:
+      - electrical
+      - instrumentation
+      - civil
+      - structural
+      - pipe fitter
+    fetch_details: true
+    deny_on_robots_error: true
+    enabled: false
+    profile_filter: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 20
+    max_response_bytes: 5000000
+    max_items: 100
+    max_pages: 1
+    max_redirects: 5
+
+policy:
+  respect_robots_txt: true
+  skip_login_required_pages: true
+  bypass_captcha: false
+  use_rotating_proxies: false
+  retain_source_evidence: true
