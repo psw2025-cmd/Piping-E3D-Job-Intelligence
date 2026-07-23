@@ -1,0 +1,14 @@
+schema_version: 1
+verified_at: 2026-07-23
+
+employers:
+  - company: Engineers India Limited
+    priority: 1
+    official_careers_url: https://engineersindia.com/careers
+    public_job_url: https://recruitment.eil.co.in/
+    public_job_host: recruitment.eil.co.in
+    ats_type: robots_restricted_recruitment_portal
+    status: email_alert_ingestion_ready
+    source_ids: []
+    verified_at: 2026-07-23
+    notes: The official recruitment portal blocks this crawler through robots.txt. Use read-only Gmail alerts and private PDF/EML/image imports; do not bypass robots restrictions.
