@@ -9,7 +9,7 @@ from openpyxl import load_workbook
 from openpyxl.styles import Font
 
 from .database import JOB_COLUMNS, connect, fetch_jobs
-from .proof import init_proof_tables
+from .private_import import init_private_import_tables
 
 REQUIRED_SHEETS = (
     "New_Today",
@@ -22,6 +22,7 @@ REQUIRED_SHEETS = (
     "Recruiter_Contacts",
     "Source_Health",
     "Source_Evidence",
+    "Private_Imports",
     "Run_Proof",
 )
 _FORMULA_PREFIXES = ("=", "+", "-", "@")
@@ -63,7 +64,7 @@ def _format_workbook(path: Path) -> None:
 
 
 def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
-    init_proof_tables(db_path)
+    init_private_import_tables(db_path)
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
 
@@ -81,6 +82,7 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
     confidence = jobs.get("contact_confidence", pd.Series(dtype="string"))
     manual_review = jobs[
         confidence.isin(["PUBLIC_UNVERIFIED", "PATTERN_SUGGESTION"])
+        | statuses.eq("review_required")
     ]
     applied = jobs[statuses.eq("applied")]
     follow_up = jobs[statuses.eq("follow_up")]
@@ -95,6 +97,10 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
         )
         source_evidence = pd.read_sql_query(
             "SELECT * FROM source_evidence ORDER BY fetched_at DESC",
+            connection,
+        )
+        private_imports = pd.read_sql_query(
+            "SELECT * FROM private_imports ORDER BY imported_at DESC",
             connection,
         )
         run_proof = pd.read_sql_query(
@@ -113,6 +119,7 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
         "Recruiter_Contacts": contacts,
         "Source_Health": source_health,
         "Source_Evidence": source_evidence,
+        "Private_Imports": private_imports,
         "Run_Proof": run_proof,
     }
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
