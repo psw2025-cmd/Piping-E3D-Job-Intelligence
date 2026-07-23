@@ -1,8 +1,12 @@
 # Piping-E3D-Job-Intelligence
 
-Local-first job intelligence, matching and tracking for piping, AVEVA E3D, PDMS, SP3D, offshore, refinery, nuclear and global EPC opportunities.
+Worldwide, local-first job intelligence, matching and tracking for piping, AVEVA E3D,
+PDMS, SP3D, offshore, refinery, nuclear, energy and EPC opportunities.
 
-> **Current status:** verified public-source collection runs automatically in GitHub every day at 09:00 Asia/Kolkata. Private local ingestion supports text, PDF, Word, saved `.eml`, image OCR and user-authorized Gmail job alerts while keeping personal source files and evidence outside Git.
+> **Current implementation:** verified public-source collection, worldwide role and
+> location taxonomies, employer and recruiter coverage registries, user-authorized Gmail
+> alerts, private document/email/OCR imports, strict database identity, non-destructive
+> cross-source workbook deduplication and one verified daily Excel tracker.
 
 ## Safety boundaries
 
@@ -12,28 +16,60 @@ Local-first job intelligence, matching and tracking for piping, AVEVA E3D, PDMS,
 - Never commit CVs, application records, recruiter lists, databases, evidence or credentials.
 - Public-source GitHub automation and private local imports remain separate.
 - Gmail uses only the official read-only Gmail API scope.
-- Detected contacts are stored as `PUBLIC_UNVERIFIED` or `ALERT_SUPPLIED`, never automatically verified.
+- Detected contacts remain `PUBLIC_UNVERIFIED` or `ALERT_SUPPLIED` until reviewed.
 - OCR and inferred vacancy fields always require review.
-- SQLite is the source of truth. Excel is a review and tracking output.
+- SQLite is the strict source of truth; Excel is the operating review output.
+
+## Worldwide source coverage
+
+### Enabled official sources
+
+- McDermott — Oracle HCM
+- Wood — Oracle HCM
+- Bechtel — SAP SuccessFactors public listings
+- Petrofac — SelectMinds new, hot and India listings
+- Worley — Eightfold public listings
+
+### Fully configured staged sources
+
+- KBR — Phenom
+- AtkinsRealis — rendered public careers
+- Fluor — Eightfold
+- Technip Energies — rendered public careers
+- Jacobs — rendered public careers
+
+Staged sources remain disabled until their exact public listing, pagination, detail,
+evidence and failure-behavior proof passes.
+
+### Employer and recruiter coverage
+
+The employer registry also tracks L&T Energy Hydrocarbon, Saipem, Kent, Aker Solutions,
+Samsung E&A, JGC, Chiyoda, NPCC, Penspen, Bilfinger, MAIRE Tecnimont, Black & Veatch,
+Burns & McDonnell, Hatch and Ramboll.
+
+The recruiter registry includes Airswift, NES Fircroft, Brunel, Petroplan, Orion, TRS,
+MPH, Spencer Ogden, WRS, Matchtech, First Recruitment Group, Progressive Recruitment,
+Energy Resourcing, Rigzone, Energy Jobline and Oil and Gas Job Search.
+
+LinkedIn, Naukri, Indeed, Bayt, GulfTalent, employer and recruiter alerts enter through
+user-authorized Gmail rather than authenticated-page scraping.
 
 ## Implemented capabilities
 
 - SQLite jobs, identity aliases, source health, evidence, private-import, Gmail-alert and run-proof tables
-- Stable cross-source duplicate handling and transactional upserts
-- Preservation of user-managed application and recruiter fields
 - Config-driven worldwide role, software, sector and location normalization
 - Explainable YAML-controlled 0–100 piping/E3D match scoring
-- Verified McDermott and Wood Oracle career sources
-- Verified Bechtel SAP SuccessFactors public listings
-- Verified Petrofac SelectMinds new, hot and India listings
-- Greenhouse, Lever, SmartRecruiters, RSS/Atom and sitemap collectors
-- Constrained public employer HTML collector with domain, robots and response controls
-- Daily GitHub Actions collection at 09:00 Asia/Kolkata with verified artifacts
-- Text, PDF, Word, saved `.eml` and image-OCR private imports
+- Global profile filtering before public-source insertion
+- Native Oracle HCM, Greenhouse, Lever and SmartRecruiters collectors
+- Constrained public HTML, RSS/Atom and sitemap collectors
+- ATS/fallback registry covering SuccessFactors, SelectMinds, Eightfold, Phenom,
+  Workday, iCIMS, Taleo, Teamtailor, Workable and Ashby
 - User-authorized Gmail API alert ingestion with multiple jobs per email
-- SHA-256 evidence protection and private/Gmail evidence verification
-- Multi-sheet Excel export including source, Gmail, private-import and daily-summary proof
-- Windows private-folder and Gmail runners with Task Scheduler installers
+- Text, PDF, Word, saved `.eml` and image-OCR private imports
+- SHA-256 evidence protection and verification
+- Strict database identity plus non-destructive cross-source grouping in Excel
+- Daily GitHub public-source artifacts and a combined Windows public/Gmail runner
+- Windows Task Scheduler installers
 
 ## Quick start on Windows
 
@@ -45,9 +81,30 @@ pip install -e ".[dev]"
 job-intel --db data/database/jobs.db init-db
 ```
 
+## Build the worldwide workbook
+
+```powershell
+.\scripts\run_worldwide_daily.ps1
+```
+
+Output:
+
+```text
+data\exports\Piping_E3D_Jobs.xlsx
+```
+
+Install the combined daily Windows task:
+
+```powershell
+.\scripts\install_worldwide_daily_task.ps1
+```
+
 ## Automatic public collection
 
-The `daily-live-job-intelligence` workflow runs every day at 09:00 Asia/Kolkata and can also be started manually from GitHub Actions. It validates enabled official sources, collects jobs, retains evidence, exports Excel, verifies all proof and uploads a 14-day portable artifact.
+The `daily-live-job-intelligence` workflow runs every day at 09:00 Asia/Kolkata and can
+also be started manually from GitHub Actions. It validates enabled official sources,
+collects jobs, retains evidence, exports Excel, verifies all proof and uploads a 14-day
+portable artifact.
 
 See `docs/DAILY_AUTOMATION.md`.
 
@@ -63,38 +120,22 @@ After creating a Google Desktop OAuth client and saving the credential locally:
 .\scripts\run_gmail_alerts.ps1
 ```
 
-The Gmail importer reads matching alerts through the read-only scope, stores hashed `.eml` evidence locally, extracts multiple distinct job links, deduplicates against official sources and updates the same workbook.
+The Gmail importer uses the read-only scope, stores hashed `.eml` evidence locally,
+extracts multiple distinct job links, deduplicates against official sources and updates
+the same workbook.
 
 See `docs/GMAIL_ALERTS.md`.
 
 ## Private vacancy import
 
-Place private vacancy files under `private-input`, then run:
+Place supported private vacancy files under `private-input`, then run:
 
 ```powershell
 .\scripts\run_private_import.ps1
 ```
 
-Supported input types:
-
-- `.txt`, `.md`, `.csv`
-- `.pdf`
-- `.docx`
-- `.eml`
-- `.png`, `.jpg`, `.jpeg`, `.webp`, `.tif`, `.tiff`, `.bmp` with OCR enabled
-
-Detailed instructions are in `docs/PRIVATE_IMPORTS.md`.
-
-## Manual text import
-
-```powershell
-job-intel --db data/database/jobs.db import-text `
-  --title "Senior E3D Piping Designer" `
-  --company "Example EPC" `
-  --location "Mumbai" `
-  --file ".\private-input\vacancy.txt" `
-  --source-url "https://example.com/jobs/123"
-```
+Supported formats include TXT, Markdown, CSV, PDF, DOCX, EML and common image formats
+with OCR explicitly enabled.
 
 ## Collect, export and verify
 
@@ -108,44 +149,50 @@ job-intel --db data/database/jobs.db verify `
   --output data/exports/Piping_E3D_Jobs.xlsx
 ```
 
-## Excel workbook
+## Worldwide Excel workbook
 
 The generated workbook contains:
 
 1. `New_Today`
 2. `High_Priority`
-3. `All_Active`
-4. `Manual_Review`
-5. `Applied`
-6. `Follow_Up`
-7. `Rejected`
-8. `Expired`
-9. `Recruiter_Contacts`
-10. `Source_Health`
-11. `Source_Evidence`
-12. `Private_Imports`
-13. `Gmail_Alerts`
-14. `Gmail_Alert_Jobs`
-15. `Run_Proof`
-16. `Daily_Summary`
+3. `Worldwide_Dedup`
+4. `All_Active`
+5. `All_Source_Rows`
+6. `Duplicate_Variants`
+7. `Manual_Review`
+8. `Applied`
+9. `Follow_Up`
+10. `Rejected`
+11. `Expired`
+12. `Recruiter_Contacts`
+13. `Country_Summary`
+14. `Company_Summary`
+15. `Employer_Coverage`
+16. `Recruiter_Coverage`
+17. `Source_Health`
+18. `Source_Evidence`
+19. `Private_Imports`
+20. `Gmail_Alerts`
+21. `Gmail_Alert_Jobs`
+22. `Run_Proof`
+23. `Daily_Summary`
+
+`Worldwide_Dedup` keeps the strongest representative row while preserving all source
+variants and application URLs in `All_Source_Rows` and `Duplicate_Variants`. Database
+identity remains strict and non-destructive.
 
 ## Repository layout
 
 ```text
-config/                     Roles, locations, sources, employer registry and scoring
-src/job_intelligence/       Application, collectors and private/Gmail imports
-tests/                      Unit, migration, fixture and end-to-end tests
+config/                     Roles, locations, sources, ATS, employers, recruiters and scoring
+src/job_intelligence/       Application, collectors, Gmail/private imports and workbook logic
+tests/                      Unit, security, resilience and end-to-end tests
 scripts/                    Windows and GitHub execution helpers
 docs/                       Operation, safety and import guides
 .github/workflows/          CI and scheduled collection
 ```
 
-## Remaining controlled phases
+See `docs/WORLDWIDE_OPERATION.md` for the complete operating model.
 
-1. Additional live-proven priority EPC employer connectors.
-2. Workday, SuccessFactors, iCIMS, Taleo, SelectMinds, Teamtailor, Workable, Ashby and source-specific rendered-page connectors.
-3. Recruiter and engineering-consultancy source expansion.
-4. Optional email or Telegram high-priority notifications.
-5. Production backup/restore, Windows restart recovery and 7–14-day soak proof.
-
-No fixed coverage percentage is promised. The objective is broad, evidence-backed coverage of verified public sources and authorized alerts through one auditable tracker.
+No fixed coverage percentage is promised. The system reports only evidence-backed public
+sources and authorized alerts through one auditable tracker.
