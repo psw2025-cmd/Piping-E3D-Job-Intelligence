@@ -155,7 +155,10 @@ def _title_scope(title: str) -> str:
             return " "
         return f" {content} "
 
-    return " ".join(_LONG_PAREN.sub(replace, title).lower().split())
+    cleaned = _LONG_PAREN.sub(replace, title)
+    if cleaned.count("(") > cleaned.count(")"):
+        cleaned = cleaned.rsplit("(", 1)[0]
+    return " ".join(cleaned.lower().split())
 
 
 def _title_matches_profile(spec: SourceSpec, job: JobRecord) -> bool:
