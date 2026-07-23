@@ -266,6 +266,7 @@ def _validate_source(spec: SourceSpec) -> None:
     elif spec.source_type == "smartrecruiters":
         spec.require_text("company_identifier")
         spec.bool_option("fetch_details", True)
+        _validate_optional_text_list(spec, "include_terms")
     else:
         _validate_public_url(spec.require_text("url"), spec.source_id)
         if spec.source_type == "sitemap":
@@ -281,15 +282,32 @@ def _validate_source(spec: SourceSpec) -> None:
     spec.int_option("max_redirects", 5, minimum=0)
 
 
-def load_source_config(path: str | Path) -> SourceConfig:
-    config_path = Path(path)
-    loaded = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+def _load_mapping(path: Path) -> dict[str, Any]:
+    loaded = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     if not isinstance(loaded, dict):
-        raise ValueError("source configuration root must be a mapping")
+        raise ValueError(f"source configuration root must be a mapping: {path}")
+    return loaded
 
+
+def _merged_raw_sources(config_path: Path, loaded: dict[str, Any]) -> list[Any]:
     raw_sources = loaded.get("sources", [])
     if not isinstance(raw_sources, list):
         raise ValueError("sources must be a list")
+    merged = list(raw_sources)
+    expansion_path = config_path.with_name("sources_expansion.yaml")
+    if expansion_path.exists():
+        expansion = _load_mapping(expansion_path)
+        extra_sources = expansion.get("sources", [])
+        if not isinstance(extra_sources, list):
+            raise ValueError("sources_expansion.yaml sources must be a list")
+        merged.extend(extra_sources)
+    return merged
+
+
+def load_source_config(path: str | Path) -> SourceConfig:
+    config_path = Path(path)
+    loaded = _load_mapping(config_path)
+    raw_sources = _merged_raw_sources(config_path, loaded)
 
     sources: list[SourceSpec] = []
     seen: set[str] = set()
