@@ -4,7 +4,11 @@ from pathlib import Path
 import yaml
 
 from job_intelligence.models import JobRecord
-from job_intelligence.scoring import load_scoring_profile, score_job
+from job_intelligence.scoring import (
+    is_profile_relevant,
+    load_scoring_profile,
+    score_job,
+)
 
 
 def test_strong_profile_match_is_high_priority() -> None:
@@ -36,11 +40,39 @@ def test_unrelated_role_stays_low() -> None:
     assert result.gaps
 
 
+def test_global_profile_filter_accepts_piping_and_3d_variants() -> None:
+    assert is_profile_relevant(
+        JobRecord(
+            title="Plant Design & Piping Designer",
+            company="Example EPC",
+            description="SP3D model coordination and equipment layout scope.",
+        )
+    )
+    assert is_profile_relevant(
+        JobRecord(
+            title="Mechanical Designer",
+            company="Example EPC",
+            description="AVEVA E3D piping and pipe support design.",
+        )
+    )
+
+
+def test_global_profile_filter_rejects_unrelated_jobs() -> None:
+    assert not is_profile_relevant(
+        JobRecord(
+            title="Payroll Specialist",
+            company="Example EPC",
+            description="Payroll, benefits and HR operations.",
+        )
+    )
+
+
 def test_scoring_reads_yaml_configuration(tmp_path: Path) -> None:
     (tmp_path / "roles.yaml").write_text(
         yaml.safe_dump(
             {
                 "target_roles": ["Custom Pipe Role"],
+                "discovery_terms": ["custom pipe"],
                 "sectors": ["Hydrogen"],
             }
         ),
@@ -83,6 +115,7 @@ def test_scoring_reads_yaml_configuration(tmp_path: Path) -> None:
     result = score_job(job, config_dir=tmp_path)
     assert result.score == 80
     assert result.priority == "high"
+    assert is_profile_relevant(job, config_dir=tmp_path)
 
 
 def test_scoring_uses_defaults_for_null_yaml_values(tmp_path: Path) -> None:
@@ -104,6 +137,7 @@ def test_scoring_uses_defaults_for_null_yaml_values(tmp_path: Path) -> None:
     assert profile.weights["target_role"] == 20
     assert profile.thresholds["critical"] == 85
     assert profile.recent_days == 7
+    assert profile.discovery_terms
 
     result = score_job(
         JobRecord(
