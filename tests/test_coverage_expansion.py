@@ -22,6 +22,22 @@ def test_workday_location_codes_are_normalized() -> None:
         assert (job.city, job.country) == (city, country)
 
 
+def test_portal_iso_country_codes_are_normalized() -> None:
+    cases = {
+        "Tours, Centre-Val de Loire, fr": "France",
+        "Jubail, sa": "Saudi Arabia",
+        "Al Khor, qa": "Qatar",
+        "Porsgrunn, Telemark, no": "Norway",
+        "Hanko, Uusimaa, fi": "Finland",
+        "Piteå, Norrbotten County, se": "Sweden",
+        "São Paulo, SP, br": "Brazil",
+    }
+    for location, expected in cases.items():
+        job = JobRecord(title="Piping Designer", company="EPC", location=location)
+        enrich_job(job, config_dir=CONFIG_DIR)
+        assert job.country == expected
+
+
 def test_expanded_role_aliases_are_normalized() -> None:
     cases = {
         "Principal Designer - Piping Layout": "Principal Piping Designer",
@@ -29,6 +45,9 @@ def test_expanded_role_aliases_are_normalized() -> None:
         "Senior Mechanical/Piping Designer": "Senior Mechanical Piping Designer",
         "Sr. Piping Stress Analyst": "Piping Stress Analyst",
         "Piping Material Engineer": "Piping Materials Engineer",
+        "Dessinateur Projeteur E3D / PDMS H/F": "Piping Designer",
+        "Responsable Delivery Piping H/F": "Specialist Piping Engineer",
+        "Catalogue Manager E3D - H/F": "3D Modelling Manager",
     }
     for title, expected in cases.items():
         job = JobRecord(title=title, company="EPC")
@@ -40,7 +59,7 @@ def test_portal_and_taxonomy_matrices_load() -> None:
     employers, recruiters, portals = registry_frames(CONFIG_DIR)
     roles, locations = taxonomy_frames(CONFIG_DIR)
     assert "JobStreet Job Alerts" in set(portals["company"])
-    assert len(employers) >= 25
+    assert len(employers) >= 35
     assert len(recruiters) >= 15
     assert len(roles) >= 30
     assert len(locations) >= 100
