@@ -18,6 +18,22 @@ from .scoring import score_job
 from .source_config import SourceSpec, load_source_config
 
 _SAFE_SUFFIX = re.compile(r"^\.[a-z0-9]{1,10}$")
+_LONG_PAREN = re.compile(r"\(([^()]*)\)")
+_GENERIC_DESIGN_TITLES = (
+    "mechanical designer",
+    "mechanical design engineer",
+    "designer mechanical",
+    "plant designer",
+)
+_GENERIC_DESIGN_CONTEXT = (
+    "e3d",
+    "aveva e3d",
+    "pdms",
+    "sp3d",
+    "smart 3d",
+    "smartplant 3d",
+    "piping layout",
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -115,10 +131,53 @@ def _prepare_jobs(spec: SourceSpec, jobs: list[JobRecord], config_dir: Path) -> 
         job.gaps = "; ".join(result.gaps)
 
 
+def _title_scope(title: str) -> str:
+    def replace(match: re.Match[str]) -> str:
+        content = " ".join(match.group(1).split())
+        lowered = content.lower()
+        if len(content.split()) > 4 or any(
+            term in lowered
+            for term in ("project", "rotation", "subsea cable", "wht's")
+        ):
+            return " "
+        return f" {content} "
+
+    return " ".join(_LONG_PAREN.sub(replace, title).lower().split())
+
+
+def _title_matches_profile(spec: SourceSpec, job: JobRecord) -> bool:
+    scoped_title = _title_scope(job.title)
+    title_terms = spec.text_list_option("title_terms") or spec.text_list_option(
+        "include_terms"
+    )
+    if any(term in scoped_title for term in title_terms):
+        return True
+    if any(term in scoped_title for term in _GENERIC_DESIGN_TITLES):
+        searchable = job.searchable_text
+        return any(term in searchable for term in _GENERIC_DESIGN_CONTEXT)
+    return False
+
+
 def _filter_profile_jobs(spec: SourceSpec, jobs: list[JobRecord]) -> list[JobRecord]:
     if not spec.bool_option("profile_filter", True):
         return jobs
-    return [job for job in jobs if job.normalized_role or job.match_score >= 20]
+    return [job for job in jobs if _title_matches_profile(spec, job)]
+
+
+def _profile_audit_warnings(raw_count: int, filtered_count: int) -> list[str]:
+    if raw_count == 0:
+        return ["ZERO_RAW_CANDIDATES: source returned no profile candidates"]
+    rejected = raw_count - filtered_count
+    if filtered_count == 0:
+        return [
+            f"ZERO_FILTERED_TARGETS: raw_candidates={raw_count}; filtered_targets=0"
+        ]
+    if rejected:
+        return [
+            f"PROFILE_FILTER_AUDIT: raw_candidates={raw_count}; "
+            f"filtered_targets={filtered_count}; rejected={rejected}"
+        ]
+    return []
 
 
 def _select_sources(source_config, only_source_ids: set[str] | None):
@@ -194,8 +253,10 @@ def collect_sources(
                 )
                 evidence_saved = True
             stage = "score"
+            raw_count = len(result.jobs)
             _prepare_jobs(spec, result.jobs, config_path.parent)
             result.jobs = _filter_profile_jobs(spec, result.jobs)
+            result.warnings.extend(_profile_audit_warnings(raw_count, len(result.jobs)))
             stage = "upsert"
             new_jobs, updated_jobs = upsert_jobs(db_path, result.jobs)
             stage = "health"
