@@ -1,8 +1,8 @@
 # Piping-E3D-Job-Intelligence
 
-Local-first job intelligence, matching and tracking for piping, AVEVA E3D, PDMS, SP3D, offshore, refinery, nuclear and global EPC opportunities.
+Worldwide, local-first job intelligence, matching and tracking for piping engineering, AVEVA E3D, PDMS, SP3D, offshore, refinery, nuclear and global EPC opportunities.
 
-> **Current status:** verified public-source collection runs automatically in GitHub every day at 09:00 Asia/Kolkata. Private local ingestion supports text, PDF, Word, saved `.eml`, image OCR and user-authorized Gmail job alerts while keeping personal source files and evidence outside Git.
+> **Current status:** worldwide profile/workbook foundations, user-authorized Gmail alerts, private document/OCR imports and scheduled public collection are implemented. This branch expands verified official coverage to nine employers through eleven enabled source definitions. The system remains **limited verified employer coverage** until recruiter sources, further employers and production soak proof are complete.
 
 ## Safety boundaries
 
@@ -14,6 +14,7 @@ Local-first job intelligence, matching and tracking for piping, AVEVA E3D, PDMS,
 - Gmail uses only the official read-only Gmail API scope.
 - Detected contacts are stored as `PUBLIC_UNVERIFIED` or `ALERT_SUPPLIED`, never automatically verified.
 - OCR and inferred vacancy fields always require review.
+- Missing salary, dates, employers, locations, experience and contact details remain blank rather than being invented.
 - SQLite is the source of truth. Excel is a review and tracking output.
 
 ## Implemented capabilities
@@ -23,16 +24,23 @@ Local-first job intelligence, matching and tracking for piping, AVEVA E3D, PDMS,
 - Preservation of user-managed application and recruiter fields
 - Config-driven worldwide role, software, sector and location normalization
 - Explainable YAML-controlled 0–100 piping/E3D match scoring
-- Verified McDermott and Wood Oracle career sources
-- Verified Bechtel SAP SuccessFactors public listings
-- Verified Petrofac SelectMinds new, hot and India listings
-- Greenhouse, Lever, SmartRecruiters, RSS/Atom and sitemap collectors
-- Constrained public employer HTML collector with domain, robots and response controls
+- Verified official public sources for:
+  - McDermott — Oracle HCM
+  - Wood — Oracle HCM
+  - Technip Energies — Oracle HCM
+  - KBR — Workday
+  - AtkinsRealis — Workday
+  - Fluor — SAP SuccessFactors public career pages
+  - Saipem — context-aware official global job board
+  - Bechtel — SAP SuccessFactors public listings
+  - Petrofac — SelectMinds new, hot and India listings
+- Greenhouse, Lever, SmartRecruiters, RSS/Atom and sitemap collector foundations
+- Constrained public employer HTML and context-aware card collectors with domain, robots and response controls
 - Daily GitHub Actions collection at 09:00 Asia/Kolkata with verified artifacts
 - Text, PDF, Word, saved `.eml` and image-OCR private imports
 - User-authorized Gmail API alert ingestion with multiple jobs per email
 - SHA-256 evidence protection and private/Gmail evidence verification
-- Multi-sheet Excel export including source, Gmail, private-import and daily-summary proof
+- Multi-sheet Excel export including normalized fields, source, Gmail, private-import and daily-summary proof
 - Windows private-folder and Gmail runners with Task Scheduler installers
 
 ## Quick start on Windows
@@ -85,17 +93,6 @@ Supported input types:
 
 Detailed instructions are in `docs/PRIVATE_IMPORTS.md`.
 
-## Manual text import
-
-```powershell
-job-intel --db data/database/jobs.db import-text `
-  --title "Senior E3D Piping Designer" `
-  --company "Example EPC" `
-  --location "Mumbai" `
-  --file ".\private-input\vacancy.txt" `
-  --source-url "https://example.com/jobs/123"
-```
-
 ## Collect, export and verify
 
 ```powershell
@@ -110,42 +107,16 @@ job-intel --db data/database/jobs.db verify `
 
 ## Excel workbook
 
-The generated workbook contains:
+The generated workbook contains `New_Today`, `High_Priority`, `All_Active`, `Manual_Review`, application-status sheets, recruiter contacts, source/evidence proof, private imports, Gmail alerts, run proof and `Daily_Summary`.
 
-1. `New_Today`
-2. `High_Priority`
-3. `All_Active`
-4. `Manual_Review`
-5. `Applied`
-6. `Follow_Up`
-7. `Rejected`
-8. `Expired`
-9. `Recruiter_Contacts`
-10. `Source_Health`
-11. `Source_Evidence`
-12. `Private_Imports`
-13. `Gmail_Alerts`
-14. `Gmail_Alert_Jobs`
-15. `Run_Proof`
-16. `Daily_Summary`
-
-## Repository layout
-
-```text
-config/                     Roles, locations, sources, employer registry and scoring
-src/job_intelligence/       Application, collectors and private/Gmail imports
-tests/                      Unit, migration, fixture and end-to-end tests
-scripts/                    Windows and GitHub execution helpers
-docs/                       Operation, safety and import guides
-.github/workflows/          CI and scheduled collection
-```
+Core vacancy fields include exact title, normalized role, company, city/country, apply and source URL, published and closing dates, experience, software, sector, employment type, score, explanation, gaps, contact confidence, duplicate status and application status.
 
 ## Remaining controlled phases
 
-1. Additional live-proven priority EPC employer connectors.
-2. Workday, SuccessFactors, iCIMS, Taleo, SelectMinds, Teamtailor, Workable, Ashby and source-specific rendered-page connectors.
-3. Recruiter and engineering-consultancy source expansion.
-4. Optional email or Telegram high-priority notifications.
-5. Production backup/restore, Windows restart recovery and 7–14-day soak proof.
+1. Add further live-proven EPC employers and ATS families in small reviewable batches.
+2. Add recruiter and engineering-consultancy source coverage.
+3. Activate authorized Gmail alert queries after the user completes local Google OAuth.
+4. Add optional email or Telegram high-priority notifications.
+5. Complete production backup/restore, Windows restart recovery and 7–14-day soak proof.
 
 No fixed coverage percentage is promised. The objective is broad, evidence-backed coverage of verified public sources and authorized alerts through one auditable tracker.
