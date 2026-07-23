@@ -1,0 +1,69 @@
+schema_version: 1
+verified_at: 2026-07-23
+
+portals:
+  - company: LinkedIn Job Alerts
+    priority: 1
+    official_careers_url: https://www.linkedin.com/jobs/
+    portal_domain: linkedin.com
+    status: email_alert_ingestion_ready
+  - company: Naukri Job Alerts
+    priority: 1
+    official_careers_url: https://www.naukri.com/
+    portal_domain: naukri.com
+    status: email_alert_ingestion_ready
+  - company: Indeed Job Alerts
+    priority: 1
+    official_careers_url: https://www.indeed.com/
+    portal_domain: indeed.com
+    status: email_alert_ingestion_ready
+  - company: JobStreet Job Alerts
+    priority: 1
+    official_careers_url: https://www.jobstreet.com/
+    portal_domain: jobstreet.com
+    status: email_alert_ingestion_ready
+  - company: GulfTalent Job Alerts
+    priority: 1
+    official_careers_url: https://www.gulftalent.com/
+    portal_domain: gulftalent.com
+    status: email_alert_ingestion_ready
+  - company: Bayt Job Alerts
+    priority: 1
+    official_careers_url: https://www.bayt.com/
+    portal_domain: bayt.com
+    status: email_alert_ingestion_ready
+  - company: Naukrigulf Job Alerts
+    priority: 1
+    official_careers_url: https://www.naukrigulf.com/
+    portal_domain: naukrigulf.com
+    status: email_alert_ingestion_ready
+  - company: Foundit Job Alerts
+    priority: 2
+    official_careers_url: https://www.foundit.in/
+    portal_domain: foundit.in
+    status: email_alert_ingestion_ready
+  - company: Glassdoor Job Alerts
+    priority: 2
+    official_careers_url: https://www.glassdoor.com/Job/
+    portal_domain: glassdoor.com
+    status: email_alert_ingestion_ready
+  - company: Rigzone Job Alerts
+    priority: 1
+    official_careers_url: https://www.rigzone.com/oil/jobs/
+    portal_domain: rigzone.com
+    status: email_alert_ingestion_ready
+  - company: Energy Jobline Alerts
+    priority: 1
+    official_careers_url: https://www.energyjobline.com/jobs
+    portal_domain: energyjobline.com
+    status: email_alert_ingestion_ready
+  - company: Oil and Gas Job Search Alerts
+    priority: 1
+    official_careers_url: https://www.oilandgasjobsearch.com/jobs
+    portal_domain: oilandgasjobsearch.com
+    status: email_alert_ingestion_ready
+  - company: EPC Engineer Alerts
+    priority: 2
+    official_careers_url: https://www.epcengineer.com/jobs
+    portal_domain: epcengineer.com
+    status: email_alert_ingestion_ready
