@@ -1,6 +1,6 @@
 # Public-source registry.
 # Never place credentials, private portals, cookies, CV data or recruiter lists here.
-# McDermott, Wood, Bechtel and Petrofac sources were verified read-only on 2026-07-23.
+# McDermott, Wood, Bechtel, Petrofac, KBR and AtkinsRealis sources were verified read-only on 2026-07-23.
 sources:
   - id: mcdermott_oracle
     name: McDermott official Oracle careers
@@ -75,6 +75,80 @@ sources:
     max_scan_items: 3000
     max_pages: 30
     page_size: 100
+
+  - id: kbr_workday
+    name: KBR official Workday careers
+    type: workday
+    company: KBR
+    base_url: https://kbr.wd5.myworkdayjobs.com
+    tenant: kbr
+    site: KBR_Careers
+    locale: en-US
+    search_terms:
+      - piping
+      - e3d
+      - pdms
+      - sp3d
+      - smart 3d
+      - plant layout
+      - pipe support
+    include_terms:
+      - piping
+      - pipe layout
+      - e3d
+      - pdms
+      - sp3d
+      - smart 3d
+      - smartplant 3d
+      - plant layout
+      - pipe support
+    location_terms: []
+    enabled: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 30
+    max_response_bytes: 5000000
+    max_items: 250
+    max_scan_items: 3000
+    max_pages: 40
+    page_size: 20
+    max_redirects: 3
+
+  - id: atkinsrealis_workday
+    name: AtkinsRealis official Workday careers
+    type: workday
+    company: AtkinsRealis
+    base_url: https://slihrms.wd3.myworkdayjobs.com
+    tenant: slihrms
+    site: Careers
+    locale: en-US
+    search_terms:
+      - piping
+      - e3d
+      - pdms
+      - sp3d
+      - smart 3d
+      - plant layout
+      - pipe support
+    include_terms:
+      - piping
+      - pipe layout
+      - e3d
+      - pdms
+      - sp3d
+      - smart 3d
+      - smartplant 3d
+      - plant layout
+      - pipe support
+    location_terms: []
+    enabled: true
+    timeout_seconds: 30
+    rate_limit_per_minute: 30
+    max_response_bytes: 5000000
+    max_items: 250
+    max_scan_items: 3000
+    max_pages: 40
+    page_size: 20
+    max_redirects: 3
 
   - id: bechtel_successfactors
     name: Bechtel official SAP SuccessFactors careers
