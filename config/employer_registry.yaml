@@ -1,4 +1,4 @@
-schema_version: 1
+schema_version: 2
 verified_at: 2026-07-23
 
 status_definitions:
@@ -6,61 +6,209 @@ status_definitions:
   official_site_verified: Official employer careers site verified; connector research remains.
   connector_planned: Public job portal verified; a constrained connector is planned.
   restricted_endpoint_not_used: A platform endpoint exists but is not documented for public third-party use.
+  email_alert_path: Official or portal alerts should be ingested through user-authorized email.
+  blocked: No safe, stable public source has been verified.
 
 employers:
   - company: McDermott
     priority: 1
     official_careers_url: https://www.mcdermott.com/careers/search-apply
     public_job_host: edsv.fa.us2.oraclecloud.com
+    ats_type: oracle_hcm
     status: active_supported
     source_ids:
       - mcdermott_oracle
-    notes: Verified public Oracle Candidate Experience requisition source with role and location filters.
+    verified_at: 2026-07-23
+    notes: Verified public Oracle Candidate Experience requisition source with profile and location filters.
 
   - company: Wood
     priority: 1
     official_careers_url: https://careers.woodplc.com/
     public_job_host: ehif.fa.em2.oraclecloud.com
+    ats_type: oracle_hcm
     status: active_supported
     source_ids:
       - wood_oracle
-    notes: Verified public Oracle Candidate Experience requisition source with role and location filters.
+    verified_at: 2026-07-23
+    notes: Verified public Oracle Candidate Experience requisition source with profile and location filters.
+
+  - company: Bechtel
+    priority: 1
+    official_careers_url: https://www.bechtel.com/careers/
+    public_job_url: https://jobs.bechtel.com/go/Professional/4321400/0/
+    public_job_host: jobs.bechtel.com
+    ats_type: sap_successfactors_public_html
+    status: active_supported
+    source_ids:
+      - bechtel_successfactors
+    verified_at: 2026-07-23
+    notes: Official SAP SuccessFactors professional listings expose public job links, titles and locations; detail pages are fetched read-only and evidence is retained.
+
+  - company: Petrofac
+    priority: 1
+    official_careers_url: https://www.petrofac.com/careers/find-a-job-at-petrofac
+    public_job_url: https://petrofac.referrals.selectminds.com/latest-jobs
+    public_job_host: petrofac.referrals.selectminds.com
+    ats_type: selectminds_public_html
+    status: active_supported
+    source_ids:
+      - petrofac_latest_selectminds
+      - petrofac_hot_selectminds
+      - petrofac_india_selectminds
+    verified_at: 2026-07-23
+    notes: Official SelectMinds new, hot and India vacancy listings expose public job detail links, locations, dates and requisition information.
 
   - company: Worley
     priority: 1
     official_careers_url: https://www.worley.com/en/careers
     public_job_url: https://jobs.worley.com/careers
+    public_job_host: jobs.worley.com
+    ats_type: eightfold
     status: connector_planned
     source_ids: []
-    notes: Official public job search verified; connector must use documented and permitted public access only.
-
-  - company: Bechtel
-    priority: 1
-    official_careers_url: https://www.bechtel.com/careers/
-    public_job_url: https://jobs.bechtel.com/us/en
-    status: connector_planned
-    source_ids: []
-    notes: Official public professional-job portal verified; connector remains disabled pending proof.
+    notes: Official Eightfold public job search verified; implement a constrained source-specific connector rather than guessing internal APIs.
 
   - company: KBR
     priority: 1
     official_careers_url: https://careers.kbr.com/us/en
     public_job_url: https://careers.kbr.com/us/en/search-results
+    public_job_host: careers.kbr.com
+    ats_type: platform_research_required
     status: connector_planned
     source_ids: []
-    notes: Official public careers portal verified; platform-specific connector remains disabled.
-
-  - company: Petrofac
-    priority: 1
-    official_careers_url: https://www.petrofac.com/careers/find-a-job-at-petrofac
-    public_job_url: https://petrofac.referrals.selectminds.com/
-    status: connector_planned
-    source_ids: []
-    notes: Official application portal verified; collector remains disabled pending proof.
+    notes: Official careers portal verified; identify a permitted public listing interface or use authorized email alerts.
 
   - company: Technip Energies
     priority: 1
     official_careers_url: https://careers.technipenergies.com/
+    public_job_host: careers.technipenergies.com
+    ats_type: rendered_public_pages
     status: restricted_endpoint_not_used
     source_ids: []
-    notes: Public rendered pages may be supported later; undocumented internal APIs will not be used.
+    notes: Only documented public rendered pages or user-authorized alerts may be used; undocumented internal endpoints remain prohibited.
+
+  - company: L&T Energy Hydrocarbon
+    priority: 1
+    official_careers_url: https://www.larsentoubro.com/corporate/careers/
+    status: official_site_verified
+    source_ids: []
+    notes: Official careers entry verified; employer-specific public vacancy source still requires proof.
+
+  - company: Saipem
+    priority: 1
+    official_careers_url: https://www.saipem.com/en/people/careers
+    status: connector_planned
+    source_ids: []
+    notes: Official career source scheduled for a controlled connector batch.
+
+  - company: Fluor
+    priority: 1
+    official_careers_url: https://www.fluor.com/careers
+    status: connector_planned
+    source_ids: []
+    notes: Official career source scheduled for a controlled connector batch.
+
+  - company: Jacobs
+    priority: 1
+    official_careers_url: https://careers.jacobs.com/
+    status: connector_planned
+    source_ids: []
+    notes: Official career source scheduled for a controlled connector batch.
+
+  - company: AtkinsRealis
+    priority: 1
+    official_careers_url: https://careers.atkinsrealis.com/
+    status: connector_planned
+    source_ids: []
+    notes: Official career source scheduled for a controlled connector batch.
+
+  - company: Kent
+    priority: 2
+    official_careers_url: https://kentplc.com/careers
+    status: connector_planned
+    source_ids: []
+    notes: Official career source scheduled for a controlled connector batch.
+
+  - company: Aker Solutions
+    priority: 2
+    official_careers_url: https://www.akersolutions.com/careers/
+    status: connector_planned
+    source_ids: []
+    notes: Official career source scheduled for a controlled connector batch.
+
+  - company: Samsung E&A
+    priority: 2
+    official_careers_url: https://www.samsungena.com/en/careers/
+    status: official_site_verified
+    source_ids: []
+    notes: Official careers site retained for source discovery and authorized alerts.
+
+  - company: JGC
+    priority: 2
+    official_careers_url: https://www.jgc.com/en/recruit/
+    status: official_site_verified
+    source_ids: []
+    notes: Official careers site retained for source discovery and authorized alerts.
+
+  - company: Chiyoda
+    priority: 2
+    official_careers_url: https://www.chiyodacorp.com/en/recruit/
+    status: official_site_verified
+    source_ids: []
+    notes: Official careers site retained for source discovery and authorized alerts.
+
+  - company: NPCC
+    priority: 1
+    official_careers_url: https://www.npcc.ae/careers/
+    status: official_site_verified
+    source_ids: []
+    notes: Official careers site retained for source discovery and authorized alerts.
+
+  - company: Penspen
+    priority: 2
+    official_careers_url: https://www.penspen.com/careers/
+    status: connector_planned
+    source_ids: []
+    notes: Official career source scheduled for a controlled connector batch.
+
+  - company: Bilfinger
+    priority: 2
+    official_careers_url: https://jobs.bilfinger.com/
+    status: connector_planned
+    source_ids: []
+    notes: Official career source scheduled for a controlled connector batch.
+
+  - company: MAIRE Tecnimont
+    priority: 1
+    official_careers_url: https://www.groupmaire.com/en/careers/
+    status: connector_planned
+    source_ids: []
+    notes: Official career source scheduled for a controlled connector batch.
+
+  - company: Black & Veatch
+    priority: 2
+    official_careers_url: https://careers.bv.com/
+    status: connector_planned
+    source_ids: []
+    notes: Official career source scheduled for a controlled connector batch.
+
+  - company: Burns & McDonnell
+    priority: 2
+    official_careers_url: https://burnsmcd.jobs/
+    status: connector_planned
+    source_ids: []
+    notes: Official career source scheduled for a controlled connector batch.
+
+  - company: Hatch
+    priority: 2
+    official_careers_url: https://jobs.hatch.com/
+    status: connector_planned
+    source_ids: []
+    notes: Official career source scheduled for a controlled connector batch.
+
+  - company: Ramboll
+    priority: 2
+    official_careers_url: https://jobs.smartrecruiters.com/Ramboll3/
+    status: connector_planned
+    source_ids: []
+    notes: Official SmartRecruiters tenant requires identifier and live contract proof before enablement.
