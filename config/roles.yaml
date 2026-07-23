@@ -1,20 +1,120 @@
 target_roles:
   - Lead Piping Engineer
   - Senior Piping Engineer
+  - Principal Piping Engineer
+  - Piping Discipline Lead
+  - Piping Engineering Lead
   - Piping Design Engineer
-  - Senior Piping Layout Engineer
-  - Senior E3D Piping Designer
-  - Senior PDMS Piping Designer
-  - Offshore Piping Engineer
-  - Site Piping Engineer
+  - Lead Piping Design Engineer
+  - Senior Piping Design Engineer
   - Piping Layout Engineer
+  - Senior Piping Layout Engineer
+  - Senior Layout Engineer
+  - Piping Area Lead
+  - Piping Design Checker
+  - Senior Piping Design Checker
+  - Site Piping Engineer
+  - Field Piping Engineer
+  - Piping Construction Engineer
+  - Offshore Piping Engineer
+  - Senior E3D Piping Designer
+  - AVEVA E3D Designer
+  - E3D Piping Designer
+  - E3D Administrator
+  - E3D Coordinator
+  - Senior PDMS Piping Designer
+  - Senior PDMS Designer
+  - SP3D Piping Designer
+  - SmartPlant 3D Piping Designer
+  - 3D Model Coordinator
+  - Plant Design Engineer
+  - Plant Layout Designer
+  - Mechanical Piping Designer
   - Piping CAD Lead
+
+role_families:
+  Lead Piping Engineer:
+    - lead piping engineer
+    - piping discipline lead
+    - piping engineering lead
+    - principal piping engineer
+    - piping lead engineer
+  Senior Piping Engineer:
+    - senior piping engineer
+    - sr piping engineer
+    - senior engineer piping
+  Lead Piping Design Engineer:
+    - lead piping design engineer
+    - lead design engineer piping
+    - piping design lead
+  Piping Design Engineer:
+    - piping design engineer
+    - piping engineer design
+  Senior Piping Layout Engineer:
+    - senior piping layout engineer
+    - senior layout engineer piping
+    - senior piping layout designer
+  Piping Layout Engineer:
+    - piping layout engineer
+    - pipe layout engineer
+    - plant layout engineer piping
+  Piping Area Lead:
+    - piping area lead
+    - area lead piping
+  Senior Piping Design Checker:
+    - senior piping design checker
+    - piping design checker
+    - piping checker
+    - senior checker piping
+  Site Piping Engineer:
+    - site piping engineer
+    - field piping engineer
+    - piping field engineer
+    - piping construction engineer
+    - construction piping engineer
+  Offshore Piping Engineer:
+    - offshore piping engineer
+    - offshore piping designer
+  Senior E3D Piping Designer:
+    - senior e3d piping designer
+    - senior aveva e3d designer
+    - e3d piping designer
+    - aveva e3d piping designer
+    - e3d designer piping
+  E3D Administrator:
+    - e3d administrator
+    - aveva e3d administrator
+    - e3d admin
+  E3D Coordinator:
+    - e3d coordinator
+    - aveva e3d coordinator
+    - e3d model coordinator
+  Senior PDMS Piping Designer:
+    - senior pdms piping designer
+    - senior pdms designer
+    - pdms piping designer
+  SP3D Piping Designer:
+    - sp3d piping designer
+    - smartplant 3d piping designer
+    - smart plant 3d piping designer
+  3D Model Coordinator:
+    - 3d model coordinator
+    - piping model coordinator
+    - plant model coordinator
+  Plant Design Engineer:
+    - plant design engineer
+    - plant layout designer
+    - mechanical piping designer
 
 primary_skills:
   - AVEVA E3D
   - E3D
   - PDMS
+  - SP3D
+  - SmartPlant 3D
+  - PDS
   - Piping Layout
+  - Plant Layout
   - Equipment Layout
   - Plot Plan
   - Piping General Arrangement
@@ -22,22 +122,56 @@ primary_skills:
   - P&ID Review
   - Pipe Support
   - MTO
+  - BOQ
   - Navisworks
+  - SmartPlant Review
+  - LFM
   - AutoCAD
   - Model Review
   - Clash Resolution
+  - 3D Model Coordination
+
+software_aliases:
+  AVEVA E3D:
+    - aveva e3d
+    - e3d
+  PDMS:
+    - pdms
+    - aveva pdms
+  SP3D:
+    - sp3d
+    - smartplant 3d
+    - smart plant 3d
+  PDS:
+    - pds
+    - plant design system
+  Navisworks:
+    - navisworks
+  SmartPlant Review:
+    - smartplant review
+    - smart plant review
+  LFM:
+    - lfm
+  AutoCAD:
+    - autocad
+    - auto cad
 
 engineering_skills:
-  - Stress Review
+  - Stress Report Review
   - Flexibility Review
   - Thermal Expansion
   - Tie-in
   - Brownfield
   - Site Engineering
+  - Field Engineering
+  - Construction Support
   - Punch List
   - As-built
   - Constructability
   - Interdisciplinary Coordination
+  - Vendor Interface
+  - MTO Verification
+  - BOQ Verification
 
 sectors:
   - Oil and Gas
@@ -48,3 +182,84 @@ sectors:
   - Nuclear
   - Chemical
   - Power
+  - Hydrogen
+  - Energy Transition
+  - Mining and Metals
+  - Water
+
+sector_aliases:
+  Oil and Gas:
+    - oil and gas
+    - oil & gas
+    - upstream
+    - downstream
+  Refinery:
+    - refinery
+    - refining
+  Petrochemical:
+    - petrochemical
+    - petrochemicals
+  Offshore:
+    - offshore
+    - topsides
+    - platform
+    - fpsO
+  LNG:
+    - lng
+    - liquefied natural gas
+  Nuclear:
+    - nuclear
+    - fusion
+    - iter
+  Chemical:
+    - chemical plant
+    - chemicals
+  Power:
+    - power plant
+    - thermal power
+  Hydrogen:
+    - hydrogen
+    - green hydrogen
+  Energy Transition:
+    - energy transition
+    - carbon capture
+    - ccs
+  Mining and Metals:
+    - mining
+    - metals
+  Water:
+    - water treatment
+    - wastewater
+
+employment_type_aliases:
+  Permanent:
+    - permanent
+    - full time
+    - full-time
+  Contract:
+    - contract
+    - contractual
+    - fixed term
+    - fixed-term
+  Site:
+    - site based
+    - site-based
+    - field assignment
+  Remote:
+    - remote
+    - work from home
+  Hybrid:
+    - hybrid
+  Rotation:
+    - rotation
+    - rotational
+
+negative_role_terms:
+  - software developer
+  - accountant
+  - civil engineer
+  - electrical engineer
+  - instrumentation engineer
+  - sales engineer
+  - data engineer
+  - piping material engineer only
