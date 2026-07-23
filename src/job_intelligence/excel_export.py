@@ -9,7 +9,7 @@ from openpyxl import load_workbook
 from openpyxl.styles import Font
 
 from .database import JOB_COLUMNS, connect, fetch_jobs
-from .private_import import init_private_import_tables
+from .gmail_alerts import init_gmail_tables
 
 REQUIRED_SHEETS = (
     "New_Today",
@@ -24,6 +24,8 @@ REQUIRED_SHEETS = (
     "Source_Health",
     "Source_Evidence",
     "Private_Imports",
+    "Gmail_Alerts",
+    "Gmail_Alert_Jobs",
     "Run_Proof",
     "Daily_Summary",
 )
@@ -103,8 +105,10 @@ def _daily_summary(
     expired: pd.DataFrame,
     contacts: pd.DataFrame,
     source_health: pd.DataFrame,
+    gmail_alerts: pd.DataFrame,
 ) -> pd.DataFrame:
     source_status = source_health.get("status", pd.Series(dtype="string"))
+    gmail_status = gmail_alerts.get("status", pd.Series(dtype="string"))
     metrics = (
         ("generated_at", datetime.now(UTC).replace(microsecond=0).isoformat()),
         ("total_jobs", len(jobs)),
@@ -120,12 +124,15 @@ def _daily_summary(
         ("sources_total", len(source_health)),
         ("sources_passing", int(source_status.isin(["pass", "pass_with_warnings"]).sum())),
         ("sources_failing", int(source_status.eq("fail").sum())),
+        ("gmail_messages", len(gmail_alerts)),
+        ("gmail_complete", int(gmail_status.str.startswith("complete", na=False).sum())),
+        ("gmail_failed", int(gmail_status.eq("failed").sum())),
     )
     return pd.DataFrame(metrics, columns=("metric", "value"))
 
 
 def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
-    init_private_import_tables(db_path)
+    init_gmail_tables(db_path)
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
 
@@ -144,6 +151,14 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
         )
         private_imports = pd.read_sql_query(
             "SELECT * FROM private_imports ORDER BY imported_at DESC",
+            connection,
+        )
+        gmail_alerts = pd.read_sql_query(
+            "SELECT * FROM gmail_alert_messages ORDER BY imported_at DESC",
+            connection,
+        )
+        gmail_alert_jobs = pd.read_sql_query(
+            "SELECT * FROM gmail_alert_jobs ORDER BY message_id, candidate_index",
             connection,
         )
         run_proof = pd.read_sql_query(
@@ -189,6 +204,7 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
         expired=expired,
         contacts=contacts,
         source_health=source_health,
+        gmail_alerts=gmail_alerts,
     )
 
     sheets = {
@@ -204,6 +220,8 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
         "Source_Health": source_health,
         "Source_Evidence": source_evidence,
         "Private_Imports": private_imports,
+        "Gmail_Alerts": gmail_alerts,
+        "Gmail_Alert_Jobs": gmail_alert_jobs,
         "Run_Proof": run_proof,
         "Daily_Summary": daily_summary,
     }
