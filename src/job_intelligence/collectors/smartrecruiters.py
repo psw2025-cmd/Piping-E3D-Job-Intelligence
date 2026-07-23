@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import hashlib
+import re
 from typing import Any
 
 from ..models import JobRecord
 from ..source_config import SourceSpec
 from .common import CollectionResult, EvidenceArtifact, html_to_text, join_nonempty, json_bytes
 from .http_client import HttpClient
+
+_NON_ALNUM = re.compile(r"[^a-z0-9]+")
 
 
 def _location(value: Any) -> str:
@@ -55,12 +58,24 @@ def _salary(value: Any) -> str:
     return join_nonempty(parts, " ")
 
 
+def _normalized(value: str) -> str:
+    return " ".join(_NON_ALNUM.sub(" ", value.lower()).split())
+
+
+def _title_is_candidate(title: str, include_terms: tuple[str, ...]) -> bool:
+    if not include_terms:
+        return True
+    normalized_title = _normalized(title)
+    return any(_normalized(term) in normalized_title for term in include_terms)
+
+
 def collect_smartrecruiters(spec: SourceSpec, client: HttpClient) -> CollectionResult:
     identifier = spec.require_text("company_identifier")
     list_url = f"https://api.smartrecruiters.com/v1/companies/{identifier}/postings"
     max_items = spec.int_option("max_items", 300)
     page_size = min(spec.int_option("page_size", 100), 100)
     fetch_details = spec.bool_option("fetch_details", True)
+    include_terms = spec.text_list_option("include_terms")
     default_max_pages = max(4, ((max_items + page_size - 1) // page_size) * 4)
     max_pages = spec.int_option("max_pages", default_max_pages)
 
@@ -74,7 +89,7 @@ def collect_smartrecruiters(spec: SourceSpec, client: HttpClient) -> CollectionR
             raise ValueError(
                 f"source {spec.source_id!r} exceeded max_pages={max_pages}"
             )
-        limit = min(page_size, max_items - len(jobs))
+        limit = page_size
         response = client.get(list_url, params={"offset": offset, "limit": limit})
         payload = response.json()
         if not isinstance(payload, dict):
@@ -111,6 +126,9 @@ def collect_smartrecruiters(spec: SourceSpec, client: HttpClient) -> CollectionR
                 break
             if not isinstance(summary, dict):
                 continue
+            summary_title = str(summary.get("name", "")).strip()
+            if not summary_title or not _title_is_candidate(summary_title, include_terms):
+                continue
             detail = summary
             posting_id = str(summary.get("id") or summary.get("uuid") or "").strip()
             if fetch_details and posting_id:
@@ -131,7 +149,7 @@ def collect_smartrecruiters(spec: SourceSpec, client: HttpClient) -> CollectionR
                         )
                     )
 
-            title = str(detail.get("name", summary.get("name", ""))).strip()
+            title = str(detail.get("name", summary_title)).strip()
             company_data = detail.get("company", summary.get("company"))
             if isinstance(company_data, dict):
                 company = str(company_data.get("name", "")).strip() or spec.company
@@ -191,7 +209,7 @@ def collect_smartrecruiters(spec: SourceSpec, client: HttpClient) -> CollectionR
                 )
             )
 
-        if len(jobs) >= max_items or len(raw_postings) < limit:
+        if len(raw_postings) < limit:
             break
         offset += len(raw_postings)
 
