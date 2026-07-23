@@ -10,27 +10,27 @@ recruiters:
     status: active_supported
     source_ids: [airswift_global_public]
     fallback: user_authorized_gmail
-    notes: Official global public vacancy pages are collected with bounded pagination. End-client identity remains undisclosed unless explicitly published.
+    notes: Official global public vacancy pages passed exact live contract proof. End-client identity remains undisclosed unless explicitly published.
 
   - agency: NES Fircroft
     priority: 1
     official_jobs_url: https://www.nesfircroft.com/job-search/
     regions: [Global, Middle East, Asia, Europe, Americas]
     focus: [Oil and Gas, Chemicals, Power, Renewables, Engineering]
-    status: active_supported
-    source_ids: [nesfircroft_piping_public]
+    status: email_alert_path
+    source_ids: []
     fallback: user_authorized_gmail
-    notes: Official public piping search and job detail pages are collected. Public professional contacts retain source URL and remain unverified.
+    notes: Official pages contain current piping roles, but the configured public search did not pass the exact automated live contract. Keep direct collection disabled and use authorized alerts or saved EML until a stable listing contract is proven.
 
   - agency: Brunel
     priority: 1
     official_jobs_url: https://www.brunel.net/en/jobs
     regions: [Global, Middle East, Asia, Europe]
     focus: [Oil and Gas, Offshore, Mining, Engineering]
-    status: active_supported
-    source_ids: [brunel_global_public]
+    status: email_alert_path
+    source_ids: []
     fallback: user_authorized_gmail
-    notes: Official global vacancy pages are collected with public recruiter and closing-date evidence where published.
+    notes: Official pages contain current mechanical and piping roles, but the rendered listing did not pass the exact automated live contract. Keep direct collection disabled and use authorized alerts or saved EML until a stable interface is proven.
 
   - agency: Petroplan
     priority: 1
