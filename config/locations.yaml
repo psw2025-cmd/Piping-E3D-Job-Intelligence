@@ -1,32 +1,89 @@
 locations:
-  india:
+  india_priority:
     - Mumbai
     - Navi Mumbai
+    - Thane
     - Pune
     - Vadodara
+    - Ahmedabad
     - Chennai
     - Bengaluru
-    - Delhi NCR
     - Hyderabad
-  middle_east:
+    - Delhi NCR
+    - Gurugram
+    - Noida
+    - Kolkata
+    - Dahej
+    - Hazira
+    - Jamnagar
+    - Nagothane
+    - India
+  middle_east_priority:
+    - United Arab Emirates
     - UAE
+    - Abu Dhabi
+    - Dubai
+    - Sharjah
     - Saudi Arabia
-    - Oman
+    - Al Khobar
+    - Dammam
+    - Riyadh
     - Qatar
+    - Doha
+    - Oman
+    - Muscat
     - Kuwait
     - Bahrain
-  international:
-    - Europe
+  asia_pacific:
+    - Singapore
+    - Malaysia
+    - Indonesia
+    - Thailand
+    - Vietnam
+    - Philippines
+    - South Korea
+    - Japan
+    - Australia
+    - New Zealand
+  europe:
     - United Kingdom
     - Norway
     - Netherlands
     - France
     - Germany
-    - Singapore
-    - Malaysia
+    - Belgium
+    - Italy
+    - Spain
+    - Poland
+    - Romania
+    - Czech Republic
+    - Europe
+  americas:
+    - Canada
+    - United States
+    - USA
+    - Mexico
+    - Brazil
+    - Chile
+    - Peru
+    - Colombia
+  africa:
+    - Egypt
+    - Algeria
+    - Nigeria
+    - South Africa
+    - Mozambique
+    - Angola
+  flexible:
+    - Remote
+    - Hybrid
+    - Worldwide
+    - Global
 
 languages:
   - English
+  - Hindi
+  - Marathi
   - Arabic
   - French
   - German
