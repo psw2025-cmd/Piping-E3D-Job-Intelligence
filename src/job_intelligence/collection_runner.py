@@ -19,6 +19,19 @@ from .source_config import SourceSpec, load_source_config
 
 _SAFE_SUFFIX = re.compile(r"^\.[a-z0-9]{1,10}$")
 _LONG_PAREN = re.compile(r"\(([^()]*)\)")
+_DEFAULT_TITLE_TERMS = (
+    "piping",
+    "pipe layout",
+    "plant layout",
+    "e3d",
+    "aveva e3d",
+    "pdms",
+    "sp3d",
+    "smart 3d",
+    "smartplant 3d",
+    "3d model",
+    "pipe support",
+)
 _GENERIC_DESIGN_TITLES = (
     "mechanical designer",
     "mechanical design engineer",
@@ -147,10 +160,12 @@ def _title_scope(title: str) -> str:
 
 def _title_matches_profile(spec: SourceSpec, job: JobRecord) -> bool:
     scoped_title = _title_scope(job.title)
-    title_terms = spec.text_list_option("title_terms") or spec.text_list_option(
-        "include_terms"
+    title_terms = (
+        spec.text_list_option("title_terms")
+        or spec.text_list_option("include_terms")
+        or _DEFAULT_TITLE_TERMS
     )
-    if any(term in scoped_title for term in title_terms):
+    if any(term.lower() in scoped_title for term in title_terms):
         return True
     if any(term in scoped_title for term in _GENERIC_DESIGN_TITLES):
         searchable = job.searchable_text
