@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from ..source_config import SourceSpec
+from .card_html import collect_card_html
 from .common import CollectionResult
 from .greenhouse import collect_greenhouse
 from .http_client import HttpClient
@@ -17,6 +18,7 @@ from .workday import collect_workday
 Collector = Callable[[SourceSpec, HttpClient], CollectionResult]
 
 COLLECTORS: dict[str, Collector] = {
+    "card_html": collect_card_html,
     "greenhouse": collect_greenhouse,
     "lever": collect_lever,
     "oracle_hcm": collect_oracle_hcm,
