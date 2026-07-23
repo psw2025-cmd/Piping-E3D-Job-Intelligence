@@ -6,9 +6,13 @@ on:
     paths:
       - "src/job_intelligence/collectors/public_notice.py"
       - "src/job_intelligence/source_config.py"
+      - "config/sources.yaml"
       - "config/sources.india-notices.yaml"
+      - "config/employer_registry.d/**"
+      - "config/worldwide_companies.d/**"
       - "scripts/verify_live_notice_sources.py"
       - "tests/test_public_notice*.py"
+      - "tests/test_npcil_activation.py"
       - ".github/workflows/live-india-public-notices.yml"
   workflow_dispatch:
 
@@ -40,15 +44,22 @@ jobs:
         run: |
           ruff check \
             src/job_intelligence/collectors/public_notice.py \
+            src/job_intelligence/coverage_overrides.py \
+            src/job_intelligence/registry_config.py \
             scripts/verify_live_notice_sources.py \
             tests/test_public_notice.py \
-            tests/test_public_notice_config.py
-          pytest -q tests/test_public_notice.py tests/test_public_notice_config.py
+            tests/test_public_notice_config.py \
+            tests/test_npcil_activation.py
+          pytest -q \
+            tests/test_public_notice.py \
+            tests/test_public_notice_config.py \
+            tests/test_npcil_activation.py
 
-      - name: Live official notice contract proof
+      - name: Live NPCIL production contract proof
         run: |
           python scripts/verify_live_notice_sources.py \
-            --config config/sources.india-notices.yaml \
+            --config config/sources.yaml \
+            --only npcil_public_notices \
             --output output/live-india-notices \
             --max-notices 3 \
             --max-pdf-pages 10 \
@@ -90,7 +101,12 @@ jobs:
               raise SystemExit(
                   f"Live notice proof failed: {status.get('results')}"
               )
-          if status.get("sources_passed") != status.get("sources_attempted"):
-              raise SystemExit("Not every notice source passed")
-          print("PASS: every staged India notice source passed live proof")
+          if status.get("sources_attempted") != 1:
+              raise SystemExit("Expected exactly one production NPCIL source")
+          result = status["results"][0]
+          if result.get("source_id") != "npcil_public_notices":
+              raise SystemExit(f"Unexpected notice source: {result}")
+          if result.get("status") != "pass":
+              raise SystemExit(f"NPCIL proof did not pass: {result}")
+          print("PASS: production NPCIL public-notice source passed live proof")
           PY
