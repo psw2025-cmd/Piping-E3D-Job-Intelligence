@@ -1,0 +1,100 @@
+schema_version: 1
+verified_at: 2026-07-23
+
+status_definitions:
+  active_supported: Verified public recruiter vacancy source configured and enabled.
+  official_site_verified: Official vacancy site verified; connector proof remains.
+  email_alert_path: Use user-authorized Gmail or saved .eml alerts when public collection is unstable.
+  blocked: No stable permitted source is currently verified.
+
+recruiters:
+  - agency: Airswift
+    priority: 1
+    official_jobs_url: https://www.airswift.com/jobs
+    status: active_supported
+    source_ids:
+      - airswift_global_public
+    verified_at: 2026-07-23
+    notes: Official global public vacancy list with direct job detail links, published date, location and employment type. End client is retained as undisclosed unless explicitly published.
+
+  - agency: NES Fircroft
+    priority: 1
+    official_jobs_url: https://www.nesfircroft.com/job-search/
+    status: active_supported
+    source_ids:
+      - nesfircroft_piping_public
+    verified_at: 2026-07-23
+    notes: Official public recruiter vacancy search and detail pages with requisition, published date, location, contract type and public contact where displayed.
+
+  - agency: Brunel
+    priority: 1
+    official_jobs_url: https://www.brunel.net/en/jobs
+    status: active_supported
+    source_ids:
+      - brunel_global_public
+      - brunel_us_public
+    verified_at: 2026-07-23
+    notes: Official global and United States public vacancy pages with direct details, experience, closing date and recruiter information where published.
+
+  - agency: Petroplan
+    priority: 1
+    official_jobs_url: https://www.petroplan.com/jobs/
+    status: official_site_verified
+    source_ids: []
+    notes: Official public detail pages verified; listing and pagination contract still requires exact live proof.
+
+  - agency: Orion Group
+    priority: 2
+    official_jobs_url: https://www.orionjobs.com/job-search
+    status: official_site_verified
+    source_ids: []
+    notes: Scheduled for a controlled public-source or Gmail-alert batch.
+
+  - agency: TRS Staffing
+    priority: 2
+    official_jobs_url: https://www.trsstaffing.com/jobs
+    status: official_site_verified
+    source_ids: []
+    notes: Scheduled for a controlled public-source or Gmail-alert batch.
+
+  - agency: Spencer Ogden
+    priority: 2
+    official_jobs_url: https://www.spencer-ogden.com/jobs
+    status: official_site_verified
+    source_ids: []
+    notes: Scheduled for a controlled public-source or Gmail-alert batch.
+
+  - agency: Matchtech
+    priority: 2
+    official_jobs_url: https://www.matchtech.com/jobs
+    status: official_site_verified
+    source_ids: []
+    notes: Scheduled for a controlled public-source or Gmail-alert batch.
+
+  - agency: First Recruitment Group
+    priority: 2
+    official_jobs_url: https://www.firstrecruitmentgroup.com/jobs/
+    status: official_site_verified
+    source_ids: []
+    notes: Scheduled for a controlled public-source or Gmail-alert batch.
+
+  - agency: WRS
+    priority: 2
+    official_jobs_url: https://www.worldwide-rs.com/jobs/
+    status: email_alert_path
+    source_ids: []
+    notes: Use verified public listings when stable and user-authorized alerts as fallback.
+
+  - agency: MPH
+    priority: 2
+    official_jobs_url: https://mphexperts.com/jobs/
+    status: email_alert_path
+    source_ids: []
+    notes: Use verified public listings when stable and user-authorized alerts as fallback.
+
+  - agency: Energy Resourcing
+    priority: 2
+    official_jobs_url: https://energyresourcing.com/jobs/
+    status: email_alert_path
+    source_ids: []
+    notes: Use verified public listings when stable and user-authorized alerts as fallback.
