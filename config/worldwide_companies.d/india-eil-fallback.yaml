@@ -1,0 +1,11 @@
+schema_version: 1
+verified_at: 2026-07-23
+
+overrides:
+  - company_id: engineers_india
+    status: ACTIVE_GMAIL_ALERT
+    source_mode: gmail_alert
+    source_ids: []
+    ats_family: Robots-restricted recruitment portal
+    alert_supported: true
+    blocked_reason: The official recruitment portal disallows this crawler through robots.txt. Use read-only Gmail alerts and private imports without bypassing restrictions.
