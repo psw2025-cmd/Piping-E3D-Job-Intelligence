@@ -7,6 +7,7 @@ import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.styles import Font
 
+from .coverage_proof import apply_coverage_proof
 from .coverage_registry import coverage_frames
 from .database import connect, fetch_jobs, init_database
 
@@ -80,7 +81,9 @@ def append_coverage_sheets(
             "SELECT * FROM source_health ORDER BY source_id",
             connection,
         )
-    frames = coverage_frames(jobs, source_health, config_dir=config_dir)
+    frames = apply_coverage_proof(
+        coverage_frames(jobs, source_health, config_dir=config_dir)
+    )
     with pd.ExcelWriter(
         workbook,
         engine="openpyxl",
@@ -123,7 +126,9 @@ def verify_coverage_workbook(path: str | Path) -> list[str]:
             "ats_family",
             "source_mode",
             "status",
-            "coverage_active",
+            "coverage_ready",
+            "coverage_proven",
+            "proof_state",
             "recommended_next_action",
         }
         absent = sorted(required - headers)
@@ -150,10 +155,11 @@ def main() -> int:
         config_dir=args.config_dir,
     )
     registry = frames["Company_Registry"]
-    active = int(registry["coverage_active"].sum()) if not registry.empty else 0
+    proven = int(registry["coverage_proven"].sum()) if not registry.empty else 0
+    ready = int(registry["coverage_ready"].sum()) if not registry.empty else 0
     print(
         f"PASS: coverage workbook verified | companies={len(registry)} | "
-        f"covered={active} | workbook={args.workbook}"
+        f"configured={ready} | proven={proven} | workbook={args.workbook}"
     )
     return 0
 
