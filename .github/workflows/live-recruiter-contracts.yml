@@ -43,3 +43,12 @@ jobs:
 
       - name: Live official recruiter contract proof
         run: python scripts/verify_live_recruiter_sources.py
+
+      - name: Upload live recruiter proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-recruiter-proof-${{ github.run_id }}
+          path: live-recruiter-proof.json
+          if-no-files-found: warn
+          retention-days: 14
