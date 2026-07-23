@@ -48,25 +48,28 @@ JOB_COLUMNS = (
 
 _STRING_REFRESH_COLUMNS = (
     "title",
-    "normalized_role",
     "company",
     "location",
-    "city",
-    "country",
     "description",
     "apply_url",
     "source_url",
     "source_name",
     "published_at",
-    "closing_at",
     "job_type",
-    "employment_type",
     "salary_text",
     "experience_text",
     "skills_text",
+    "agency_name",
+)
+
+_PROFILE_REFRESH_COLUMNS = (
+    "normalized_role",
+    "city",
+    "country",
+    "closing_at",
+    "employment_type",
     "software_text",
     "sector",
-    "agency_name",
 )
 
 _PROFILE_COLUMN_DEFINITIONS = {
@@ -380,6 +383,13 @@ def _upsert_job(connection: sqlite3.Connection, job: JobRecord) -> bool:
         f"{column}=COALESCE(NULLIF(excluded.{column}, ''), jobs.{column})"
         for column in _STRING_REFRESH_COLUMNS
     )
+    profile_updates = ",\n                ".join(
+        f"{column}=CASE "
+        "WHEN excluded.match_reasons <> '' OR excluded.gaps <> '' "
+        f"THEN excluded.{column} "
+        f"ELSE COALESCE(NULLIF(excluded.{column}, ''), jobs.{column}) END"
+        for column in _PROFILE_REFRESH_COLUMNS
+    )
 
     existing_key = _find_existing_job_key(
         connection,
@@ -411,6 +421,7 @@ def _upsert_job(connection: sqlite3.Connection, job: JobRecord) -> bool:
                 NULLIF(excluded.canonical_url, ''), jobs.canonical_url
             ),
             {string_updates},
+            {profile_updates},
             last_seen_at=excluded.last_seen_at,
             recruiter_name=COALESCE(
                 NULLIF(excluded.recruiter_name, ''), jobs.recruiter_name
