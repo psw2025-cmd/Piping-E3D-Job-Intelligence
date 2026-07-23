@@ -24,19 +24,19 @@ employers:
   - {company: Fluor, priority: 1, official_careers_url: https://www.fluor.com/careers, ats_type: eightfold_public_html, status: staged_source, source_ids: [fluor_eightfold_html]}
   - {company: Jacobs, priority: 1, official_careers_url: https://careers.jacobs.com/, ats_type: rendered_public_pages, status: staged_source, source_ids: [jacobs_public_html]}
   - {company: AtkinsRealis, priority: 1, official_careers_url: https://careers.atkinsrealis.com/, ats_type: rendered_public_pages, status: staged_source, source_ids: [atkinsrealis_public_html]}
-  - {company: L&T Energy Hydrocarbon, priority: 1, official_careers_url: https://www.larsentoubro.com/corporate/careers/, status: official_site_verified, source_ids: []}
+  - {company: "L&T Energy Hydrocarbon", priority: 1, official_careers_url: https://www.larsentoubro.com/corporate/careers/, status: official_site_verified, source_ids: []}
   - {company: Saipem, priority: 1, official_careers_url: https://www.saipem.com/en/people/careers, status: connector_planned, source_ids: []}
   - {company: Kent, priority: 2, official_careers_url: https://kentplc.com/careers, status: connector_planned, source_ids: []}
   - {company: Aker Solutions, priority: 2, official_careers_url: https://www.akersolutions.com/careers/, status: connector_planned, source_ids: []}
-  - {company: Samsung E&A, priority: 2, official_careers_url: https://www.samsungena.com/en/careers/, status: official_site_verified, source_ids: []}
+  - {company: "Samsung E&A", priority: 2, official_careers_url: https://www.samsungena.com/en/careers/, status: official_site_verified, source_ids: []}
   - {company: JGC, priority: 2, official_careers_url: https://www.jgc.com/en/recruit/, status: official_site_verified, source_ids: []}
   - {company: Chiyoda, priority: 2, official_careers_url: https://www.chiyodacorp.com/en/recruit/, status: official_site_verified, source_ids: []}
   - {company: NPCC, priority: 1, official_careers_url: https://www.npcc.ae/careers/, status: official_site_verified, source_ids: []}
   - {company: Penspen, priority: 2, official_careers_url: https://www.penspen.com/careers/, status: connector_planned, source_ids: []}
   - {company: Bilfinger, priority: 2, official_careers_url: https://jobs.bilfinger.com/, status: connector_planned, source_ids: []}
   - {company: MAIRE Tecnimont, priority: 1, official_careers_url: https://www.groupmaire.com/en/careers/, status: connector_planned, source_ids: []}
-  - {company: Black & Veatch, priority: 2, official_careers_url: https://careers.bv.com/, status: connector_planned, source_ids: []}
-  - {company: Burns & McDonnell, priority: 2, official_careers_url: https://burnsmcd.jobs/, status: connector_planned, source_ids: []}
+  - {company: "Black & Veatch", priority: 2, official_careers_url: https://careers.bv.com/, status: connector_planned, source_ids: []}
+  - {company: "Burns & McDonnell", priority: 2, official_careers_url: https://burnsmcd.jobs/, status: connector_planned, source_ids: []}
   - {company: Hatch, priority: 2, official_careers_url: https://jobs.hatch.com/, status: connector_planned, source_ids: []}
   - {company: Ramboll, priority: 2, official_careers_url: https://jobs.smartrecruiters.com/Ramboll3/, status: connector_planned, source_ids: []}
   - {company: LinkedIn Job Alerts, priority: 1, official_careers_url: https://www.linkedin.com/jobs/, status: email_alert_ingestion_ready, source_ids: []}
