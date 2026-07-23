@@ -14,6 +14,7 @@ _CLOSING_DATE_PATTERN = re.compile(
     r"([^\n\r|;]{4,80})",
     re.IGNORECASE,
 )
+_WORKDAY_CODE_PATTERN = re.compile(r"^[A-Z]{2}(?:\.[A-Z]{2,3})?\.")
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,6 +27,7 @@ class ProfileTaxonomy:
     country_aliases: tuple[tuple[str, tuple[str, ...]], ...]
     region_aliases: tuple[tuple[str, tuple[str, ...]], ...]
     negative_role_terms: tuple[str, ...]
+    workday_country_codes: tuple[tuple[str, str], ...] = ()
 
 
 def _read_yaml(path: Path) -> dict[str, Any]:
@@ -47,15 +49,45 @@ def _terms(value: Any) -> tuple[str, ...]:
     )
 
 
-def _alias_groups(value: Any) -> tuple[tuple[str, tuple[str, ...]], ...]:
-    if not isinstance(value, dict):
-        return ()
-    groups: list[tuple[str, tuple[str, ...]]] = []
-    for canonical, aliases in value.items():
-        canonical_text = str(canonical).strip()
-        values = _terms(aliases)
-        if canonical_text and values:
-            groups.append((canonical_text, values))
+def _combined_alias_groups(*values: Any) -> tuple[tuple[str, tuple[str, ...]], ...]:
+    combined: dict[str, list[str]] = {}
+    order: list[str] = []
+    for value in values:
+        if not isinstance(value, dict):
+            continue
+        for canonical, aliases in value.items():
+            canonical_text = str(canonical).strip()
+            if not canonical_text:
+                continue
+            if canonical_text not in combined:
+                combined[canonical_text] = []
+                order.append(canonical_text)
+            for alias in _terms(aliases):
+                if alias not in combined[canonical_text]:
+                    combined[canonical_text].append(alias)
+    return tuple(
+        (canonical, tuple(combined[canonical]))
+        for canonical in order
+        if combined[canonical]
+    )
+
+
+def _city_groups(*values: Any) -> tuple[tuple[str, str, tuple[str, ...]], ...]:
+    groups: list[tuple[str, str, tuple[str, ...]]] = []
+    seen: set[tuple[str, str]] = set()
+    for value in values:
+        if not isinstance(value, dict):
+            continue
+        for city, details in value.items():
+            if not isinstance(details, dict):
+                continue
+            city_name = str(city).strip()
+            country = str(details.get("country", "")).strip()
+            aliases = _terms(details.get("aliases"))
+            key = (city_name.lower(), country.lower())
+            if city_name and aliases and key not in seen:
+                groups.append((city_name, country, aliases))
+                seen.add(key)
     return tuple(groups)
 
 
@@ -63,39 +95,64 @@ def load_profile_taxonomy(config_dir: str | Path) -> ProfileTaxonomy:
     root = Path(config_dir)
     roles = _read_yaml(root / "roles.yaml")
     locations = _read_yaml(root / "locations.yaml")
-
-    city_groups: list[tuple[str, str, tuple[str, ...]]] = []
-    raw_cities = locations.get("location_aliases", {})
-    if isinstance(raw_cities, dict):
-        for city, details in raw_cities.items():
-            if not isinstance(details, dict):
-                continue
-            city_name = str(city).strip()
-            country = str(details.get("country", "")).strip()
-            aliases = _terms(details.get("aliases"))
-            if city_name and aliases:
-                city_groups.append((city_name, country, aliases))
+    expansion = _read_yaml(root / "coverage_expansion.yaml")
+    raw_codes = expansion.get("workday_country_codes", {})
+    code_pairs = (
+        tuple(
+            (str(code).strip().upper(), str(country).strip())
+            for code, country in raw_codes.items()
+            if str(code).strip() and str(country).strip()
+        )
+        if isinstance(raw_codes, dict)
+        else ()
+    )
 
     return ProfileTaxonomy(
-        role_families=_alias_groups(roles.get("role_families")),
-        software_aliases=_alias_groups(roles.get("software_aliases")),
-        sector_aliases=_alias_groups(roles.get("sector_aliases")),
-        employment_type_aliases=_alias_groups(
-            roles.get("employment_type_aliases")
+        role_families=_combined_alias_groups(
+            roles.get("role_families"), expansion.get("role_families")
         ),
-        city_aliases=tuple(city_groups),
-        country_aliases=_alias_groups(locations.get("country_aliases")),
-        region_aliases=_alias_groups(locations.get("region_aliases")),
-        negative_role_terms=_terms(roles.get("negative_role_terms")),
+        software_aliases=_combined_alias_groups(
+            roles.get("software_aliases"), expansion.get("software_aliases")
+        ),
+        sector_aliases=_combined_alias_groups(
+            roles.get("sector_aliases"), expansion.get("sector_aliases")
+        ),
+        employment_type_aliases=_combined_alias_groups(
+            roles.get("employment_type_aliases"),
+            expansion.get("employment_type_aliases"),
+        ),
+        city_aliases=_city_groups(
+            locations.get("location_aliases"), expansion.get("location_aliases")
+        ),
+        country_aliases=_combined_alias_groups(
+            locations.get("country_aliases"), expansion.get("country_aliases")
+        ),
+        region_aliases=_combined_alias_groups(
+            locations.get("region_aliases"), expansion.get("region_aliases")
+        ),
+        negative_role_terms=tuple(
+            dict.fromkeys(
+                _terms(roles.get("negative_role_terms"))
+                + _terms(expansion.get("negative_role_terms"))
+            )
+        ),
+        workday_country_codes=code_pairs,
     )
 
 
+def _normalized_phrase(value: str) -> str:
+    value = re.sub(r"\bsr\.?\b", "senior", value.lower())
+    value = re.sub(r"\bjr\.?\b", "junior", value)
+    return " ".join(re.sub(r"[^a-z0-9]+", " ", value).split())
+
+
 def _contains_phrase(text: str, phrase: str) -> bool:
-    cleaned = " ".join(phrase.lower().split())
+    cleaned = _normalized_phrase(phrase)
+    haystack = _normalized_phrase(text)
     if not cleaned:
         return False
     pattern = re.escape(cleaned).replace(r"\ ", r"\s+")
-    return re.search(rf"(?<![a-z0-9]){pattern}(?![a-z0-9])", text) is not None
+    return re.search(rf"(?<![a-z0-9]){pattern}(?![a-z0-9])", haystack) is not None
 
 
 def _first_match(
@@ -106,7 +163,7 @@ def _first_match(
     for order, (canonical, aliases) in enumerate(groups):
         for alias in aliases:
             if _contains_phrase(text, alias):
-                candidates.append((len(alias), -order, canonical))
+                candidates.append((len(_normalized_phrase(alias)), -order, canonical))
     return max(candidates, default=(0, 0, ""))[2]
 
 
@@ -121,15 +178,41 @@ def _all_matches(
     return tuple(matches)
 
 
-def normalize_role(job: JobRecord, taxonomy: ProfileTaxonomy) -> str:
-    title_text = " ".join(job.title.lower().split())
+def normalize_title_role(title: str, taxonomy: ProfileTaxonomy) -> str:
+    title_text = _normalized_phrase(title)
     if any(_contains_phrase(title_text, term) for term in taxonomy.negative_role_terms):
         return ""
-    title_match = _first_match(title_text, taxonomy.role_families)
+    return _first_match(title_text, taxonomy.role_families)
+
+
+def normalize_role(job: JobRecord, taxonomy: ProfileTaxonomy) -> str:
+    title_match = normalize_title_role(job.title, taxonomy)
     if title_match:
         return title_match
+    title_text = _normalized_phrase(job.title)
     context = f"{title_text} {job.description[:2000].lower()}"
     return _first_match(context, taxonomy.role_families)
+
+
+def _workday_location(
+    raw_location: str,
+    taxonomy: ProfileTaxonomy,
+) -> tuple[str, str]:
+    raw = raw_location.strip()
+    if not _WORKDAY_CODE_PATTERN.match(raw):
+        return "", ""
+    parts = [part.strip() for part in raw.split(".") if part.strip()]
+    if len(parts) < 2:
+        return "", ""
+    country_codes = dict(taxonomy.workday_country_codes)
+    country = country_codes.get(parts[0].upper(), "")
+    if not country:
+        return "", ""
+    city_index = 2 if len(parts) > 2 and re.fullmatch(r"[A-Z]{2,3}", parts[1]) else 1
+    if city_index >= len(parts):
+        return "", country
+    city = re.split(r"\s+-\s+|\d", parts[city_index], maxsplit=1)[0].strip(" ,-_")
+    return city, country
 
 
 def normalize_location(
@@ -148,6 +231,10 @@ def normalize_location(
     if city_candidates:
         _, _, city, country = max(city_candidates)
         return city, country
+
+    workday_city, workday_country = _workday_location(raw_location, taxonomy)
+    if workday_country:
+        return workday_city, workday_country
 
     country = _first_match(text, taxonomy.country_aliases)
     if country:

@@ -1,0 +1,32 @@
+schema_version: 1
+observed_at: 2026-07-23
+status_definitions:
+  email_alert_ingestion_ready: Current vacancies were observed through user-authorized job-alert email; no protected portal scraping is used.
+  connector_discovery_required: Employer is relevant and observed, but no verified direct public collector is enabled.
+
+employers:
+  - {company: Jacobs, priority: 1, sector_group: Global EPC and Engineering, regions: [Global, India, Americas, Europe, Middle East], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: Worley, priority: 1, sector_group: Global EPC and Engineering, regions: [Global, India, Middle East, Asia Pacific], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: L&T Energy Hydrocarbon, priority: 1, sector_group: India EPC, regions: [India, Middle East, Global], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: Burns & McDonnell, priority: 1, sector_group: Engineering and EPC, regions: [India, United States, Global], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: Ausenco, priority: 1, sector_group: Mining Energy and Process Engineering, regions: [Canada, Australia, Americas, Global], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: Zachry Group, priority: 2, sector_group: EPC and Construction, regions: [United States], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: Mitsubishi Power, priority: 1, sector_group: Power and Energy, regions: [Americas, Asia, Global], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: Exyte, priority: 1, sector_group: Advanced Facilities and Engineering, regions: [Global, Asia, Europe, Americas], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: PM Group, priority: 1, sector_group: Pharma and Process Engineering, regions: [Europe, Asia, Global], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: WSP, priority: 1, sector_group: Global Engineering Consultancy, regions: [India, Global], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: Reliance Industries, priority: 1, sector_group: India Owner Operator, regions: [India], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: Westinghouse Electric Company, priority: 1, sector_group: Nuclear and Power, regions: [Global, Europe, Americas], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: Air Liquide, priority: 2, sector_group: Industrial Gases and Engineering, regions: [Global, India, Europe, Middle East], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: NOV, priority: 2, sector_group: Oilfield Equipment and Engineering, regions: [Global, Middle East, Americas], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: Bilfinger, priority: 1, sector_group: Industrial Services and Engineering, regions: [Europe, Middle East, Global], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: COOEC, priority: 2, sector_group: Offshore EPC, regions: [Asia Pacific, Global], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: Bloom Energy, priority: 2, sector_group: Energy Technology, regions: [United States, Global], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: Quest Global, priority: 1, sector_group: Engineering Services, regions: [India, Global], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: KBR, priority: 1, sector_group: Global EPC and Engineering, regions: [Global, India, Middle East], status: active_supported, evidence_path: official_workday_and_authorized_job_alert}
+  - {company: McDermott, priority: 1, sector_group: Offshore and Energy EPC, regions: [Global, India, Middle East, Americas], status: active_supported, evidence_path: official_oracle_and_authorized_job_alert}
+  - {company: Wood, priority: 1, sector_group: Global Engineering and Consulting, regions: [Global, India, Middle East, Europe], status: active_supported, evidence_path: official_oracle_and_authorized_job_alert}
+  - {company: Padink Engineering, priority: 2, sector_group: India Engineering Services, regions: [India, Middle East], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: AVIN Energy Solutions, priority: 2, sector_group: India Energy Engineering, regions: [India], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: Barak and Brazos Engineering, priority: 2, sector_group: India Engineering Services, regions: [India], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}
+  - {company: Tesla, priority: 3, sector_group: Advanced Manufacturing, regions: [United States, Europe, Global], status: email_alert_ingestion_ready, evidence_path: authorized_job_alert}

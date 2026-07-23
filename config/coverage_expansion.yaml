@@ -1,0 +1,240 @@
+schema_version: 1
+
+# Additive coverage loaded after roles.yaml and locations.yaml.
+target_roles:
+  - Principal Piping Designer
+  - Lead Piping Designer
+  - Piping Designer
+  - Piping Modeller
+  - Senior Mechanical Piping Designer
+  - Piping Stress Engineer
+  - Piping Stress Analyst
+  - Piping Materials Engineer
+  - Piping Analysis Engineer
+  - Nuclear Piping Engineer
+  - Piping Supervisor
+  - Piping Superintendent
+  - Piping Construction Supervisor
+  - Piping Construction Superintendent
+  - Construction Manager Piping
+  - Specialist Piping Engineer
+  - 3D Modelling Manager
+
+role_families:
+  Principal Piping Designer:
+    - principal piping designer
+    - principal designer piping
+    - principal designer - piping
+    - principal designer piping layout
+  Lead Piping Designer:
+    - lead piping designer
+    - piping design lead
+    - lead designer piping
+  Piping Designer:
+    - piping designer
+    - designer piping
+    - designer - piping
+    - piping draughtsman
+    - piping draftsman
+    - dessinateur projeteur e3d
+    - dessinateur projeteur pdms
+    - dessinateur projeteur e3d pdms
+  Piping Modeller:
+    - piping modeller
+    - piping modeler
+    - 3d piping modeller
+    - 3d piping modeler
+  Senior Mechanical Piping Designer:
+    - senior mechanical piping designer
+    - senior mechanical/piping designer
+    - mechanical piping designer
+    - designer - mechanical piping
+  Piping Stress Engineer:
+    - piping stress engineer
+    - lead piping stress engineer
+    - senior piping stress engineer
+    - stress engineer piping
+  Piping Stress Analyst:
+    - piping stress analyst
+    - senior piping stress analyst
+    - piping flexibility analyst
+  Piping Materials Engineer:
+    - piping material engineer
+    - piping materials engineer
+    - senior piping engineer materials
+    - piping engineer materials
+  Piping Analysis Engineer:
+    - piping analysis engineer
+    - piping analyst engineer
+    - feeder piping analyst
+    - feeder piping engineer
+  Nuclear Piping Engineer:
+    - nuclear piping engineer
+    - nuclear piping design engineer
+  Piping Supervisor:
+    - piping supervisor
+    - senior piping supervisor
+    - piping construction supervisor
+  Piping Superintendent:
+    - piping superintendent
+    - construction superintendent piping
+  Construction Manager Piping:
+    - construction manager piping
+    - piping construction manager
+  Specialist Piping Engineer:
+    - specialist piping engineer
+    - principal engineer piping
+    - responsable delivery piping
+  3D Modelling Manager:
+    - 3d modelling engineering manager
+    - 3d modeling engineering manager
+    - 3d model manager
+    - plant model manager
+    - catalogue manager e3d
+
+locations:
+  india_priority:
+    - Ahmedabad
+    - Surat
+    - Bharuch
+    - Dahej
+    - Hazira
+    - Jamnagar
+    - Kochi
+    - Visakhapatnam
+    - Faridabad
+    - Ghaziabad
+    - Nagpur
+    - Mangalore
+    - Paradip
+    - Haldia
+  gulf_middle_east:
+    - Basra
+    - Baghdad
+    - Baku
+    - Al Khobar
+    - Dammam
+    - Jubail
+    - Riyadh
+    - Yanbu
+  americas:
+    - Argentina
+    - Chile
+    - Peru
+    - Colombia
+  asia_pacific:
+    - New Zealand
+    - Taiwan
+    - Brunei
+  africa:
+    - Algeria
+    - Morocco
+    - Namibia
+
+location_aliases:
+  Ahmedabad: {country: India, aliases: [ahmedabad, amdavad]}
+  Surat: {country: India, aliases: [surat]}
+  Bharuch: {country: India, aliases: [bharuch, broach]}
+  Dahej: {country: India, aliases: [dahej]}
+  Hazira: {country: India, aliases: [hazira]}
+  Jamnagar: {country: India, aliases: [jamnagar]}
+  Kochi: {country: India, aliases: [kochi, cochin]}
+  Visakhapatnam: {country: India, aliases: [visakhapatnam, vizag]}
+  Faridabad: {country: India, aliases: [faridabad]}
+  Ghaziabad: {country: India, aliases: [ghaziabad]}
+  Nagpur: {country: India, aliases: [nagpur]}
+  Mangalore: {country: India, aliases: [mangalore, mangaluru]}
+  Paradip: {country: India, aliases: [paradip, paradeep]}
+  Haldia: {country: India, aliases: [haldia]}
+  Mississauga: {country: Canada, aliases: [mississauga]}
+  Calgary: {country: Canada, aliases: [calgary]}
+  Vancouver: {country: Canada, aliases: [vancouver]}
+  Henderson: {country: United States, aliases: [henderson]}
+  Oak Ridge: {country: United States, aliases: [oak ridge]}
+  Bothell: {country: United States, aliases: [bothell]}
+  Newark: {country: United States, aliases: [newark, delaware]}
+  Port Sulphur: {country: United States, aliases: [port sulphur, louisiana]}
+  Bristol: {country: United Kingdom, aliases: [bristol]}
+  Leatherhead: {country: United Kingdom, aliases: [leatherhead]}
+  Buenos Aires: {country: Argentina, aliases: [buenos aires]}
+  Baku: {country: Azerbaijan, aliases: [baku]}
+  Basra: {country: Iraq, aliases: [basra, al basrah, al başrah]}
+  Dammam: {country: Saudi Arabia, aliases: [dammam]}
+  Al Khobar: {country: Saudi Arabia, aliases: [al khobar, khobar]}
+  Jubail: {country: Saudi Arabia, aliases: [jubail]}
+  Riyadh: {country: Saudi Arabia, aliases: [riyadh]}
+  Yanbu: {country: Saudi Arabia, aliases: [yanbu]}
+
+country_aliases:
+  Argentina: [argentina, ar]
+  Azerbaijan: [azerbaijan]
+  Iraq: [iraq]
+  Mexico: [mexico, mx]
+  Brazil: [brazil, br]
+  Chile: [chile, cl]
+  Peru: [peru, pe]
+  Colombia: [colombia, co]
+  Indonesia: [indonesia, id]
+  Thailand: [thailand, th]
+  Vietnam: [vietnam, vn]
+  Philippines: [philippines, ph]
+  Belgium: [belgium, be]
+  Sweden: [sweden, se]
+  Denmark: [denmark, dk]
+  Finland: [finland, fi]
+  Poland: [poland, pl]
+  Romania: [romania, ro]
+  France: [france, fr]
+  Norway: [norway, "no"]
+  Qatar: [qatar, qa]
+  Saudi Arabia: [saudi arabia, ksa, sa]
+  United Arab Emirates: [united arab emirates, uae, ae]
+  New Zealand: [new zealand, nz]
+  Taiwan: [taiwan, tw]
+  Brunei: [brunei, bn]
+  Algeria: [algeria, dz]
+  Morocco: [morocco, ma]
+  Namibia: [namibia, na]
+
+workday_country_codes:
+  US: United States
+  CA: Canada
+  GB: United Kingdom
+  IN: India
+  SG: Singapore
+  AU: Australia
+  NZ: New Zealand
+  AE: United Arab Emirates
+  SA: Saudi Arabia
+  QA: Qatar
+  OM: Oman
+  KW: Kuwait
+  BH: Bahrain
+  MY: Malaysia
+  ID: Indonesia
+  TH: Thailand
+  VN: Vietnam
+  PH: Philippines
+  JP: Japan
+  KR: South Korea
+  AR: Argentina
+  BR: Brazil
+  MX: Mexico
+  CL: Chile
+  PE: Peru
+  CO: Colombia
+  ZA: South Africa
+  NG: Nigeria
+  EG: Egypt
+  "NO": Norway
+  NL: Netherlands
+  FR: France
+  DE: Germany
+  IT: Italy
+  ES: Spain
+  BE: Belgium
+  SE: Sweden
+  DK: Denmark
+  FI: Finland
+  PL: Poland
+  RO: Romania

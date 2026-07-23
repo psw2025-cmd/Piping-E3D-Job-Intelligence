@@ -108,6 +108,15 @@ def _lower_terms(values: Any) -> tuple[str, ...]:
     return tuple(str(value).strip().lower() for value in values if str(value).strip())
 
 
+def _merge_terms(*values: Any) -> tuple[str, ...]:
+    merged: list[str] = []
+    for value in values:
+        for term in _lower_terms(value):
+            if term not in merged:
+                merged.append(term)
+    return tuple(merged)
+
+
 def _mapping_or_empty(value: Any) -> dict[str, Any]:
     return value if isinstance(value, dict) else {}
 
@@ -159,15 +168,27 @@ def _resolve_config_dir(config_dir: str | Path | None) -> Path | None:
     return next((path for path in candidates if path.is_dir()), None)
 
 
+def _location_values(data: dict[str, Any]) -> list[str]:
+    groups = data.get("locations", {})
+    values: list[str] = []
+    if isinstance(groups, dict):
+        for entries in groups.values():
+            if isinstance(entries, list):
+                values.extend(str(entry) for entry in entries)
+    return values
+
+
 def load_scoring_profile(config_dir: str | Path | None = None) -> ScoringProfile:
     resolved = _resolve_config_dir(config_dir)
     roles_data: dict[str, Any] = {}
     locations_data: dict[str, Any] = {}
     scoring_data: dict[str, Any] = {}
+    expansion_data: dict[str, Any] = {}
     if resolved:
         roles_data = _read_yaml(resolved / "roles.yaml")
         locations_data = _read_yaml(resolved / "locations.yaml")
         scoring_data = _read_yaml(resolved / "scoring.yaml")
+        expansion_data = _read_yaml(resolved / "coverage_expansion.yaml")
 
     weights = _merge_int_config(_DEFAULT_WEIGHTS, scoring_data.get("weights"))
     thresholds = _merge_int_config(
@@ -175,18 +196,15 @@ def load_scoring_profile(config_dir: str | Path | None = None) -> ScoringProfile
         scoring_data.get("thresholds"),
     )
     term_config = _mapping_or_empty(scoring_data.get("terms"))
-
-    location_groups = locations_data.get("locations", {})
-    location_values: list[str] = []
-    if isinstance(location_groups, dict):
-        for values in location_groups.values():
-            if isinstance(values, list):
-                location_values.extend(str(value) for value in values)
+    location_values = _location_values(locations_data) + _location_values(expansion_data)
+    target_roles = _merge_terms(
+        roles_data.get("target_roles"), expansion_data.get("target_roles")
+    )
 
     return ScoringProfile(
         weights=weights,
         thresholds=thresholds,
-        target_roles=_lower_terms(roles_data.get("target_roles")) or _DEFAULT_ROLES,
+        target_roles=target_roles or _DEFAULT_ROLES,
         e3d_pdms_terms=_lower_terms(term_config.get("e3d_pdms"))
         or _DEFAULT_TERMS["e3d_pdms"],
         layout_terms=_lower_terms(term_config.get("piping_layout"))
@@ -236,11 +254,9 @@ def score_job(
     reasons: list[str] = []
     gaps: list[str] = []
 
-    if _contains_any(text, active.target_roles):
+    if job.normalized_role or _contains_any(text, active.target_roles):
         score += active.weights["target_role"]
-        reasons.append(
-            f"Target role alignment: {job.normalized_role or job.title}"
-        )
+        reasons.append(f"Target role alignment: {job.normalized_role or job.title}")
     else:
         gaps.append("Target role wording not detected")
 

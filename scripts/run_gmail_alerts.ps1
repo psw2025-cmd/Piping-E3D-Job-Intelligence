@@ -7,8 +7,19 @@ param(
     [string]$Database = "data\database\jobs.db",
     [string]$EvidenceFolder = "private-output\gmail-evidence",
     [string]$Workbook = "data\exports\Piping_E3D_Jobs.xlsx",
-    [string]$Query = "newer_than:30d (job OR jobs OR vacancy OR vacancies OR hiring OR career)",
-    [int]$MaxMessages = 200
+    [string]$Query = "newer_than:45d -from:github.com -from:cursor.com " +
+        "-from:newsletters-noreply@linkedin.com -subject:electrical " +
+        "-subject:structural -subject:`"process engineering`" " +
+        "-subject:pipeline -subject:pipelines -subject:cybersecurity " +
+        "{from:jobalerts-noreply@linkedin.com from:jobs-noreply@linkedin.com " +
+        "from:indeed.com from:gulftalent.com from:jobstreet.com from:naukri.com " +
+        "from:bayt.com from:naukrigulf.com from:rigzone.com " +
+        "from:energyjobline.com from:oilandgasjobsearch.com " +
+        "subject:`"job alert`" subject:`"jobs for you`" subject:`"is hiring`" " +
+        "subject:vacancy} " +
+        "{piping e3d aveva pdms sp3d `"smart 3d`" `"plant layout`" " +
+        "`"pipe support`" `"piping stress`" `"piping designer`"}",
+    [int]$MaxMessages = 500
 )
 
 $ErrorActionPreference = "Stop"
