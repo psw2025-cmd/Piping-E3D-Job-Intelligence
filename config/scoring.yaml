@@ -14,36 +14,57 @@ thresholds:
   high: 70
   normal: 50
 
-recent_days: 7
+recent_days: 14
 
 terms:
   e3d_pdms:
     - AVEVA E3D
     - E3D
     - PDMS
+    - SP3D
+    - SmartPlant 3D
   piping_layout:
     - Piping Layout
+    - Pipe Layout
+    - Plant Layout
+    - Plant Design
+    - Plant Design and Piping
     - Equipment Layout
     - Plot Plan
     - General Arrangement
+    - 3D Model
+    - Model Review
+    - Pipe Support
   experience:
     - 10 years
     - 12 years
     - 15 years
+    - 18 years
     - Senior
     - Lead
+    - Principal
+    - Supervisor
+    - Manager
   site_offshore:
     - Site Engineering
+    - Field Engineering
     - Site Experience
     - Brownfield
+    - Tie-in
+    - Walkdown
     - Punch List
+    - As-built
     - Offshore
+    - Construction Support
   diploma_eligible:
     - Diploma
     - Degree or Diploma
+    - Diploma or Degree
+    - Engineering Diploma
   mandatory_degree:
     - Degree Required
     - Bachelor's Degree Required
+    - Bachelor Degree Mandatory
 
 rules:
   require_explanation: true
