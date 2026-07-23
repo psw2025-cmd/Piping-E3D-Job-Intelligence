@@ -1,21 +1,150 @@
-schema_version: 1
-verified_at: 2026-07-23
-status_definitions:
-  email_alert_ingestion_ready: User-authorized Gmail alerts can be imported locally.
+schema_version: 2
+updated_at: 2026-07-23
+
 recruiters:
-  - {company: Airswift, priority: 1, official_jobs_url: https://www.airswift.com/jobs, regions: [Global, Middle East, Asia Pacific, Europe, Americas], focus: [Oil and Gas, LNG, Offshore, Energy, Engineering], status: email_alert_ingestion_ready}
-  - {company: NES Fircroft, priority: 1, official_jobs_url: https://www.nesfircroft.com/job-search/, regions: [Global, Middle East, Asia, Europe, Americas], focus: [Oil and Gas, Chemicals, Power, Renewables, Engineering], status: email_alert_ingestion_ready}
-  - {company: Brunel, priority: 1, official_jobs_url: https://www.brunel.net/en/jobs, regions: [Global, Middle East, Asia, Europe], focus: [Oil and Gas, Offshore, Mining, Engineering], status: email_alert_ingestion_ready}
-  - {company: Petroplan, priority: 1, official_jobs_url: https://www.petroplan.com/jobs, regions: [Global, Middle East, Europe, Americas], focus: [Oil and Gas, Energy, Engineering], status: email_alert_ingestion_ready}
-  - {company: Orion Group, priority: 1, official_jobs_url: https://www.orionjobs.com/job-search, regions: [Global, Middle East, Europe], focus: [Oil and Gas, Nuclear, Energy, Engineering], status: email_alert_ingestion_ready}
-  - {company: TRS Staffing Solutions, priority: 1, official_jobs_url: https://www.trsstaffing.com/jobs, regions: [Global, Middle East, Asia, Europe, Americas], focus: [EPC, Oil and Gas, Mining, Infrastructure, Engineering], status: email_alert_ingestion_ready}
-  - {company: MPH Global Services, priority: 1, official_jobs_url: https://www.mphglobalservices.com/jobs, regions: [Middle East, Europe, Asia, Africa], focus: [Oil and Gas, Nuclear, Power, Engineering], status: email_alert_ingestion_ready}
-  - {company: Spencer Ogden, priority: 2, official_jobs_url: https://www.spencer-ogden.com/jobs, regions: [Global, Middle East, Asia Pacific, Europe, Americas], focus: [Energy, Renewables, Oil and Gas, Engineering], status: email_alert_ingestion_ready}
-  - {company: WRS Worldwide Recruitment Solutions, priority: 2, official_jobs_url: https://www.worldwide-rs.com/jobs, regions: [Global, Middle East, Europe, Africa], focus: [Oil and Gas, Marine, Mining, Energy], status: email_alert_ingestion_ready}
-  - {company: Matchtech, priority: 2, official_jobs_url: https://www.matchtech.com/jobs, regions: [United Kingdom, Europe, Global], focus: [Engineering, Energy, Infrastructure, Marine], status: email_alert_ingestion_ready}
-  - {company: First Recruitment Group, priority: 2, official_jobs_url: https://www.firstrecruitmentgroup.com/jobs, regions: [United Kingdom, Europe, Middle East, Global], focus: [Oil and Gas, Nuclear, Energy, Engineering], status: email_alert_ingestion_ready}
-  - {company: Progressive Recruitment, priority: 2, official_jobs_url: https://www.progressiverecruitment.com/en-gb/job-search/, regions: [Europe, United Kingdom, Global], focus: [Engineering, Energy, Technology], status: email_alert_ingestion_ready}
-  - {company: Energy Resourcing, priority: 2, official_jobs_url: https://www.energyresourcing.com/jobs, regions: [Global, Asia Pacific, Europe, Middle East], focus: [Energy, EPC, Engineering], status: email_alert_ingestion_ready}
-  - {company: Rigzone, priority: 1, official_jobs_url: https://www.rigzone.com/oil/jobs/, regions: [Global], focus: [Oil and Gas, Offshore, Drilling, Engineering], status: email_alert_ingestion_ready}
-  - {company: Energy Jobline, priority: 1, official_jobs_url: https://www.energyjobline.com/jobs, regions: [Global], focus: [Energy, Oil and Gas, Nuclear, Renewables, Engineering], status: email_alert_ingestion_ready}
-  - {company: Oil and Gas Job Search, priority: 1, official_jobs_url: https://www.oilandgasjobsearch.com/jobs, regions: [Global], focus: [Oil and Gas, Offshore, EPC, Engineering], status: email_alert_ingestion_ready}
+  - agency: Airswift
+    priority: 1
+    official_jobs_url: https://www.airswift.com/jobs
+    regions: [Global, Middle East, Asia Pacific, Europe, Americas]
+    focus: [Oil and Gas, LNG, Offshore, Energy, Engineering]
+    status: active_supported
+    source_ids: [airswift_global_public]
+    fallback: user_authorized_gmail
+    notes: Official global public vacancy pages are collected with bounded pagination. End-client identity remains undisclosed unless explicitly published.
+
+  - agency: NES Fircroft
+    priority: 1
+    official_jobs_url: https://www.nesfircroft.com/job-search/
+    regions: [Global, Middle East, Asia, Europe, Americas]
+    focus: [Oil and Gas, Chemicals, Power, Renewables, Engineering]
+    status: active_supported
+    source_ids: [nesfircroft_piping_public]
+    fallback: user_authorized_gmail
+    notes: Official public piping search and job detail pages are collected. Public professional contacts retain source URL and remain unverified.
+
+  - agency: Brunel
+    priority: 1
+    official_jobs_url: https://www.brunel.net/en/jobs
+    regions: [Global, Middle East, Asia, Europe]
+    focus: [Oil and Gas, Offshore, Mining, Engineering]
+    status: active_supported
+    source_ids: [brunel_global_public]
+    fallback: user_authorized_gmail
+    notes: Official global vacancy pages are collected with public recruiter and closing-date evidence where published.
+
+  - agency: Petroplan
+    priority: 1
+    official_jobs_url: https://www.petroplan.com/jobs
+    regions: [Global, Middle East, Europe, Americas]
+    focus: [Oil and Gas, Energy, Engineering]
+    status: official_site_verified
+    source_ids: []
+    fallback: user_authorized_gmail
+
+  - agency: Orion Group
+    priority: 1
+    official_jobs_url: https://www.orionjobs.com/job-search
+    regions: [Global, Middle East, Europe]
+    focus: [Oil and Gas, Nuclear, Energy, Engineering]
+    status: official_site_verified
+    source_ids: []
+    fallback: user_authorized_gmail
+
+  - agency: TRS Staffing Solutions
+    priority: 1
+    official_jobs_url: https://www.trsstaffing.com/jobs
+    regions: [Global, Middle East, Asia, Europe, Americas]
+    focus: [EPC, Oil and Gas, Mining, Infrastructure, Engineering]
+    status: official_site_verified
+    source_ids: []
+    fallback: user_authorized_gmail
+
+  - agency: MPH Global Services
+    priority: 1
+    official_jobs_url: https://www.mphglobalservices.com/jobs
+    regions: [Middle East, Europe, Asia, Africa]
+    focus: [Oil and Gas, Nuclear, Power, Engineering]
+    status: email_alert_path
+    source_ids: []
+    fallback: user_authorized_gmail
+
+  - agency: Spencer Ogden
+    priority: 2
+    official_jobs_url: https://www.spencer-ogden.com/jobs
+    regions: [Global, Middle East, Asia Pacific, Europe, Americas]
+    focus: [Energy, Renewables, Oil and Gas, Engineering]
+    status: official_site_verified
+    source_ids: []
+    fallback: user_authorized_gmail
+
+  - agency: WRS Worldwide Recruitment Solutions
+    priority: 2
+    official_jobs_url: https://www.worldwide-rs.com/jobs
+    regions: [Global, Middle East, Europe, Africa]
+    focus: [Oil and Gas, Marine, Mining, Energy]
+    status: email_alert_path
+    source_ids: []
+    fallback: user_authorized_gmail
+
+  - agency: Matchtech
+    priority: 2
+    official_jobs_url: https://www.matchtech.com/jobs
+    regions: [United Kingdom, Europe, Global]
+    focus: [Engineering, Energy, Infrastructure, Marine]
+    status: official_site_verified
+    source_ids: []
+    fallback: user_authorized_gmail
+
+  - agency: First Recruitment Group
+    priority: 2
+    official_jobs_url: https://www.firstrecruitmentgroup.com/jobs
+    regions: [United Kingdom, Europe, Middle East, Global]
+    focus: [Oil and Gas, Nuclear, Energy, Engineering]
+    status: official_site_verified
+    source_ids: []
+    fallback: user_authorized_gmail
+
+  - agency: Progressive Recruitment
+    priority: 2
+    official_jobs_url: https://www.progressiverecruitment.com/en-gb/job-search/
+    regions: [Europe, United Kingdom, Global]
+    focus: [Engineering, Energy, Technology]
+    status: official_site_verified
+    source_ids: []
+    fallback: user_authorized_gmail
+
+  - agency: Energy Resourcing
+    priority: 2
+    official_jobs_url: https://www.energyresourcing.com/jobs
+    regions: [Global, Asia Pacific, Europe, Middle East]
+    focus: [Energy, EPC, Engineering]
+    status: email_alert_path
+    source_ids: []
+    fallback: user_authorized_gmail
+
+  - agency: Rigzone
+    priority: 1
+    official_jobs_url: https://www.rigzone.com/oil/jobs/
+    regions: [Global]
+    focus: [Oil and Gas, Offshore, Drilling, Engineering]
+    status: email_alert_path
+    source_ids: []
+    fallback: user_authorized_gmail
+
+  - agency: Energy Jobline
+    priority: 1
+    official_jobs_url: https://www.energyjobline.com/jobs
+    regions: [Global]
+    focus: [Energy, Oil and Gas, Nuclear, Renewables, Engineering]
+    status: email_alert_path
+    source_ids: []
+    fallback: user_authorized_gmail
+
+  - agency: Oil and Gas Job Search
+    priority: 1
+    official_jobs_url: https://www.oilandgasjobsearch.com/jobs
+    regions: [Global]
+    focus: [Oil and Gas, Offshore, EPC, Engineering]
+    status: email_alert_path
+    source_ids: []
+    fallback: user_authorized_gmail
