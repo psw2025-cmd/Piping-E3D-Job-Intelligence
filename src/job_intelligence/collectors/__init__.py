@@ -9,6 +9,7 @@ from .http_client import HttpClient
 from .lever import collect_lever
 from .oracle_hcm import collect_oracle_hcm
 from .public_html import collect_public_html
+from .public_notice import collect_public_notice
 from .rss import collect_rss
 from .sitemap import collect_sitemap
 from .smartrecruiters import collect_smartrecruiters
@@ -20,6 +21,7 @@ COLLECTORS: dict[str, Collector] = {
     "greenhouse": collect_greenhouse,
     "lever": collect_lever,
     "oracle_hcm": collect_oracle_hcm,
+    "public_notice": collect_public_notice,
     "smartrecruiters": collect_smartrecruiters,
     "rss": collect_rss,
     "workday": collect_workday,
@@ -30,5 +32,6 @@ __all__ = [
     "CollectionResult",
     "Collector",
     "collect_public_html",
+    "collect_public_notice",
     "collect_sitemap",
 ]
