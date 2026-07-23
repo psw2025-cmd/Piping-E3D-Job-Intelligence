@@ -9,6 +9,12 @@ from .collection_runner import collect_sources
 from .database import connect, upsert_job
 from .excel_export import export_excel, verify_excel
 from .manual_import import create_manual_job
+from .private_import import (
+    import_private_file,
+    import_private_folder,
+    init_private_import_tables,
+    verify_private_imports,
+)
 from .proof import init_proof_tables, set_run_export_status
 from .source_config import load_source_config
 
@@ -19,6 +25,10 @@ DEFAULT_EXPORT = os.getenv(
 )
 DEFAULT_SOURCES = os.getenv("JOB_INTEL_SOURCES_PATH", "config/sources.yaml")
 DEFAULT_EVIDENCE = os.getenv("JOB_INTEL_EVIDENCE_PATH", "data/raw")
+DEFAULT_PRIVATE_EVIDENCE = os.getenv(
+    "JOB_INTEL_PRIVATE_EVIDENCE_PATH",
+    "private-output/evidence",
+)
 
 
 def _read_text(path: str) -> str:
@@ -27,7 +37,7 @@ def _read_text(path: str) -> str:
 
 def _verify_database(db_path: str) -> list[str]:
     errors: list[str] = []
-    init_proof_tables(db_path)
+    init_private_import_tables(db_path)
     with connect(db_path) as connection:
         duplicate_count = connection.execute(
             "SELECT COUNT(*) FROM ("
@@ -62,7 +72,17 @@ def _verify_database(db_path: str) -> list[str]:
         digest = hashlib.sha256(evidence_path.read_bytes()).hexdigest()
         if digest != row["sha256"]:
             errors.append(f"Evidence hash mismatch: {evidence_path}")
+    errors.extend(verify_private_imports(db_path))
     return errors
+
+
+def _add_private_common_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--evidence-dir", default=DEFAULT_PRIVATE_EVIDENCE)
+    parser.add_argument("--ocr", action="store_true")
+    parser.add_argument("--tesseract-cmd", default="")
+    parser.add_argument("--max-bytes", type=int, default=25_000_000)
+    parser.add_argument("--output", default=DEFAULT_EXPORT)
+    parser.add_argument("--no-export", action="store_true")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -84,6 +104,26 @@ def build_parser() -> argparse.ArgumentParser:
     import_parser.add_argument("--source-url", default="")
     import_parser.add_argument("--source-name", default="manual")
     import_parser.add_argument("--published-at", default="")
+
+    file_parser = subparsers.add_parser(
+        "import-file",
+        help="Import a private PDF, Word, email, text, or image vacancy file",
+    )
+    file_parser.add_argument("--file", required=True)
+    file_parser.add_argument("--title", default="")
+    file_parser.add_argument("--company", default="")
+    file_parser.add_argument("--location", default="")
+    file_parser.add_argument("--apply-url", default="")
+    _add_private_common_arguments(file_parser)
+
+    folder_parser = subparsers.add_parser(
+        "import-folder",
+        help="Import supported private vacancy files from a folder",
+    )
+    folder_parser.add_argument("--folder", required=True)
+    folder_parser.add_argument("--recursive", action="store_true")
+    folder_parser.add_argument("--max-files", type=int, default=500)
+    _add_private_common_arguments(folder_parser)
 
     validate_parser = subparsers.add_parser(
         "validate-sources",
@@ -111,7 +151,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     verify_parser = subparsers.add_parser(
         "verify",
-        help="Verify database, source evidence and Excel output",
+        help="Verify database, evidence, private imports, and Excel output",
     )
     verify_parser.add_argument("--output", default=DEFAULT_EXPORT)
     return parser
@@ -136,11 +176,23 @@ def _print_collection_summary(summary) -> None:
         print(message)
 
 
+def _export_after_import(db_path: str, output: str, disabled: bool) -> int:
+    if disabled:
+        return 0
+    exported = export_excel(db_path, output)
+    errors = verify_excel(exported)
+    if errors:
+        print("FAIL: " + " | ".join(errors))
+        return 2
+    print(f"PASS: Excel exported and verified at {exported}")
+    return 0
+
+
 def main() -> int:
     args = build_parser().parse_args()
 
     if args.command == "init-db":
-        init_proof_tables(args.db)
+        init_private_import_tables(args.db)
         print(f"PASS: database initialized at {args.db}")
         return 0
 
@@ -162,6 +214,52 @@ def main() -> int:
             f"score={job.match_score} | priority={job.priority}"
         )
         return 0
+
+    if args.command == "import-file":
+        result = import_private_file(
+            args.db,
+            args.file,
+            args.evidence_dir,
+            title=args.title,
+            company=args.company,
+            location=args.location,
+            apply_url=args.apply_url,
+            ocr=args.ocr,
+            tesseract_cmd=args.tesseract_cmd or None,
+            max_bytes=args.max_bytes,
+        )
+        print(
+            f"PASS: private import {result.status} | job={result.job_key[:12]} | "
+            f"review_required={int(result.review_required)} | sha256={result.sha256}"
+        )
+        for warning in result.warnings:
+            print(f"REVIEW: {warning}")
+        return _export_after_import(args.db, args.output, args.no_export)
+
+    if args.command == "import-folder":
+        summary = import_private_folder(
+            args.db,
+            args.folder,
+            args.evidence_dir,
+            recursive=args.recursive,
+            ocr=args.ocr,
+            tesseract_cmd=args.tesseract_cmd or None,
+            max_files=args.max_files,
+            max_bytes=args.max_bytes,
+        )
+        print(
+            "IMPORT: "
+            f"attempted={summary.attempted} created={summary.created} "
+            f"updated={summary.updated} duplicates={summary.duplicates} "
+            f"failed={summary.failed} review_required={summary.review_required}"
+        )
+        for result in summary.results:
+            if result.status == "failed":
+                print(f"FAIL: {result.input_path} | {result.error_message}")
+        export_code = _export_after_import(args.db, args.output, args.no_export)
+        if export_code:
+            return export_code
+        return 1 if summary.failed else 0
 
     if args.command == "validate-sources":
         config = load_source_config(args.sources)
@@ -212,7 +310,7 @@ def main() -> int:
         if errors:
             print("FAIL: " + " | ".join(errors))
             return 1
-        print("PASS: database, evidence and Excel verification completed")
+        print("PASS: database, evidence, private imports, and Excel verified")
         return 0
 
     return 2
