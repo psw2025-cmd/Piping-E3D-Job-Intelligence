@@ -8,6 +8,16 @@ sources:
     company_identifier: Ramboll3
     enabled: true
     profile_filter: true
+    search_terms: &expanded_search_terms
+      - piping
+      - e3d
+      - pdms
+      - sp3d
+      - smart 3d
+      - plant layout
+      - pipe support
+      - piping stress
+      - piping materials
     include_terms: &expanded_profile_terms
       - piping
       - pipe layout
@@ -38,6 +48,7 @@ sources:
     company_identifier: ASSYSTEM
     enabled: true
     profile_filter: true
+    search_terms: *expanded_search_terms
     include_terms: *expanded_profile_terms
     fetch_details: true
     timeout_seconds: 30
@@ -54,6 +65,7 @@ sources:
     company_identifier: VeoliaEnvironnementSA
     enabled: true
     profile_filter: true
+    search_terms: *expanded_search_terms
     include_terms: *expanded_profile_terms
     fetch_details: true
     timeout_seconds: 30
@@ -70,6 +82,7 @@ sources:
     company_identifier: SamsungEnA
     enabled: true
     profile_filter: true
+    search_terms: *expanded_search_terms
     include_terms: *expanded_profile_terms
     fetch_details: true
     timeout_seconds: 30
@@ -86,6 +99,7 @@ sources:
     company_identifier: AFRY
     enabled: true
     profile_filter: true
+    search_terms: *expanded_search_terms
     include_terms: *expanded_profile_terms
     fetch_details: true
     timeout_seconds: 30
@@ -102,6 +116,7 @@ sources:
     company_identifier: SegulaTechnologies
     enabled: true
     profile_filter: true
+    search_terms: *expanded_search_terms
     include_terms: *expanded_profile_terms
     fetch_details: true
     timeout_seconds: 30
