@@ -1,0 +1,115 @@
+schema_version: 1
+verified_at: 2026-07-23
+
+principles:
+  - Use official public job pages, documented feeds or documented APIs only.
+  - Never bypass login, CAPTCHA, robots.txt or access controls.
+  - Keep employer-specific endpoints in config, not hard-coded in collectors.
+  - Keep unproven sources disabled until live extraction and evidence proof pass.
+
+connectors:
+  - platform: Oracle HCM Candidate Experience
+    source_type: oracle_hcm
+    implementation: native
+    access: public read-only requisition endpoint
+    pagination: offset and limit
+    active_examples: [McDermott, Wood]
+
+  - platform: Greenhouse
+    source_type: greenhouse
+    implementation: native
+    access: public board API
+    pagination: board response
+    active_examples: []
+
+  - platform: Lever
+    source_type: lever
+    implementation: native
+    access: public postings API
+    pagination: skip and limit
+    active_examples: []
+
+  - platform: SmartRecruiters
+    source_type: smartrecruiters
+    implementation: native
+    access: public postings API
+    pagination: offset and limit
+    active_examples: []
+
+  - platform: SAP SuccessFactors Jobs2Web
+    source_type: public_html
+    implementation: bounded public listing and detail crawler
+    access: rendered public pages or employer XML/RSS feed
+    pagination: employer page template
+    active_examples: [Bechtel]
+
+  - platform: SelectMinds
+    source_type: public_html
+    implementation: bounded public listing and detail crawler
+    access: rendered public pages
+    pagination: employer page template when proven
+    active_examples: [Petrofac]
+
+  - platform: Eightfold
+    source_type: public_html
+    implementation: rendered public listing and detail crawler
+    access: rendered public pages and public job URLs only
+    pagination: start parameter
+    active_examples: [Worley]
+    staged_examples: [Fluor]
+
+  - platform: Phenom
+    source_type: public_html
+    implementation: bounded public listing and detail crawler
+    access: rendered public pages only
+    pagination: from parameter after proof
+    staged_examples: [KBR]
+
+  - platform: Workday
+    source_type: public_html_or_sitemap
+    implementation: public career page and sitemap fallback
+    access: no undocumented tenant API usage
+    pagination: employer-specific rendered pages
+    staged_examples: []
+
+  - platform: iCIMS
+    source_type: public_html_or_documented_api
+    implementation: public portal HTML; documented Job Portal API only with authorization
+    access: employer public portal or authorized documented API
+    pagination: employer-specific
+    staged_examples: []
+
+  - platform: Taleo
+    source_type: public_html_or_rss
+    implementation: public careersection pages, sitemap or feed
+    access: rendered public pages only
+    pagination: employer-specific
+    staged_examples: []
+
+  - platform: Teamtailor
+    source_type: public_html_or_documented_api
+    implementation: public job pages or documented API
+    access: employer public configuration
+    pagination: employer-specific
+    staged_examples: []
+
+  - platform: Workable
+    source_type: public_html_or_documented_api
+    implementation: public job pages or documented API
+    access: employer public configuration
+    pagination: employer-specific
+    staged_examples: []
+
+  - platform: Ashby
+    source_type: public_html_or_documented_api
+    implementation: public job pages or documented API
+    access: employer public configuration
+    pagination: employer-specific
+    staged_examples: []
+
+fallback_order:
+  - native documented public API
+  - official XML, RSS or sitemap
+  - bounded official public HTML
+  - user-authorized Gmail job alerts
+  - private PDF, Word, EML or image import
