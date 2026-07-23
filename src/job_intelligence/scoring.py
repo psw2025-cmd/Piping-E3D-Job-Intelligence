@@ -24,6 +24,7 @@ class ScoringProfile:
     weights: dict[str, int]
     thresholds: dict[str, int]
     target_roles: tuple[str, ...]
+    discovery_terms: tuple[str, ...]
     e3d_pdms_terms: tuple[str, ...]
     layout_terms: tuple[str, ...]
     sector_terms: tuple[str, ...]
@@ -48,33 +49,87 @@ _DEFAULT_WEIGHTS = {
 }
 _DEFAULT_THRESHOLDS = {"critical": 85, "high": 70, "normal": 50}
 _DEFAULT_TERMS = {
-    "e3d_pdms": ("aveva e3d", "e3d", "pdms"),
+    "e3d_pdms": ("aveva e3d", "e3d", "pdms", "sp3d", "smartplant 3d"),
     "piping_layout": (
         "piping layout",
+        "pipe layout",
+        "plant layout",
+        "plant design",
         "equipment layout",
         "plot plan",
         "general arrangement",
+        "3d model",
+        "pipe support",
     ),
-    "experience": ("10 years", "12 years", "15 years", "senior", "lead"),
+    "experience": (
+        "10 years",
+        "12 years",
+        "15 years",
+        "18 years",
+        "senior",
+        "lead",
+        "principal",
+        "supervisor",
+        "manager",
+    ),
     "site_offshore": (
         "site engineering",
+        "field engineering",
         "site experience",
         "brownfield",
+        "tie-in",
+        "walkdown",
         "punch list",
+        "as-built",
         "offshore",
+        "construction support",
     ),
-    "diploma_eligible": ("diploma", "degree or diploma"),
-    "mandatory_degree": ("degree required", "bachelor's degree required"),
+    "diploma_eligible": (
+        "diploma",
+        "degree or diploma",
+        "diploma or degree",
+        "engineering diploma",
+    ),
+    "mandatory_degree": (
+        "degree required",
+        "bachelor's degree required",
+        "bachelor degree mandatory",
+    ),
 }
 _DEFAULT_ROLES = (
     "lead piping engineer",
+    "principal piping engineer",
     "senior piping engineer",
+    "piping engineer",
     "piping design engineer",
     "piping layout engineer",
     "e3d piping designer",
     "pdms piping designer",
+    "sp3d piping designer",
+    "plant design engineer",
+    "plant layout designer",
     "offshore piping engineer",
     "site piping engineer",
+    "field piping engineer",
+    "pipe support engineer",
+    "piping stress engineer",
+)
+_DEFAULT_DISCOVERY_TERMS = (
+    "piping",
+    "pipe layout",
+    "plant layout",
+    "plant design",
+    "aveva e3d",
+    "e3d",
+    "pdms",
+    "sp3d",
+    "smartplant 3d",
+    "pipe support",
+    "piping stress",
+    "piping materials",
+    "piping walkdown",
+    "3d model coordinator",
+    "equipment layout",
 )
 _DEFAULT_SECTORS = (
     "oil and gas",
@@ -83,17 +138,35 @@ _DEFAULT_SECTORS = (
     "offshore",
     "lng",
     "nuclear",
+    "chemical",
+    "power",
+    "energy",
+    "fertilizer",
+    "hydrogen",
+    "mining and metals",
 )
 _DEFAULT_LOCATIONS = (
     "mumbai",
     "navi mumbai",
     "pune",
     "vadodara",
+    "chennai",
+    "bengaluru",
+    "hyderabad",
+    "gurugram",
     "uae",
+    "united arab emirates",
     "saudi arabia",
     "oman",
     "qatar",
     "kuwait",
+    "bahrain",
+    "singapore",
+    "malaysia",
+    "united kingdom",
+    "canada",
+    "australia",
+    "remote",
 )
 
 
@@ -182,6 +255,8 @@ def load_scoring_profile(config_dir: str | Path | None = None) -> ScoringProfile
         weights=weights,
         thresholds=thresholds,
         target_roles=_lower_terms(roles_data.get("target_roles")) or _DEFAULT_ROLES,
+        discovery_terms=_lower_terms(roles_data.get("discovery_terms"))
+        or _DEFAULT_DISCOVERY_TERMS,
         e3d_pdms_terms=_lower_terms(term_config.get("e3d_pdms"))
         or _DEFAULT_TERMS["e3d_pdms"],
         layout_terms=_lower_terms(term_config.get("piping_layout"))
@@ -202,6 +277,16 @@ def load_scoring_profile(config_dir: str | Path | None = None) -> ScoringProfile
 
 def _contains_any(text: str, terms: tuple[str, ...]) -> bool:
     return any(term in text for term in terms)
+
+
+def is_profile_relevant(
+    job: JobRecord,
+    *,
+    config_dir: str | Path | None = None,
+    profile: ScoringProfile | None = None,
+) -> bool:
+    active = profile or load_scoring_profile(config_dir)
+    return _contains_any(job.searchable_text, active.discovery_terms)
 
 
 def _is_recent(published_at: str, days: int) -> bool:
@@ -236,13 +321,13 @@ def score_job(
 
     if _contains_any(text, active.e3d_pdms_terms):
         score += active.weights["e3d_pdms"]
-        reasons.append("AVEVA E3D or PDMS requirement detected")
+        reasons.append("AVEVA E3D, PDMS or SP3D requirement detected")
     else:
-        gaps.append("E3D/PDMS requirement not stated")
+        gaps.append("E3D/PDMS/SP3D requirement not stated")
 
     if _contains_any(text, active.layout_terms):
         score += active.weights["piping_layout"]
-        reasons.append("Piping or equipment layout scope detected")
+        reasons.append("Piping, plant or equipment layout scope detected")
 
     if _contains_any(text, active.sector_terms):
         score += active.weights["sector"]
@@ -254,11 +339,11 @@ def score_job(
 
     if _contains_any(text, active.preferred_locations):
         score += active.weights["preferred_location"]
-        reasons.append("Preferred location detected")
+        reasons.append("Preferred global location detected")
 
     if _contains_any(text, active.site_offshore_terms):
         score += active.weights["site_offshore"]
-        reasons.append("Site, brownfield or offshore experience valued")
+        reasons.append("Site, field, brownfield or offshore experience valued")
 
     if _contains_any(text, active.diploma_terms):
         score += active.weights["diploma_eligible"]
