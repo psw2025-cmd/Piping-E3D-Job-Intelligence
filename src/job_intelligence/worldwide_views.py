@@ -30,13 +30,14 @@ def duplicate_group(row: pd.Series) -> str:
 
 def deduplicate_worldwide(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     enriched = frame.copy()
-    enriched["duplicate_group"] = enriched.apply(duplicate_group, axis=1)
     if enriched.empty:
+        enriched["duplicate_group"] = pd.Series(dtype="string")
         enriched["source_count"] = pd.Series(dtype="int64")
         enriched["duplicate_sources"] = pd.Series(dtype="string")
         enriched["all_apply_urls"] = pd.Series(dtype="string")
         return enriched, enriched.copy()
 
+    enriched["duplicate_group"] = enriched.apply(duplicate_group, axis=1)
     grouped = enriched.groupby("duplicate_group", dropna=False)
     counts = grouped.size().rename("source_count")
     source_names = grouped["source_name"].agg(
