@@ -16,7 +16,7 @@ permissions:
 
 concurrency:
   group: daily-live-job-intelligence
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   collect:
