@@ -16,7 +16,6 @@ def test_staged_india_notice_sources_validate_and_remain_disabled() -> None:
 
     assert {source.source_id for source in config.sources} == {
         "npcil_public_notices",
-        "eil_public_notices",
         "gail_public_notices",
     }
     assert all(source.source_type == "public_notice" for source in config.sources)
