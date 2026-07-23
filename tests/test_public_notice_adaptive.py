@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Mapping
 
+from job_intelligence.collectors import COLLECTORS
 from job_intelligence.collectors.http_client import FetchedResponse
 from job_intelligence.collectors.public_notice_adaptive import (
     collect_public_notice_adaptive,
@@ -61,6 +62,10 @@ def source(listing_url: str) -> SourceSpec:
             "deny_on_robots_error": True,
         },
     )
+
+
+def test_production_dispatch_uses_adaptive_public_notice_collector() -> None:
+    assert COLLECTORS["public_notice"] is collect_public_notice_adaptive
 
 
 def test_embedded_gail_template_extracts_card_title_dates_and_one_notice() -> None:
