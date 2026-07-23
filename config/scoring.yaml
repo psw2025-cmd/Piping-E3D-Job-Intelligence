@@ -1,5 +1,5 @@
 weights:
-  target_role: 20
+  target_role: 25
   e3d_pdms: 20
   piping_layout: 15
   sector: 10
@@ -14,38 +14,67 @@ thresholds:
   high: 70
   normal: 50
 
-recent_days: 7
+recent_days: 14
 
 terms:
   e3d_pdms:
     - AVEVA E3D
     - E3D
     - PDMS
+    - SP3D
+    - SmartPlant 3D
+    - Smart Plant 3D
+    - PDS
   piping_layout:
     - Piping Layout
+    - Pipe Layout
+    - Plant Layout
     - Equipment Layout
     - Plot Plan
     - General Arrangement
+    - Piping General Arrangement
+    - Isometric
+    - 3D Model Coordination
+    - Model Review
+    - Clash Resolution
+    - Pipe Support
   experience:
     - 10 years
     - 12 years
     - 15 years
+    - 20 years
     - Senior
     - Lead
+    - Principal
+    - Manager
   site_offshore:
     - Site Engineering
+    - Field Engineering
+    - Construction Support
     - Site Experience
     - Brownfield
+    - Revamp
+    - Tie-in
     - Punch List
     - Offshore
+    - Platform
+    - Topsides
   diploma_eligible:
     - Diploma
     - Degree or Diploma
+    - Diploma or Degree
+    - Technical Diploma
   mandatory_degree:
     - Degree Required
     - Bachelor's Degree Required
+    - Bachelor Degree Mandatory
+    - B.E. Required
+    - B.Tech Required
 
 rules:
   require_explanation: true
   never_infer_missing_salary: true
+  never_infer_missing_employer: true
+  never_infer_missing_location: true
   never_mark_suggested_email_as_verified: true
+  preserve_user_application_status: true
