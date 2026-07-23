@@ -91,7 +91,7 @@ def run(output_dir: Path, config_dir: Path) -> int:
                 f"- Registry companies: `{len(registry)}`",
                 f"- Active direct/alert/notice/manual coverage: `{active}`",
                 f"- India batch coverage: `{india_percentage:.1f}%`",
-                f"- Coverage workbook verification: `PASS`",
+                "- Coverage workbook verification: `PASS`",
                 "- Coverage sheets: `Company_Registry`, `Country_Coverage`, "
                 "`Missing_Companies`, `ATS_Coverage`, `Coverage_Gaps` and proof views",
                 "",
