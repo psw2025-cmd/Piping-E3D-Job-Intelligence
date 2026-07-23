@@ -245,6 +245,7 @@ def _validate_source(spec: SourceSpec) -> None:
 
     if not spec.company:
         raise ValueError(f"source {spec.source_id!r} requires company")
+    spec.bool_option("profile_filter", True)
     spec.int_option("timeout_seconds", 30)
     spec.int_option("rate_limit_per_minute", 30)
     spec.int_option("max_items", 500)
