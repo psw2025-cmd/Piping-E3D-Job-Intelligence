@@ -35,6 +35,12 @@ jobs:
         continue-on-error: true
         run: python scripts/run_cloud_daily.py --output output/daily
 
+      - name: Append worldwide coverage proof
+        id: coverage
+        if: always()
+        continue-on-error: true
+        run: python scripts/append_daily_coverage.py --output output/daily
+
       - name: Publish run summary
         if: always()
         shell: bash
@@ -77,5 +83,10 @@ jobs:
               raise SystemExit(
                   f"Daily collection failed: {status.get('error') or status.get('collection_status')}"
               )
-          print("PASS: daily collection, evidence and workbook verification completed")
+          if status.get("coverage_verified") is not True:
+              raise SystemExit("Worldwide coverage workbook proof did not pass")
+          print(
+              "PASS: daily collection, evidence, workbook and worldwide coverage "
+              "verification completed"
+          )
           PY
