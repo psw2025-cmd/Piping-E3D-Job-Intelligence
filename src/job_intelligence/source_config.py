@@ -14,7 +14,9 @@ _SUPPORTED_TYPES = {
     "lever",
     "oracle_hcm",
     "public_html",
+    "selectminds",
     "smartrecruiters",
+    "successfactors",
     "rss",
     "sitemap",
 }
@@ -213,6 +215,53 @@ def _validate_oracle_source(spec: SourceSpec) -> None:
     spec.int_option("max_scan_items", 2500)
 
 
+def _validate_successfactors(spec: SourceSpec) -> None:
+    template = spec.require_text("page_url_template")
+    if "{offset}" not in template:
+        raise ValueError(
+            f"source {spec.source_id!r} page_url_template must contain '{{offset}}'"
+        )
+    try:
+        rendered = template.format(offset=0)
+    except (KeyError, ValueError) as exc:
+        raise ValueError(
+            f"source {spec.source_id!r} has invalid page_url_template"
+        ) from exc
+    _validate_public_url(rendered, spec.source_id, "page_url_template")
+    if not str(spec.options.get("job_link_pattern", "/job/")).strip():
+        raise ValueError(f"source {spec.source_id!r} requires job_link_pattern")
+    spec.text_list_option("include_terms")
+    spec.text_list_option("location_terms")
+    spec.text_list_option("closed_text_patterns")
+    spec.int_option("page_size", 25)
+
+
+def _validate_selectminds(spec: SourceSpec) -> None:
+    base_url = spec.require_text("url")
+    _validate_public_url(base_url, spec.source_id)
+    base_host = (urlsplit(base_url).hostname or "").lower()
+    additional = spec.options.get("additional_urls", [])
+    if not isinstance(additional, list):
+        raise ValueError(
+            f"source {spec.source_id!r} option 'additional_urls' must be a list"
+        )
+    for url in additional:
+        if not isinstance(url, str) or not url.strip():
+            raise ValueError(
+                f"source {spec.source_id!r} additional_urls must contain text"
+            )
+        _validate_public_url(url.strip(), spec.source_id, "additional_urls")
+        if (urlsplit(url.strip()).hostname or "").lower() != base_host:
+            raise ValueError(
+                f"source {spec.source_id!r} additional URL must use listing host"
+            )
+    if not str(spec.options.get("job_link_pattern", "/jobs/")).strip():
+        raise ValueError(f"source {spec.source_id!r} requires job_link_pattern")
+    spec.text_list_option("include_terms")
+    spec.text_list_option("location_terms")
+    spec.text_list_option("closed_text_patterns")
+
+
 def _validate_source(spec: SourceSpec) -> None:
     if not _SOURCE_ID_PATTERN.fullmatch(spec.source_id):
         raise ValueError(
@@ -235,9 +284,13 @@ def _validate_source(spec: SourceSpec) -> None:
         _validate_oracle_source(spec)
     elif spec.source_type == "public_html":
         _validate_public_html(spec)
+    elif spec.source_type == "selectminds":
+        _validate_selectminds(spec)
     elif spec.source_type == "smartrecruiters":
         spec.require_text("company_identifier")
         spec.bool_option("fetch_details", True)
+    elif spec.source_type == "successfactors":
+        _validate_successfactors(spec)
     else:
         _validate_public_url(spec.require_text("url"), spec.source_id)
         if spec.source_type == "sitemap":
