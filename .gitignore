@@ -43,10 +43,14 @@ private-output/
 *.pdf
 *.doc
 *.docx
+*.eml
 *.png
 *.jpg
 *.jpeg
 *.webp
+*.tif
+*.tiff
+*.bmp
 
 # Keep only explicit placeholders
 !data/.gitkeep

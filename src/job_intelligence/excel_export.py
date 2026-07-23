@@ -9,7 +9,7 @@ from openpyxl import load_workbook
 from openpyxl.styles import Font
 
 from .database import JOB_COLUMNS, connect, fetch_jobs
-from .proof import init_proof_tables
+from .private_import import init_private_import_tables
 
 REQUIRED_SHEETS = (
     "New_Today",
@@ -22,6 +22,7 @@ REQUIRED_SHEETS = (
     "Recruiter_Contacts",
     "Source_Health",
     "Source_Evidence",
+    "Private_Imports",
     "Run_Proof",
 )
 _FORMULA_PREFIXES = ("=", "+", "-", "@")
@@ -63,30 +64,13 @@ def _format_workbook(path: Path) -> None:
 
 
 def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
-    init_proof_tables(db_path)
+    init_private_import_tables(db_path)
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
 
     jobs = pd.DataFrame(fetch_jobs(db_path))
     if jobs.empty:
         jobs = _empty_jobs_frame()
-
-    today = datetime.now(UTC).date().isoformat()
-    found_dates = jobs.get("found_at", pd.Series(dtype="string")).astype(str)
-    new_today = jobs[found_dates.str.startswith(today, na=False)]
-    priorities = jobs.get("priority", pd.Series(dtype="string"))
-    high_priority = jobs[priorities.isin(["critical", "high"])]
-    statuses = jobs.get("application_status", pd.Series(dtype="string"))
-    active = jobs[~statuses.isin(["expired", "rejected"])]
-    confidence = jobs.get("contact_confidence", pd.Series(dtype="string"))
-    manual_review = jobs[
-        confidence.isin(["PUBLIC_UNVERIFIED", "PATTERN_SUGGESTION"])
-    ]
-    applied = jobs[statuses.eq("applied")]
-    follow_up = jobs[statuses.eq("follow_up")]
-    expired = jobs[statuses.eq("expired")]
-    emails = jobs.get("recruiter_email", pd.Series(dtype="string"))
-    contacts = jobs[emails.fillna("").astype(str).str.len() > 0]
 
     with connect(db_path) as connection:
         source_health = pd.read_sql_query(
@@ -97,10 +81,40 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
             "SELECT * FROM source_evidence ORDER BY fetched_at DESC",
             connection,
         )
+        private_imports = pd.read_sql_query(
+            "SELECT * FROM private_imports ORDER BY imported_at DESC",
+            connection,
+        )
         run_proof = pd.read_sql_query(
             "SELECT * FROM runs ORDER BY started_at DESC",
             connection,
         )
+
+    review_job_keys = set(
+        private_imports.loc[
+            private_imports.get("review_required", pd.Series(dtype="int64")).eq(1),
+            "job_key",
+        ].astype(str)
+    )
+    today = datetime.now(UTC).date().isoformat()
+    found_dates = jobs.get("found_at", pd.Series(dtype="string")).astype(str)
+    new_today = jobs[found_dates.str.startswith(today, na=False)]
+    priorities = jobs.get("priority", pd.Series(dtype="string"))
+    high_priority = jobs[priorities.isin(["critical", "high"])]
+    statuses = jobs.get("application_status", pd.Series(dtype="string"))
+    active = jobs[~statuses.isin(["expired", "rejected"])]
+    confidence = jobs.get("contact_confidence", pd.Series(dtype="string"))
+    job_keys = jobs.get("job_key", pd.Series(dtype="string")).astype(str)
+    manual_review = jobs[
+        confidence.isin(["PUBLIC_UNVERIFIED", "PATTERN_SUGGESTION"])
+        | statuses.eq("review_required")
+        | job_keys.isin(review_job_keys)
+    ]
+    applied = jobs[statuses.eq("applied")]
+    follow_up = jobs[statuses.eq("follow_up")]
+    expired = jobs[statuses.eq("expired")]
+    emails = jobs.get("recruiter_email", pd.Series(dtype="string"))
+    contacts = jobs[emails.fillna("").astype(str).str.len() > 0]
 
     sheets = {
         "New_Today": new_today,
@@ -113,6 +127,7 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
         "Recruiter_Contacts": contacts,
         "Source_Health": source_health,
         "Source_Evidence": source_evidence,
+        "Private_Imports": private_imports,
         "Run_Proof": run_proof,
     }
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
