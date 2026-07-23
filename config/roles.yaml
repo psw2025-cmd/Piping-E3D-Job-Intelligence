@@ -2,20 +2,121 @@ target_roles:
   - Lead Piping Engineer
   - Senior Piping Engineer
   - Piping Design Engineer
-  - Senior Piping Layout Engineer
-  - Senior E3D Piping Designer
-  - Senior PDMS Piping Designer
-  - Offshore Piping Engineer
-  - Site Piping Engineer
+  - Lead Piping Design Engineer
   - Piping Layout Engineer
+  - Senior Piping Layout Engineer
+  - Senior Layout Engineer
+  - Piping Area Lead
+  - Piping Design Checker
+  - Site Piping Engineer
+  - Field Piping Engineer
+  - Offshore Piping Engineer
+  - Piping Construction Engineer
+  - Senior E3D Piping Designer
+  - AVEVA E3D Designer
+  - E3D Piping Designer
+  - Senior PDMS Designer
+  - PDMS Piping Designer
+  - E3D Administrator
+  - E3D Coordinator
+  - 3D Model Coordinator
+  - Plant Design Engineer
+  - Plant Layout Designer
+  - Mechanical Piping Designer
+  - SP3D Piping Designer
   - Piping CAD Lead
+
+role_families:
+  Lead Piping Engineer:
+    - lead piping engineer
+    - piping lead engineer
+    - piping engineering lead
+    - lead engineer piping
+    - piping discipline lead
+    - piping area lead
+    - lead piping design engineer
+  Senior Piping Engineer:
+    - senior piping engineer
+    - sr piping engineer
+    - principal piping engineer
+    - piping specialist
+    - piping engineer senior
+  Piping Design Engineer:
+    - piping design engineer
+    - piping engineer design
+    - piping designer engineer
+  Piping Layout Engineer:
+    - piping layout engineer
+    - senior piping layout engineer
+    - senior layout engineer
+    - plant layout engineer
+    - layout engineer piping
+    - piping layout lead
+  Piping Design Checker:
+    - piping design checker
+    - piping checker
+    - piping check engineer
+    - design checker piping
+  Site Piping Engineer:
+    - site piping engineer
+    - field piping engineer
+    - piping field engineer
+    - piping construction engineer
+    - construction piping engineer
+    - piping site engineer
+  Offshore Piping Engineer:
+    - offshore piping engineer
+    - topsides piping engineer
+    - subsea piping engineer
+    - hook up piping engineer
+  Senior E3D Piping Designer:
+    - senior e3d piping designer
+    - e3d piping designer
+    - aveva e3d designer
+    - e3d designer piping
+    - senior aveva e3d designer
+  Senior PDMS Designer:
+    - senior pdms designer
+    - pdms piping designer
+    - pdms designer piping
+    - senior pdms piping designer
+  SP3D Piping Designer:
+    - sp3d piping designer
+    - smartplant 3d piping designer
+    - smart 3d piping designer
+    - s3d piping designer
+  E3D Administrator:
+    - e3d administrator
+    - aveva e3d administrator
+    - pdms administrator
+    - e3d admin
+  E3D Coordinator:
+    - e3d coordinator
+    - 3d model coordinator
+    - model coordination engineer
+    - 3d design coordinator
+    - plant model coordinator
+  Plant Design Engineer:
+    - plant design engineer
+    - plant layout designer
+    - plant design specialist
+    - mechanical piping designer
+  Piping CAD Lead:
+    - piping cad lead
+    - cad lead piping
+    - piping design lead
+    - piping drafting lead
 
 primary_skills:
   - AVEVA E3D
   - E3D
   - PDMS
+  - SP3D
+  - SmartPlant 3D
+  - Smart 3D
   - Piping Layout
   - Equipment Layout
+  - Plant Layout
   - Plot Plan
   - Piping General Arrangement
   - Isometrics
@@ -26,6 +127,7 @@ primary_skills:
   - AutoCAD
   - Model Review
   - Clash Resolution
+  - 3D Model Coordination
 
 engineering_skills:
   - Stress Review
@@ -34,10 +136,14 @@ engineering_skills:
   - Tie-in
   - Brownfield
   - Site Engineering
+  - Field Engineering
+  - Construction Support
   - Punch List
   - As-built
   - Constructability
   - Interdisciplinary Coordination
+  - Offshore Hook-up
+  - Commissioning Support
 
 sectors:
   - Oil and Gas
@@ -48,3 +154,9 @@ sectors:
   - Nuclear
   - Chemical
   - Power
+  - Energy
+  - Fertilizer
+  - Mining and Metals
+  - Water and Wastewater
+  - Hydrogen
+  - Carbon Capture
