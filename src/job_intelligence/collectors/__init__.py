@@ -12,6 +12,7 @@ from .public_html import collect_public_html
 from .rss import collect_rss
 from .sitemap import collect_sitemap
 from .smartrecruiters import collect_smartrecruiters
+from .workday import collect_workday
 
 Collector = Callable[[SourceSpec, HttpClient], CollectionResult]
 
@@ -21,6 +22,7 @@ COLLECTORS: dict[str, Collector] = {
     "oracle_hcm": collect_oracle_hcm,
     "smartrecruiters": collect_smartrecruiters,
     "rss": collect_rss,
+    "workday": collect_workday,
 }
 
 __all__ = [

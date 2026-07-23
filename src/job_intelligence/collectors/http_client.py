@@ -10,7 +10,7 @@ from urllib.parse import urljoin, urlsplit
 
 import requests
 
-DEFAULT_USER_AGENT = "Piping-E3D-Job-Intelligence/0.2 (+public-job-monitor)"
+DEFAULT_USER_AGENT = "Piping-E3D-Job-Intelligence/0.5 (+public-job-monitor)"
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,6 +45,14 @@ class HttpClient(Protocol):
         url: str,
         *,
         params: Mapping[str, object] | None = None,
+        allowed_statuses: set[int] | None = None,
+    ) -> FetchedResponse: ...
+
+    def post_json(
+        self,
+        url: str,
+        *,
+        json_body: Mapping[str, object],
         allowed_statuses: set[int] | None = None,
     ) -> FetchedResponse: ...
 
@@ -160,6 +168,23 @@ class SafeHttpClient:
             chunks.append(chunk)
         return b"".join(chunks)
 
+    def _finalize(
+        self,
+        response: requests.Response,
+        *,
+        allowed_statuses: set[int],
+    ) -> FetchedResponse:
+        validate_public_http_url(response.url)
+        if response.status_code not in allowed_statuses:
+            response.raise_for_status()
+        content = self._read_limited_content(response)
+        return FetchedResponse(
+            url=response.url,
+            status_code=response.status_code,
+            headers={key.lower(): value for key, value in response.headers.items()},
+            content=content,
+        )
+
     def get(
         self,
         url: str,
@@ -183,7 +208,6 @@ class SafeHttpClient:
             )
             self._last_request_at = time.monotonic()
             try:
-                validate_public_http_url(response.url)
                 location = response.headers.get("location")
                 if response.is_redirect or response.is_permanent_redirect:
                     if not location:
@@ -195,18 +219,57 @@ class SafeHttpClient:
                     current_url = urljoin(response.url, location)
                     current_params = None
                     continue
-                if response.status_code not in allowed:
-                    response.raise_for_status()
-                content = self._read_limited_content(response)
-                return FetchedResponse(
-                    url=response.url,
-                    status_code=response.status_code,
-                    headers={
-                        key.lower(): value for key, value in response.headers.items()
-                    },
-                    content=content,
-                )
+                return self._finalize(response, allowed_statuses=allowed)
             finally:
                 response.close()
 
         raise ValueError(f"too many redirects while fetching: {url}")
+
+    def post_json(
+        self,
+        url: str,
+        *,
+        json_body: Mapping[str, object],
+        allowed_statuses: set[int] | None = None,
+    ) -> FetchedResponse:
+        current_url = url
+        current_body: Mapping[str, object] | None = json_body
+        allowed = allowed_statuses or set()
+
+        for redirect_count in range(self.max_redirects + 1):
+            self._validate_target(current_url)
+            self._wait_for_rate_limit()
+            if current_body is None:
+                response = self.session.get(
+                    current_url,
+                    timeout=self.timeout_seconds,
+                    allow_redirects=False,
+                    stream=True,
+                )
+            else:
+                response = self.session.post(
+                    current_url,
+                    json=current_body,
+                    timeout=self.timeout_seconds,
+                    allow_redirects=False,
+                    stream=True,
+                )
+            self._last_request_at = time.monotonic()
+            try:
+                location = response.headers.get("location")
+                if response.is_redirect or response.is_permanent_redirect:
+                    if not location:
+                        raise ValueError(f"redirect response has no Location: {response.url}")
+                    if redirect_count >= self.max_redirects:
+                        raise ValueError(
+                            f"too many redirects while posting: {url}"
+                        )
+                    current_url = urljoin(response.url, location)
+                    if response.status_code in {301, 302, 303}:
+                        current_body = None
+                    continue
+                return self._finalize(response, allowed_statuses=allowed)
+            finally:
+                response.close()
+
+        raise ValueError(f"too many redirects while posting: {url}")

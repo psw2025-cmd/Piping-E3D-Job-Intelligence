@@ -32,6 +32,30 @@ employers:
     verified_at: 2026-07-23
     notes: Verified public Oracle Candidate Experience requisition source with profile and location filters.
 
+  - company: KBR
+    priority: 1
+    official_careers_url: https://careers.kbr.com/us/en
+    public_job_url: https://kbr.wd5.myworkdayjobs.com/en-US/KBR_Careers
+    public_job_host: kbr.wd5.myworkdayjobs.com
+    ats_type: workday
+    status: active_supported
+    source_ids:
+      - kbr_workday
+    verified_at: 2026-07-23
+    notes: Official KBR Workday candidate site and current public piping requisitions verified; connector uses read-only public candidate search and detail responses.
+
+  - company: AtkinsRealis
+    priority: 1
+    official_careers_url: https://careers.atkinsrealis.com/
+    public_job_url: https://slihrms.wd3.myworkdayjobs.com/en-US/Careers
+    public_job_host: slihrms.wd3.myworkdayjobs.com
+    ats_type: workday
+    status: active_supported
+    source_ids:
+      - atkinsrealis_workday
+    verified_at: 2026-07-23
+    notes: Official AtkinsRealis Workday candidate site and current public piping/design requisitions verified; connector uses read-only public candidate search and detail responses.
+
   - company: Bechtel
     priority: 1
     official_careers_url: https://www.bechtel.com/careers/
@@ -68,16 +92,6 @@ employers:
     source_ids: []
     notes: Official Eightfold public job search verified; implement a constrained source-specific connector rather than guessing internal APIs.
 
-  - company: KBR
-    priority: 1
-    official_careers_url: https://careers.kbr.com/us/en
-    public_job_url: https://careers.kbr.com/us/en/search-results
-    public_job_host: careers.kbr.com
-    ats_type: platform_research_required
-    status: connector_planned
-    source_ids: []
-    notes: Official careers portal verified; identify a permitted public listing interface or use authorized email alerts.
-
   - company: Technip Energies
     priority: 1
     official_careers_url: https://careers.technipenergies.com/
@@ -111,13 +125,6 @@ employers:
   - company: Jacobs
     priority: 1
     official_careers_url: https://careers.jacobs.com/
-    status: connector_planned
-    source_ids: []
-    notes: Official career source scheduled for a controlled connector batch.
-
-  - company: AtkinsRealis
-    priority: 1
-    official_careers_url: https://careers.atkinsrealis.com/
     status: connector_planned
     source_ids: []
     notes: Official career source scheduled for a controlled connector batch.
