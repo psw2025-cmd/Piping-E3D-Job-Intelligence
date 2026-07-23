@@ -21,22 +21,21 @@ def test_worldwide_registry_has_india_batch_and_unique_ids() -> None:
     assert len(ids) == len(set(ids))
     assert len(ids) >= 30
 
-    companies = {company["company"] for company in registry.companies}
     required = {
-        "Engineers India Limited",
-        "Tata Consulting Engineers",
-        "Tata Projects",
-        "Reliance Industries",
-        "Toyo Engineering India",
-        "Nuberg EPC",
-        "VA Tech Wabag",
-        "ONGC",
-        "Indian Oil Corporation",
-        "NPCIL",
-        "NTPC",
-        "BHEL",
+        "engineers_india",
+        "tata_consulting_engineers",
+        "tata_projects",
+        "reliance_industries",
+        "toyo_engineering_india",
+        "nuberg_epc",
+        "va_tech_wabag",
+        "ongc",
+        "indian_oil",
+        "npcil",
+        "ntpc",
+        "bhel",
     }
-    assert required <= companies
+    assert required <= set(ids)
 
 
 def test_active_direct_companies_have_source_ids() -> None:
