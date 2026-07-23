@@ -13,43 +13,74 @@ JOB_COLUMNS = (
     "identity_fingerprint",
     "canonical_url",
     "title",
+    "normalized_role",
     "company",
     "location",
+    "city",
+    "country",
     "description",
     "apply_url",
     "source_url",
     "source_name",
     "published_at",
+    "closing_at",
     "found_at",
     "last_seen_at",
     "job_type",
+    "employment_type",
     "salary_text",
     "experience_text",
     "skills_text",
+    "software_text",
+    "sector",
+    "agency_name",
     "recruiter_name",
     "recruiter_email",
+    "contact_source_url",
     "contact_confidence",
     "match_score",
     "match_reasons",
     "gaps",
     "priority",
+    "duplicate_status",
     "application_status",
 )
 
 _STRING_REFRESH_COLUMNS = (
     "title",
+    "normalized_role",
     "company",
     "location",
+    "city",
+    "country",
     "description",
     "apply_url",
     "source_url",
     "source_name",
     "published_at",
+    "closing_at",
     "job_type",
+    "employment_type",
     "salary_text",
     "experience_text",
     "skills_text",
+    "software_text",
+    "sector",
+    "agency_name",
 )
+
+_PROFILE_COLUMN_DEFINITIONS = {
+    "normalized_role": "TEXT NOT NULL DEFAULT ''",
+    "city": "TEXT NOT NULL DEFAULT ''",
+    "country": "TEXT NOT NULL DEFAULT ''",
+    "closing_at": "TEXT NOT NULL DEFAULT ''",
+    "employment_type": "TEXT NOT NULL DEFAULT ''",
+    "software_text": "TEXT NOT NULL DEFAULT ''",
+    "sector": "TEXT NOT NULL DEFAULT ''",
+    "agency_name": "TEXT NOT NULL DEFAULT ''",
+    "contact_source_url": "TEXT NOT NULL DEFAULT ''",
+    "duplicate_status": "TEXT NOT NULL DEFAULT 'unique'",
+}
 
 
 def connect(db_path: str | Path) -> sqlite3.Connection:
@@ -86,7 +117,7 @@ def _register_identity_aliases(
     )
 
 
-def _ensure_job_identity_columns(connection: sqlite3.Connection) -> None:
+def _ensure_job_columns(connection: sqlite3.Connection) -> None:
     columns = {row[1] for row in connection.execute("PRAGMA table_info(jobs)")}
     if "identity_fingerprint" not in columns:
         connection.execute(
@@ -96,6 +127,9 @@ def _ensure_job_identity_columns(connection: sqlite3.Connection) -> None:
         connection.execute(
             "ALTER TABLE jobs ADD COLUMN canonical_url TEXT NOT NULL DEFAULT ''"
         )
+    for column, definition in _PROFILE_COLUMN_DEFINITIONS.items():
+        if column not in columns:
+            connection.execute(f"ALTER TABLE jobs ADD COLUMN {column} {definition}")
 
     rows = connection.execute(
         "SELECT * FROM jobs WHERE identity_fingerprint = '' OR canonical_url = ''"
@@ -162,26 +196,36 @@ def init_database(db_path: str | Path) -> None:
                 identity_fingerprint TEXT NOT NULL DEFAULT '',
                 canonical_url TEXT NOT NULL DEFAULT '',
                 title TEXT NOT NULL,
+                normalized_role TEXT NOT NULL DEFAULT '',
                 company TEXT NOT NULL,
                 location TEXT NOT NULL DEFAULT '',
+                city TEXT NOT NULL DEFAULT '',
+                country TEXT NOT NULL DEFAULT '',
                 description TEXT NOT NULL DEFAULT '',
                 apply_url TEXT NOT NULL DEFAULT '',
                 source_url TEXT NOT NULL DEFAULT '',
                 source_name TEXT NOT NULL DEFAULT '',
                 published_at TEXT NOT NULL DEFAULT '',
+                closing_at TEXT NOT NULL DEFAULT '',
                 found_at TEXT NOT NULL,
                 last_seen_at TEXT NOT NULL,
                 job_type TEXT NOT NULL DEFAULT '',
+                employment_type TEXT NOT NULL DEFAULT '',
                 salary_text TEXT NOT NULL DEFAULT '',
                 experience_text TEXT NOT NULL DEFAULT '',
                 skills_text TEXT NOT NULL DEFAULT '',
+                software_text TEXT NOT NULL DEFAULT '',
+                sector TEXT NOT NULL DEFAULT '',
+                agency_name TEXT NOT NULL DEFAULT '',
                 recruiter_name TEXT NOT NULL DEFAULT '',
                 recruiter_email TEXT NOT NULL DEFAULT '',
+                contact_source_url TEXT NOT NULL DEFAULT '',
                 contact_confidence TEXT NOT NULL DEFAULT '',
                 match_score INTEGER NOT NULL DEFAULT 0,
                 match_reasons TEXT NOT NULL DEFAULT '',
                 gaps TEXT NOT NULL DEFAULT '',
                 priority TEXT NOT NULL DEFAULT 'normal',
+                duplicate_status TEXT NOT NULL DEFAULT 'unique',
                 application_status TEXT NOT NULL DEFAULT 'new'
             );
 
@@ -221,7 +265,7 @@ def init_database(db_path: str | Path) -> None:
             );
             """
         )
-        _ensure_job_identity_columns(connection)
+        _ensure_job_columns(connection)
 
 
 def _requested_key_urls_compatible(existing_url: str, incoming_url: str) -> bool:
@@ -374,9 +418,15 @@ def _upsert_job(connection: sqlite3.Connection, job: JobRecord) -> bool:
             recruiter_email=COALESCE(
                 NULLIF(excluded.recruiter_email, ''), jobs.recruiter_email
             ),
+            contact_source_url=COALESCE(
+                NULLIF(excluded.contact_source_url, ''), jobs.contact_source_url
+            ),
             contact_confidence=COALESCE(
                 NULLIF(excluded.contact_confidence, ''), jobs.contact_confidence
             ),
+            duplicate_status=CASE
+                WHEN excluded.duplicate_status NOT IN ('', 'unique')
+                THEN excluded.duplicate_status ELSE jobs.duplicate_status END,
             match_score=CASE
                 WHEN excluded.match_reasons <> '' OR excluded.gaps <> ''
                 THEN excluded.match_score ELSE jobs.match_score END,
