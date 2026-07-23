@@ -28,6 +28,8 @@ _GENERIC_LINK_TEXT = {
     "view job",
     "view details",
 }
+_CARD_TAGS = {"article", "li", "tr"}
+_CARD_CLASS_TERMS = {"card", "job", "vacancy", "listing", "result", "position"}
 
 
 @dataclass(frozen=True, slots=True)
@@ -96,13 +98,24 @@ def _heading_text(element) -> str:
     return value
 
 
+def _is_card_boundary(element) -> bool:
+    if element.name in _CARD_TAGS:
+        return True
+    role = str(element.get("role", "")).casefold()
+    if role in {"article", "listitem"}:
+        return True
+    classes = element.get("class", [])
+    class_text = " ".join(str(value).casefold() for value in classes)
+    return bool(class_text) and any(term in class_text for term in _CARD_CLASS_TERMS)
+
+
 def _card_context(anchor, include_terms: tuple[str, ...]) -> tuple[str, str]:
     element = anchor
     fallback = _normalized(anchor.get_text(" ", strip=True))
     fallback_title = ""
     for _ in range(8):
         element = element.parent
-        if element is None:
+        if element is None or element.name in {"body", "html"}:
             break
         text = _normalized(element.get_text(" ", strip=True))
         if not text:
@@ -112,6 +125,8 @@ def _card_context(anchor, include_terms: tuple[str, ...]) -> tuple[str, str]:
             fallback = text
             if title_hint:
                 fallback_title = title_hint
+        if _is_card_boundary(element):
+            return text, title_hint or fallback_title
         if _matches_any(text, include_terms) and len(text) <= 6000:
             return text, title_hint or fallback_title
     return fallback, fallback_title
