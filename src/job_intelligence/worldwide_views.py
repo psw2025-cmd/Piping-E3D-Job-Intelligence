@@ -114,12 +114,43 @@ def _rows_frame(root: Path, filename: str, key: str) -> pd.DataFrame:
     return pd.json_normalize(rows) if isinstance(rows, list) else pd.DataFrame()
 
 
+def _combine_registry_frames(*frames: pd.DataFrame) -> pd.DataFrame:
+    usable = [frame for frame in frames if not frame.empty]
+    if not usable:
+        return pd.DataFrame()
+    combined = pd.concat(usable, ignore_index=True, sort=False)
+    if "company" not in combined.columns:
+        return combined
+    combined["_company_key"] = combined["company"].map(_normalize)
+    status_rank = {
+        "active_supported": 0,
+        "email_alert_ingestion_ready": 1,
+        "official_site_verified": 2,
+        "staged_source": 3,
+        "connector_planned": 4,
+        "connector_discovery_required": 5,
+    }
+    combined["_status_rank"] = combined.get("status", "").map(
+        lambda status: status_rank.get(str(status), 99)
+    )
+    combined = combined.sort_values(
+        ["_company_key", "_status_rank"], ascending=[True, True]
+    )
+    return combined.drop_duplicates("_company_key", keep="first").drop(
+        columns=["_company_key", "_status_rank"]
+    )
+
+
 def registry_frames(
     config_dir: str | Path = "config",
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     root = Path(config_dir)
-    return (
+    employers = _combine_registry_frames(
         _rows_frame(root, "employer_registry.yaml", "employers"),
+        _rows_frame(root, "observed_employers.yaml", "employers"),
+    )
+    return (
+        employers,
         _rows_frame(root, "recruiters.yaml", "recruiters"),
         _rows_frame(root, "portal_registry.yaml", "portals"),
     )
@@ -199,7 +230,9 @@ def coverage_gaps(
                     "name": record.get("company", ""),
                     "status": status,
                     "priority": record.get("priority", ""),
-                    "detail": record.get("notes", "") or "No active verified source",
+                    "detail": record.get("notes", "")
+                    or record.get("evidence_path", "")
+                    or "No active verified source",
                 }
             )
     if not source_health.empty:
