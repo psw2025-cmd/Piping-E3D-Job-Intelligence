@@ -1,4 +1,4 @@
-schema_version: 3
+schema_version: 4
 verified_at: 2026-07-23
 
 status_definitions:
@@ -78,6 +78,66 @@ employers:
     verified_at: 2026-07-23
     notes: Official SelectMinds new, hot and India vacancy channels are collected read-only.
 
+  - company: Ramboll
+    priority: 1
+    official_careers_url: https://jobs.smartrecruiters.com/Ramboll3/
+    public_job_host: api.smartrecruiters.com
+    ats_type: smartrecruiters
+    status: active_supported
+    source_ids: [ramboll_smartrecruiters]
+    verified_at: 2026-07-23
+    notes: Official public SmartRecruiters tenant; matching roles are detailed and retained read-only.
+
+  - company: Assystem
+    priority: 1
+    official_careers_url: https://jobs.smartrecruiters.com/ASSYSTEM/
+    public_job_host: api.smartrecruiters.com
+    ats_type: smartrecruiters
+    status: active_supported
+    source_ids: [assystem_smartrecruiters]
+    verified_at: 2026-07-23
+    notes: Official public SmartRecruiters tenant covering nuclear and India piping roles.
+
+  - company: Veolia
+    priority: 1
+    official_careers_url: https://jobs.smartrecruiters.com/VeoliaEnvironnementSA/
+    public_job_host: api.smartrecruiters.com
+    ats_type: smartrecruiters
+    status: active_supported
+    source_ids: [veolia_smartrecruiters]
+    verified_at: 2026-07-23
+    notes: Official public SmartRecruiters tenant covering process, water and plant-design roles.
+
+  - company: Samsung E&A
+    priority: 1
+    official_careers_url: https://jobs.smartrecruiters.com/SamsungEnA/
+    public_job_host: api.smartrecruiters.com
+    ats_type: smartrecruiters
+    status: active_supported
+    source_ids: [samsung_ena_smartrecruiters]
+    verified_at: 2026-07-23
+    notes: Official public SmartRecruiters tenant covering piping construction and inspection roles.
+
+  - company: AFRY
+    priority: 2
+    official_careers_url: https://jobs.smartrecruiters.com/AFRY/
+    public_job_host: api.smartrecruiters.com
+    ats_type: smartrecruiters
+    status: active_supported
+    source_ids: [afry_smartrecruiters]
+    verified_at: 2026-07-23
+    notes: Official public SmartRecruiters tenant covering global energy and piping engineering.
+
+  - company: SEGULA Technologies
+    priority: 2
+    official_careers_url: https://jobs.smartrecruiters.com/SegulaTechnologies/
+    public_job_host: api.smartrecruiters.com
+    ats_type: smartrecruiters
+    status: active_supported
+    source_ids: [segula_smartrecruiters]
+    verified_at: 2026-07-23
+    notes: Official public SmartRecruiters tenant covering Gulf and global industrial roles.
+
   - company: Worley
     priority: 1
     official_careers_url: https://www.worley.com/en/careers
@@ -139,12 +199,6 @@ employers:
     status: connector_planned
     source_ids: []
 
-  - company: Samsung E&A
-    priority: 2
-    official_careers_url: https://www.samsungena.com/en/careers/
-    status: official_site_verified
-    source_ids: []
-
   - company: JGC
     priority: 2
     official_careers_url: https://www.jgc.com/en/recruit/
@@ -196,12 +250,6 @@ employers:
   - company: Hatch
     priority: 2
     official_careers_url: https://jobs.hatch.com/
-    status: connector_planned
-    source_ids: []
-
-  - company: Ramboll
-    priority: 2
-    official_careers_url: https://jobs.smartrecruiters.com/Ramboll3/
     status: connector_planned
     source_ids: []
 
