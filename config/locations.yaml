@@ -147,7 +147,7 @@ location_aliases:
     aliases: [perth]
 
 country_aliases:
-  India: [india, in]
+  India: [india]
   United Arab Emirates: [united arab emirates, uae, emirates]
   Saudi Arabia: [saudi arabia, ksa]
   Qatar: [qatar]
@@ -161,7 +161,7 @@ country_aliases:
   Malaysia: [malaysia]
   Japan: [japan]
   South Korea: [south korea, korea]
-  United States: [united states, usa, u.s.a., us]
+  United States: [united states, usa, u.s.a.]
   South Africa: [south africa]
   Nigeria: [nigeria]
   Mozambique: [mozambique]
@@ -175,7 +175,7 @@ country_aliases:
   Spain: [spain]
 
 region_aliases:
-  Europe: [europe, european union, eu]
+  Europe: [europe, european union]
   Africa: [africa]
   Middle East: [middle east, gulf, gcc]
   Asia Pacific: [asia pacific, apac]
