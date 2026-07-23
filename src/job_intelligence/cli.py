@@ -15,7 +15,7 @@ from .private_import import (
     init_private_import_tables,
     verify_private_imports,
 )
-from .proof import init_proof_tables, set_run_export_status
+from .proof import set_run_export_status
 from .source_config import load_source_config
 
 DEFAULT_DB = os.getenv("JOB_INTEL_DB_PATH", "data/database/jobs.db")
