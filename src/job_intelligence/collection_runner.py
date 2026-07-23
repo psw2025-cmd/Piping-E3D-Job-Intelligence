@@ -119,6 +119,12 @@ def _prepare_jobs(spec: SourceSpec, jobs: list[JobRecord], config_dir: Path) -> 
         job.gaps = "; ".join(result.gaps)
 
 
+def _filter_profile_jobs(spec: SourceSpec, jobs: list[JobRecord]) -> list[JobRecord]:
+    if not spec.bool_option("profile_filter", True):
+        return jobs
+    return [job for job in jobs if job.normalized_role or job.match_score >= 20]
+
+
 def _select_sources(source_config, only_source_ids: set[str] | None):
     if only_source_ids is not None:
         configured_ids = {source.source_id for source in source_config.sources}
@@ -201,6 +207,7 @@ def collect_sources(
                 evidence_saved = True
             stage = "score"
             _prepare_jobs(spec, result.jobs, config_path.parent)
+            result.jobs = _filter_profile_jobs(spec, result.jobs)
             stage = "upsert"
             new_jobs, updated_jobs = upsert_jobs(db_path, result.jobs)
             stage = "health"
