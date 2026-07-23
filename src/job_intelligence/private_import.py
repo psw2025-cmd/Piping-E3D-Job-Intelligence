@@ -39,9 +39,18 @@ SUPPORTED_EXTENSIONS = {
 _IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".tif", ".tiff", ".bmp"}
 _URL_PATTERN = re.compile(r"https?://[^\s<>\]\[\"']+", re.IGNORECASE)
 _LABEL_PATTERNS = {
-    "company": re.compile(r"^(?:company|organisation|organization|employer)\s*:\s*(.+)$", re.I),
-    "location": re.compile(r"^(?:location|job location|work location)\s*:\s*(.+)$", re.I),
-    "title": re.compile(r"^(?:job title|position|role)\s*:\s*(.+)$", re.I),
+    "company": re.compile(
+        r"^(?:company|organisation|organization|employer)\s*:\s*(.+)$",
+        re.IGNORECASE,
+    ),
+    "location": re.compile(
+        r"^(?:location|job location|work location)\s*:\s*(.+)$",
+        re.IGNORECASE,
+    ),
+    "title": re.compile(
+        r"^(?:job title|position|role)\s*:\s*(.+)$",
+        re.IGNORECASE,
+    ),
 }
 _JOB_WORDS = (
     "piping",
@@ -120,6 +129,30 @@ def init_private_import_tables(db_path: str | Path) -> None:
         )
 
 
+def _validate_source_file(path: Path, max_bytes: int) -> tuple[int, str]:
+    if max_bytes < 1:
+        raise ValueError("max_bytes must be >= 1")
+    if not path.exists() or not path.is_file():
+        raise FileNotFoundError(f"input file does not exist: {path}")
+    if path.is_symlink():
+        raise ValueError(f"symbolic-link inputs are not allowed: {path}")
+    size = path.stat().st_size
+    if size > max_bytes:
+        raise ValueError(f"input file exceeds {max_bytes} bytes: {path}")
+    extension = path.suffix.lower()
+    if extension not in SUPPORTED_EXTENSIONS:
+        raise ValueError(f"unsupported private import type: {extension or '<none>'}")
+    return size, extension
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1_048_576), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def _decode_text(data: bytes) -> str:
     for encoding in ("utf-8-sig", "utf-8", "cp1252", "latin-1"):
         try:
@@ -152,9 +185,8 @@ def _extract_docx(path: Path) -> ExtractedDocument:
     for table in document.tables:
         for row in table.rows:
             blocks.append(" | ".join(cell.text.strip() for cell in row.cells))
-    text = "\n".join(block for block in blocks if block)
     return ExtractedDocument(
-        text=text,
+        text="\n".join(block for block in blocks if block),
         method="python-docx",
         mime_type=(
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -192,7 +224,6 @@ def _extract_eml(path: Path) -> ExtractedDocument:
                 if part.get_content_type() == "text/html":
                     html = str(part.get_content())
                     blocks.append(BeautifulSoup(html, "html.parser").get_text("\n"))
-                    body_added = True
                     break
     else:
         content = str(message.get_content())
@@ -224,19 +255,19 @@ def _extract_image(
         pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
     try:
         with Image.open(path) as image:
+            image_format = image.format
             text = pytesseract.image_to_string(image.convert("RGB"))
     except Exception as exc:
         raise RuntimeError(
             "OCR failed; verify that Tesseract OCR is installed and accessible"
         ) from exc
-    warnings = (
-        "OCR text requires manual review before relying on inferred vacancy fields",
-    )
     return ExtractedDocument(
         text=text.strip(),
         method="tesseract-ocr",
-        mime_type=Image.MIME.get(Image.open(path).format, "image/*"),
-        warnings=warnings,
+        mime_type=Image.MIME.get(image_format or "", "image/*"),
+        warnings=(
+            "OCR text requires manual review before relying on inferred vacancy fields",
+        ),
     )
 
 
@@ -248,14 +279,7 @@ def extract_document(
     max_bytes: int = 25_000_000,
 ) -> ExtractedDocument:
     source = Path(path)
-    if not source.is_file():
-        raise FileNotFoundError(f"input file does not exist: {source}")
-    if source.stat().st_size > max_bytes:
-        raise ValueError(f"input file exceeds {max_bytes} bytes: {source}")
-    extension = source.suffix.lower()
-    if extension not in SUPPORTED_EXTENSIONS:
-        raise ValueError(f"unsupported private import type: {extension or '<none>'}")
-
+    _, extension = _validate_source_file(source, max_bytes)
     if extension in {".txt", ".md", ".csv"}:
         mime_type = mimetypes.guess_type(source.name)[0] or "text/plain"
         return ExtractedDocument(
@@ -269,7 +293,9 @@ def extract_document(
         return _extract_docx(source)
     if extension == ".eml":
         return _extract_eml(source)
-    return _extract_image(source, ocr=ocr, tesseract_cmd=tesseract_cmd)
+    if extension in _IMAGE_EXTENSIONS:
+        return _extract_image(source, ocr=ocr, tesseract_cmd=tesseract_cmd)
+    raise AssertionError(f"unhandled supported extension: {extension}")
 
 
 def _first_labeled_value(text: str, label: str) -> str:
@@ -291,12 +317,12 @@ def _infer_title(text: str, source: Path) -> str:
             word in candidate.lower() for word in _JOB_WORDS
         ):
             return candidate
-    return " ".join(source.stem.replace("_", " ").replace("-", " ").split())[:160]
+    stem = source.stem.replace("_", " ").replace("-", " ")
+    return " ".join(stem.split())[:160]
 
 
 def _infer_company(text: str) -> str:
-    labeled = _first_labeled_value(text, "company")
-    return labeled or "Unknown employer"
+    return _first_labeled_value(text, "company") or "Unknown employer"
 
 
 def _infer_location(text: str) -> str:
@@ -313,9 +339,14 @@ def _copy_evidence(source: Path, evidence_root: Path, digest: str) -> tuple[Path
     destination_dir.mkdir(parents=True, exist_ok=True)
     destination = destination_dir / f"{digest}{source.suffix.lower()}"
     if destination.exists():
+        if _sha256_file(destination) != digest:
+            raise ValueError(f"existing evidence file has an invalid hash: {destination}")
         return destination, False
     temporary = destination.with_suffix(destination.suffix + ".tmp")
     shutil.copyfile(source, temporary)
+    if _sha256_file(temporary) != digest:
+        temporary.unlink(missing_ok=True)
+        raise ValueError(f"evidence copy hash mismatch: {source}")
     temporary.replace(destination)
     return destination, True
 
@@ -334,16 +365,16 @@ def import_private_file(
     max_bytes: int = 25_000_000,
 ) -> PrivateImportResult:
     source = Path(input_path).resolve()
+    size, _ = _validate_source_file(source, max_bytes)
+    digest = _sha256_file(source)
     init_private_import_tables(db_path)
-    raw = source.read_bytes()
-    digest = hashlib.sha256(raw).hexdigest()
     with connect(db_path) as connection:
         existing = connection.execute(
-            "SELECT job_key, stored_path, review_required, warnings "
-            "FROM private_imports WHERE sha256=? AND status='complete'",
+            "SELECT job_key, stored_path, review_required, warnings, status "
+            "FROM private_imports WHERE sha256=?",
             (digest,),
         ).fetchone()
-    if existing:
+    if existing and existing["status"] == "complete":
         return PrivateImportResult(
             input_path=str(source),
             status="duplicate",
@@ -353,6 +384,10 @@ def import_private_file(
             review_required=bool(existing["review_required"]),
             warnings=tuple(filter(None, str(existing["warnings"]).split(" | "))),
         )
+    if existing:
+        raise ValueError(
+            "an incomplete prior import exists for this file; run verification and repair it"
+        )
 
     extracted = extract_document(
         source,
@@ -360,6 +395,9 @@ def import_private_file(
         tesseract_cmd=tesseract_cmd,
         max_bytes=max_bytes,
     )
+    if not extracted.text.strip():
+        raise ValueError("no text could be extracted from the input file")
+
     inferred_title = " ".join(title.split()) or _infer_title(extracted.text, source)
     inferred_company = " ".join(company.split()) or _infer_company(extracted.text)
     inferred_location = " ".join(location.split()) or _infer_location(extracted.text)
@@ -370,8 +408,6 @@ def import_private_file(
         warnings.append("Job title was inferred from document text or filename")
     if not company.strip():
         warnings.append("Employer was inferred or marked Unknown employer")
-    if not extracted.text.strip():
-        raise ValueError("no text could be extracted from the input file")
 
     evidence_path, copied = _copy_evidence(source, Path(evidence_root), digest)
     import_id = uuid.uuid4().hex
@@ -391,7 +427,7 @@ def import_private_file(
                 source.name,
                 str(evidence_path),
                 extracted.mime_type,
-                len(raw),
+                size,
                 extracted.method,
                 len(extracted.text),
                 int(review_required),
@@ -414,12 +450,16 @@ def import_private_file(
         created = upsert_job(db_path, job)
         with connect(db_path) as connection:
             connection.execute(
-                "UPDATE private_imports SET job_key=?, status='complete' WHERE import_id=?",
+                "UPDATE private_imports SET job_key=?, status='complete' "
+                "WHERE import_id=?",
                 (job.job_key, import_id),
             )
     except Exception:
         with connect(db_path) as connection:
-            connection.execute("DELETE FROM private_imports WHERE import_id=?", (import_id,))
+            connection.execute(
+                "DELETE FROM private_imports WHERE import_id=?",
+                (import_id,),
+            )
         if copied:
             evidence_path.unlink(missing_ok=True)
         raise
@@ -436,9 +476,23 @@ def import_private_file(
     )
 
 
-def _candidate_files(folder: Path, recursive: bool) -> Iterable[Path]:
+def _is_within(path: Path, parent: Path) -> bool:
+    try:
+        path.resolve().relative_to(parent.resolve())
+        return True
+    except ValueError:
+        return False
+
+
+def _candidate_files(
+    folder: Path,
+    recursive: bool,
+    excluded_root: Path,
+) -> Iterable[Path]:
     iterator = folder.rglob("*") if recursive else folder.glob("*")
     for path in sorted(iterator):
+        if path.is_symlink() or _is_within(path, excluded_root):
+            continue
         if path.is_file() and path.suffix.lower() in SUPPORTED_EXTENSIONS:
             yield path
 
@@ -454,12 +508,17 @@ def import_private_folder(
     max_files: int = 500,
     max_bytes: int = 25_000_000,
 ) -> FolderImportSummary:
-    source_folder = Path(folder)
+    if max_files < 1:
+        raise ValueError("max_files must be >= 1")
+    source_folder = Path(folder).resolve()
+    evidence_folder = Path(evidence_root).resolve()
     if not source_folder.is_dir():
         raise NotADirectoryError(f"input folder does not exist: {source_folder}")
-    files = list(_candidate_files(source_folder, recursive))
+    files = list(_candidate_files(source_folder, recursive, evidence_folder))
     if len(files) > max_files:
-        raise ValueError(f"folder contains {len(files)} supported files; limit is {max_files}")
+        raise ValueError(
+            f"folder contains {len(files)} supported files; limit is {max_files}"
+        )
 
     summary = FolderImportSummary()
     for path in files:
@@ -468,7 +527,7 @@ def import_private_folder(
             result = import_private_file(
                 db_path,
                 path,
-                evidence_root,
+                evidence_folder,
                 ocr=ocr,
                 tesseract_cmd=tesseract_cmd,
                 max_bytes=max_bytes,
@@ -498,7 +557,8 @@ def verify_private_imports(db_path: str | Path) -> list[str]:
     errors: list[str] = []
     with connect(db_path) as connection:
         rows = connection.execute(
-            "SELECT import_id, sha256, stored_path, job_key, status FROM private_imports"
+            "SELECT import_id, sha256, stored_path, job_key, status "
+            "FROM private_imports"
         ).fetchall()
         job_keys = {
             str(row["job_key"])
@@ -513,8 +573,7 @@ def verify_private_imports(db_path: str | Path) -> list[str]:
         if not evidence_path.exists():
             errors.append(f"Missing private import evidence: {evidence_path}")
             continue
-        digest = hashlib.sha256(evidence_path.read_bytes()).hexdigest()
-        if digest != row["sha256"]:
+        if _sha256_file(evidence_path) != row["sha256"]:
             errors.append(f"Private import hash mismatch: {evidence_path}")
         if row["job_key"] not in job_keys:
             errors.append(f"Private import has no matching job: {import_id}")
