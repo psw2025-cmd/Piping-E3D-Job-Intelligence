@@ -118,3 +118,33 @@ def test_bundle_failure_rewrites_status_as_failure(
     summary = (output / "SUMMARY.md").read_text(encoding="utf-8")
     assert "Overall result: **FAIL**" in summary
     assert "Verification: `FAIL`" in summary
+
+
+def test_bundle_failure_preserves_existing_run_error(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    export_statuses: list[str] = []
+    _patch_common(monkeypatch, "partial", export_statuses)
+
+    def fail_bundle(_output: Path) -> None:
+        raise OSError("bundle creation failed")
+
+    monkeypatch.setattr(run_cloud_daily, "_write_bundle", fail_bundle)
+    output = tmp_path / "daily"
+    args = SimpleNamespace(
+        output=str(output),
+        sources="unused.yaml",
+        allow_no_sources=False,
+    )
+
+    assert run_cloud_daily.run(args) == 2
+
+    status = json.loads((output / "status.json").read_text(encoding="utf-8"))
+    assert status["verified"] is False
+    assert "collection finished with status partial" in status["error"]
+    assert "Bundle failure: OSError: bundle creation failed" in status["error"]
+    assert export_statuses == ["fail", "fail"]
+    summary = (output / "SUMMARY.md").read_text(encoding="utf-8")
+    assert "collection finished with status partial" in summary
+    assert "Bundle failure: OSError: bundle creation failed" in summary
