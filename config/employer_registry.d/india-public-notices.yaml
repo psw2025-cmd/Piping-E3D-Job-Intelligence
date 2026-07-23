@@ -1,0 +1,25 @@
+schema_version: 1
+verified_at: 2026-07-23
+
+employers:
+  - company: Nuclear Power Corporation of India
+    priority: 1
+    official_careers_url: https://www.npcil.nic.in/content/289_1_Opportunities.aspx
+    public_job_url: https://www.npcil.nic.in/content/289_1_Opportunities.aspx
+    public_job_host: www.npcil.nic.in
+    ats_type: public_recruitment_notice
+    status: active_supported
+    source_ids: [npcil_public_notices]
+    verified_at: 2026-07-23
+    notes: Official opportunity listing and notice PDFs passed bounded live evidence proof.
+
+  - company: Indian Oil Corporation
+    priority: 1
+    official_careers_url: https://iocl.com/pages/careers-overview
+    public_job_url: https://iocl.com/latest-job-opening
+    public_job_host: iocl.com
+    ats_type: restricted_javascript_public_page
+    status: email_alert_ingestion_ready
+    source_ids: []
+    verified_at: 2026-07-23
+    notes: Direct non-browser access receives a JavaScript/Sucuri challenge; use Gmail alerts and private imports without bypassing access controls.
