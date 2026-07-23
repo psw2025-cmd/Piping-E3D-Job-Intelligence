@@ -1,0 +1,55 @@
+name: live-recruiter-contracts
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "config/sources.d/**"
+      - "config/recruiters.yaml"
+      - "src/job_intelligence/collectors/public_html.py"
+      - "src/job_intelligence/source_registry.py"
+      - "scripts/verify_live_recruiter_sources.py"
+      - "tests/test_recruiter_sources.py"
+      - ".github/workflows/live-recruiter-contracts.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-recruiter-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-live-recruiters:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install
+        run: python -m pip install -e ".[dev]"
+
+      - name: Ruff
+        run: ruff check src tests scripts/verify_live_recruiter_sources.py
+
+      - name: Unit tests
+        run: pytest -q tests/test_public_html.py tests/test_recruiter_sources.py tests/test_source_registry.py
+
+      - name: Live official recruiter contract proof
+        run: python scripts/verify_live_recruiter_sources.py
+
+      - name: Upload live recruiter proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-recruiter-proof-${{ github.run_id }}
+          path: live-recruiter-proof.json
+          if-no-files-found: warn
+          retention-days: 14
