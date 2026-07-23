@@ -18,7 +18,7 @@ from .collectors.http_client import HttpClient, SafeHttpClient
 from .database import connect, record_source_health, upsert_jobs
 from .models import JobRecord
 from .proof import finish_run, record_evidence, start_run
-from .scoring import score_job
+from .scoring import is_profile_relevant, score_job
 from .source_config import SourceSpec, load_source_config
 
 _SAFE_SUFFIX = re.compile(r"^\.[a-z0-9]{1,10}$")
@@ -109,6 +109,16 @@ def _delete_evidence(
         )
 
 
+def _filter_profile_jobs(
+    spec: SourceSpec,
+    jobs: list[JobRecord],
+    config_dir: Path,
+) -> list[JobRecord]:
+    if not spec.bool_option("profile_filter", True):
+        return jobs
+    return [job for job in jobs if is_profile_relevant(job, config_dir=config_dir)]
+
+
 def _prepare_jobs(spec: SourceSpec, jobs: list[JobRecord], config_dir: Path) -> None:
     for job in jobs:
         job.source_name = job.source_name or spec.name
@@ -190,6 +200,7 @@ def collect_sources(
             else:
                 collector = COLLECTORS[spec.source_type]
                 result = collector(spec, client)
+            result.jobs = _filter_profile_jobs(spec, result.jobs, config_path.parent)
             if source_config.policy["retain_source_evidence"]:
                 _save_evidence(
                     db_path,
