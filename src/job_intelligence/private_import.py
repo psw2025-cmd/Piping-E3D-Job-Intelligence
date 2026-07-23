@@ -16,7 +16,7 @@ from docx import Document
 from PIL import Image
 from pypdf import PdfReader
 
-from .database import connect, upsert_job
+from .database import _upsert_job, connect
 from .manual_import import create_manual_job
 from .models import utc_now_iso
 from .proof import init_proof_tables
@@ -351,6 +351,14 @@ def _copy_evidence(source: Path, evidence_root: Path, digest: str) -> tuple[Path
     return destination, True
 
 
+def _remove_stale_import(db_path: str | Path, digest: str) -> None:
+    with connect(db_path) as connection:
+        connection.execute(
+            "DELETE FROM private_imports WHERE sha256=? AND status='staged'",
+            (digest,),
+        )
+
+
 def import_private_file(
     db_path: str | Path,
     input_path: str | Path,
@@ -364,8 +372,9 @@ def import_private_file(
     tesseract_cmd: str | None = None,
     max_bytes: int = 25_000_000,
 ) -> PrivateImportResult:
-    source = Path(input_path).resolve()
-    size, _ = _validate_source_file(source, max_bytes)
+    unresolved_source = Path(input_path).expanduser()
+    size, _ = _validate_source_file(unresolved_source, max_bytes)
+    source = unresolved_source.resolve(strict=True)
     digest = _sha256_file(source)
     init_private_import_tables(db_path)
     with connect(db_path) as connection:
@@ -384,10 +393,10 @@ def import_private_file(
             review_required=bool(existing["review_required"]),
             warnings=tuple(filter(None, str(existing["warnings"]).split(" | "))),
         )
-    if existing:
-        raise ValueError(
-            "an incomplete prior import exists for this file; run verification and repair it"
-        )
+    if existing and existing["status"] == "staged":
+        _remove_stale_import(db_path, digest)
+    elif existing:
+        raise ValueError(f"unsupported prior import state: {existing['status']}")
 
     extracted = extract_document(
         source,
@@ -445,10 +454,14 @@ def import_private_file(
             apply_url=inferred_apply_url,
             source_name=f"private:{extracted.method}",
         )
-        if review_required:
-            job.application_status = "review_required"
-        created = upsert_job(db_path, job)
         with connect(db_path) as connection:
+            created = _upsert_job(connection, job)
+            if review_required:
+                connection.execute(
+                    "UPDATE jobs SET application_status='review_required' "
+                    "WHERE job_key=? AND application_status='new'",
+                    (job.job_key,),
+                )
             connection.execute(
                 "UPDATE private_imports SET job_key=?, status='complete' "
                 "WHERE import_id=?",
