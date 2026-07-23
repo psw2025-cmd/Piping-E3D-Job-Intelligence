@@ -1,0 +1,120 @@
+name: live-oracle-contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/job_intelligence/collectors/oracle_hcm.py"
+      - "src/job_intelligence/collectors/http_client.py"
+      - "src/job_intelligence/collection_runner.py"
+      - "src/job_intelligence/scoring.py"
+      - "src/job_intelligence/database.py"
+      - "config/roles.yaml"
+      - "config/sources.yaml"
+      - "tests/test_verified_email_remediation.py"
+      - ".github/workflows/live-oracle-contracts.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-oracle-contracts-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-live-oracle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install
+        run: python -m pip install --upgrade pip && pip install -e ".[dev]"
+
+      - name: Static and focused tests
+        run: |
+          ruff check \
+            src/job_intelligence/collectors/oracle_hcm.py \
+            src/job_intelligence/collectors/http_client.py \
+            src/job_intelligence/collection_runner.py \
+            tests/test_oracle_hcm.py \
+            tests/test_verified_email_remediation.py
+          pytest -q \
+            tests/test_oracle_hcm.py \
+            tests/test_http_client_security.py \
+            tests/test_verified_email_remediation.py
+          job-intel validate-sources --sources config/sources.yaml
+
+      - name: Live official Oracle collection
+        run: |
+          job-intel --db output/live-oracle/jobs.db init-db
+          job-intel --db output/live-oracle/jobs.db collect \
+            --sources config/sources.yaml \
+            --only mcdermott_oracle \
+            --only wood_oracle \
+            --evidence-dir output/live-oracle/evidence \
+            --no-export
+          job-intel --db output/live-oracle/jobs.db export \
+            --output output/live-oracle/Piping_E3D_Oracle_Proof.xlsx
+          job-intel --db output/live-oracle/jobs.db verify \
+            --output output/live-oracle/Piping_E3D_Oracle_Proof.xlsx
+
+      - name: Enforce source health and evidence
+        shell: bash
+        run: |
+          python - <<'PY'
+          import sqlite3
+          from pathlib import Path
+
+          db = Path("output/live-oracle/jobs.db")
+          if not db.exists():
+              raise SystemExit("Oracle proof database missing")
+          with sqlite3.connect(db) as connection:
+              health = dict(
+                  connection.execute(
+                      "SELECT source_id, status FROM source_health "
+                      "WHERE source_id IN ('mcdermott_oracle', 'wood_oracle')"
+                  ).fetchall()
+              )
+              evidence = dict(
+                  connection.execute(
+                      "SELECT source_id, COUNT(*) FROM source_evidence "
+                      "WHERE source_id IN ('mcdermott_oracle', 'wood_oracle') "
+                      "GROUP BY source_id"
+                  ).fetchall()
+              )
+          expected = {"mcdermott_oracle", "wood_oracle"}
+          if set(health) != expected:
+              raise SystemExit(f"Missing Oracle source health: {health}")
+          failed = {
+              source_id: status
+              for source_id, status in health.items()
+              if status not in {"pass", "pass_with_warnings"}
+          }
+          if failed:
+              raise SystemExit(f"Oracle source failures: {failed}")
+          missing_evidence = {
+              source_id for source_id in expected if evidence.get(source_id, 0) < 1
+          }
+          if missing_evidence:
+              raise SystemExit(f"Oracle evidence missing: {sorted(missing_evidence)}")
+          print(f"PASS: Oracle source health={health} evidence={evidence}")
+          PY
+
+      - name: Upload Oracle proof
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: live-oracle-${{ github.run_id }}-${{ github.run_attempt }}
+          path: output/live-oracle
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 6
