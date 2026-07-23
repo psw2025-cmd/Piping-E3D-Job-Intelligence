@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import re
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import yaml
@@ -101,20 +102,122 @@ def summary_by(frame: pd.DataFrame, column: str) -> pd.DataFrame:
     )
 
 
+def _read_yaml(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    loaded = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    return loaded if isinstance(loaded, dict) else {}
+
+
+def _rows_frame(root: Path, filename: str, key: str) -> pd.DataFrame:
+    rows = _read_yaml(root / filename).get(key, [])
+    return pd.json_normalize(rows) if isinstance(rows, list) else pd.DataFrame()
+
+
 def registry_frames(
+    config_dir: str | Path = "config",
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    root = Path(config_dir)
+    return (
+        _rows_frame(root, "employer_registry.yaml", "employers"),
+        _rows_frame(root, "recruiters.yaml", "recruiters"),
+        _rows_frame(root, "portal_registry.yaml", "portals"),
+    )
+
+
+def taxonomy_frames(
     config_dir: str | Path = "config",
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     root = Path(config_dir)
+    roles = _read_yaml(root / "roles.yaml")
+    locations = _read_yaml(root / "locations.yaml")
+    expansion = _read_yaml(root / "coverage_expansion.yaml")
 
-    def load_rows(filename: str, key: str) -> pd.DataFrame:
-        path = root / filename
-        if not path.exists():
-            return pd.DataFrame()
-        loaded = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-        rows = loaded.get(key, []) if isinstance(loaded, dict) else []
-        return pd.json_normalize(rows) if isinstance(rows, list) else pd.DataFrame()
+    role_rows: list[dict[str, str]] = []
+    for source, mapping in (
+        ("base", roles.get("role_families", {})),
+        ("expansion", expansion.get("role_families", {})),
+    ):
+        if not isinstance(mapping, dict):
+            continue
+        for role, aliases in mapping.items():
+            role_rows.append(
+                {
+                    "source": source,
+                    "canonical_role": str(role),
+                    "aliases": "; ".join(str(alias) for alias in aliases or []),
+                }
+            )
 
-    return (
-        load_rows("employer_registry.yaml", "employers"),
-        load_rows("recruiters.yaml", "recruiters"),
+    location_rows: list[dict[str, str]] = []
+    for source, data in (("base", locations), ("expansion", expansion)):
+        groups = data.get("locations", {})
+        aliases = data.get("location_aliases", {})
+        if isinstance(groups, dict):
+            for group, values in groups.items():
+                for value in values or []:
+                    location_rows.append(
+                        {
+                            "source": source,
+                            "group": str(group),
+                            "location": str(value),
+                            "country": "",
+                            "aliases": "",
+                        }
+                    )
+        if isinstance(aliases, dict):
+            for city, details in aliases.items():
+                if not isinstance(details, dict):
+                    continue
+                location_rows.append(
+                    {
+                        "source": source,
+                        "group": "alias",
+                        "location": str(city),
+                        "country": str(details.get("country", "")),
+                        "aliases": "; ".join(
+                            str(alias) for alias in details.get("aliases", []) or []
+                        ),
+                    }
+                )
+    return pd.DataFrame(role_rows), pd.DataFrame(location_rows)
+
+
+def coverage_gaps(
+    employer_coverage: pd.DataFrame,
+    source_health: pd.DataFrame,
+) -> pd.DataFrame:
+    rows: list[dict[str, object]] = []
+    if not employer_coverage.empty:
+        for record in employer_coverage.to_dict("records"):
+            status = str(record.get("status", ""))
+            if status == "active_supported":
+                continue
+            rows.append(
+                {
+                    "category": "employer",
+                    "name": record.get("company", ""),
+                    "status": status,
+                    "priority": record.get("priority", ""),
+                    "detail": record.get("notes", "") or "No active verified source",
+                }
+            )
+    if not source_health.empty:
+        for record in source_health.to_dict("records"):
+            status = str(record.get("status", ""))
+            records = int(record.get("records_found", 0) or 0)
+            if status == "pass" and records > 0:
+                continue
+            rows.append(
+                {
+                    "category": "source",
+                    "name": record.get("source_name", record.get("source_id", "")),
+                    "status": status or "unknown",
+                    "priority": "",
+                    "detail": record.get("error_message", "")
+                    or f"records_found={records}",
+                }
+            )
+    return pd.DataFrame(
+        rows, columns=["category", "name", "status", "priority", "detail"]
     )
