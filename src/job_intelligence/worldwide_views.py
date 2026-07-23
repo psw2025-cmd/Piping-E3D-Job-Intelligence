@@ -5,7 +5,8 @@ import re
 from pathlib import Path
 
 import pandas as pd
-import yaml
+
+from .registry_config import load_registry_rows
 
 _NON_ALNUM = re.compile(r"[^a-z0-9]+")
 
@@ -105,16 +106,14 @@ def registry_frames(
     config_dir: str | Path = "config",
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     root = Path(config_dir)
-
-    def load_rows(filename: str, key: str) -> pd.DataFrame:
-        path = root / filename
-        if not path.exists():
-            return pd.DataFrame()
-        loaded = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-        rows = loaded.get(key, []) if isinstance(loaded, dict) else []
-        return pd.json_normalize(rows) if isinstance(rows, list) else pd.DataFrame()
-
-    return (
-        load_rows("employer_registry.yaml", "employers"),
-        load_rows("recruiters.yaml", "recruiters"),
+    employer_rows = load_registry_rows(
+        root,
+        filename="employer_registry.yaml",
+        key="employers",
     )
+    recruiter_rows = load_registry_rows(
+        root,
+        filename="recruiters.yaml",
+        key="recruiters",
+    )
+    return pd.json_normalize(employer_rows), pd.json_normalize(recruiter_rows)
