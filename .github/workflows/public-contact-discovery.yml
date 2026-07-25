@@ -4,6 +4,15 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "30 3 * * 0"
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/public-contact-discovery.yml"
+      - "config/employers_master_verified.yaml"
+      - "config/employer_registry.yaml"
+      - "config/recruiters.yaml"
+      - "pyproject.toml"
+      - "src/job_intelligence/public_contacts.py"
   push:
     branches:
       - feat/public-contact-discovery-v1
