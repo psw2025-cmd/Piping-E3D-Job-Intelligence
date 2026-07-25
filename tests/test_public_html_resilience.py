@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Mapping
 
 from job_intelligence.collection_runner import collect_sources
 from job_intelligence.collectors.http_client import FetchedResponse

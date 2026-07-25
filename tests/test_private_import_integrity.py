@@ -8,11 +8,11 @@ import pytest
 import job_intelligence.private_import as private_import_module
 from job_intelligence.database import connect, fetch_jobs, upsert_job
 from job_intelligence.manual_import import create_manual_job
+from job_intelligence.models import utc_now_iso
 from job_intelligence.private_import import (
     import_private_file,
     init_private_import_tables,
 )
-from job_intelligence.models import utc_now_iso
 
 
 def _vacancy_text() -> str:

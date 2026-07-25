@@ -212,7 +212,7 @@ def collect_workday(spec: SourceSpec, client: HttpClient) -> CollectionResult:
             if not rows:
                 break
             fingerprint = hashlib.sha256(
-                f"{search_term}|{_page_fingerprint(rows)}".encode("utf-8")
+                f"{search_term}|{_page_fingerprint(rows)}".encode()
             ).hexdigest()
             if fingerprint in seen_pages:
                 raise ValueError(

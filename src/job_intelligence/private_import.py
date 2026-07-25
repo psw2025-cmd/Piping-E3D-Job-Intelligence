@@ -5,11 +5,11 @@ import mimetypes
 import re
 import shutil
 import uuid
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from email import policy
 from email.parser import BytesParser
 from pathlib import Path
-from typing import Iterable
 
 from bs4 import BeautifulSoup
 from docx import Document

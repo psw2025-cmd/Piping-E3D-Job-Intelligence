@@ -2,15 +2,15 @@ from __future__ import annotations
 
 import json
 import socket
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 import pytest
 import requests
 import yaml
 
-from job_intelligence.collectors import collect_public_html
-from job_intelligence.collectors import http_client
+from job_intelligence.collectors import collect_public_html, http_client
 from job_intelligence.collectors.http_client import FetchedResponse, SafeHttpClient
 from job_intelligence.collectors.oracle_hcm import _matches_terms
 from job_intelligence.database import fetch_jobs, upsert_job

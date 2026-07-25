@@ -12,13 +12,13 @@ from .http_client import HttpClient
 from .public_notice import (
     _DEFAULT_EXCLUDE,
     _DEFAULT_INCLUDE,
-    _NoticeLink,
-    _RobotsCache,
     _allowed_domains,
     _contains_any,
     _extract_document_text,
     _is_allowed,
     _job_from_notice,
+    _NoticeLink,
+    _RobotsCache,
     _terms,
 )
 

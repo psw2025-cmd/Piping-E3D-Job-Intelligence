@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import hashlib
 import sqlite3
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 from .deduplicate import build_identity_fingerprint, build_job_key, canonicalize_url
 from .models import JobRecord, utc_now_iso

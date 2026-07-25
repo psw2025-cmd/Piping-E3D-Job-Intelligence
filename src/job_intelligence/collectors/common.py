@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import html
 import json
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from html.parser import HTMLParser
-from typing import Any, Iterable
+from typing import Any
 
 from ..models import JobRecord
 

@@ -4,9 +4,9 @@ import hashlib
 import re
 import shutil
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
 
 from .collectors import COLLECTORS, collect_public_html, collect_sitemap
 from .collectors.common import EvidenceArtifact

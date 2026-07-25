@@ -11,7 +11,6 @@ from job_intelligence.models import JobRecord
 from job_intelligence.normalization import enrich_job, load_profile_taxonomy
 from job_intelligence.scoring import score_job
 
-
 CONFIG_DIR = Path(__file__).resolve().parents[1] / "config"
 
 

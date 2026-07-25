@@ -249,7 +249,7 @@ sources:
   type: public_html
   company: Worley
   url: https://jobs.worley.com/careers?query=piping&start=0
-  enabled: true
+  enabled: false
   profile_filter: true
   allowed_domains:
   - jobs.worley.com
@@ -271,7 +271,7 @@ sources:
   type: public_html
   company: Fluor
   url: https://careers.fluor.com/careers?query=piping
-  enabled: true
+  enabled: false
   profile_filter: true
   allowed_domains:
   - careers.fluor.com
@@ -293,7 +293,7 @@ sources:
   type: public_html
   company: Technip Energies
   url: https://careers.technipenergies.com/
-  enabled: true
+  enabled: false
   profile_filter: true
   allowed_domains:
   - careers.technipenergies.com
@@ -313,7 +313,7 @@ sources:
   type: public_html
   company: Jacobs
   url: https://careers.jacobs.com/
-  enabled: true
+  enabled: false
   profile_filter: true
   allowed_domains:
   - careers.jacobs.com

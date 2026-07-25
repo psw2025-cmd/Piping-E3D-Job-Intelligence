@@ -4,13 +4,14 @@ import base64
 import hashlib
 import re
 import shutil
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from email import policy
 from email.message import Message
 from email.parser import BytesParser
 from email.utils import parseaddr, parsedate_to_datetime
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 from urllib.parse import parse_qs, urlsplit
 
 from bs4 import BeautifulSoup
@@ -80,21 +81,21 @@ _GENERIC_LINK_TEXT = {
     "open",
     "click here",
 }
-_EMAIL_PATTERN = re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.I)
+_EMAIL_PATTERN = re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.IGNORECASE)
 _LABEL_PATTERNS = {
     "company": re.compile(
         r"(?:^|\n)\s*(?:company|employer|organisation|organization)\s*:\s*"
         r"([^\n|;]{2,160})",
-        re.I,
+        re.IGNORECASE,
     ),
     "location": re.compile(
         r"(?:^|\n)\s*(?:location|job location|work location)\s*:\s*"
         r"([^\n|;]{2,160})",
-        re.I,
+        re.IGNORECASE,
     ),
     "title": re.compile(
         r"(?:^|\n)\s*(?:job title|position|role)\s*:\s*([^\n|;]{2,180})",
-        re.I,
+        re.IGNORECASE,
     ),
 }
 _PORTAL_DOMAINS = {
@@ -302,7 +303,7 @@ def _plain_candidates(plain_text: str) -> list[AlertCandidate]:
         return []
     lines = [line.strip() for line in plain_text.splitlines()]
     candidates: list[AlertCandidate] = []
-    url_pattern = re.compile(r"https?://[^\s<>\]\[\"']+", re.I)
+    url_pattern = re.compile(r"https?://[^\s<>\]\[\"']+", re.IGNORECASE)
     for index, line in enumerate(lines):
         for match in url_pattern.finditer(line):
             url = _unwrap_google_url(match.group(0).rstrip(".,);]"))

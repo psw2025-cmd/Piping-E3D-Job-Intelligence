@@ -4,9 +4,9 @@ import ipaddress
 import json
 import socket
 import time
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from typing import Any, Mapping, Protocol
+from typing import Any, Protocol
 from urllib.parse import urljoin, urlsplit
 
 import requests

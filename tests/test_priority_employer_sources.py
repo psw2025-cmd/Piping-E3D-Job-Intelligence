@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from dataclasses import replace
 from pathlib import Path
-from typing import Mapping
 
 from job_intelligence.collectors.http_client import FetchedResponse
 from job_intelligence.collectors.public_html import collect_public_html
