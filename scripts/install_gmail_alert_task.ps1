@@ -2,7 +2,7 @@
 param(
     [string]$TaskName = "Piping-E3D-Gmail-Alerts",
     [string]$DailyTime = "09:15",
-    [string]$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot ".."))
+    [string]$RepoRoot = (Get-Location).Path
 )
 
 $ErrorActionPreference = "Stop"
