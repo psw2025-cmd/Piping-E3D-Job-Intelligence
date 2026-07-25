@@ -1,4 +1,4 @@
-name: Public Contact Discovery
+name: Official Hiring Contact Discovery
 
 on:
   workflow_dispatch:
@@ -40,13 +40,13 @@ jobs:
       - name: Install
         run: python -m pip install --upgrade pip && pip install -e .
 
-      - name: Scan public employer and recruiter sources
+      - name: Scan official employer and recruiter sources
         run: |
           job-contact-discovery scan \
             --registry config/employers_master_verified.yaml \
             --registry config/employer_registry.yaml \
             --registry config/recruiters.yaml \
-            --output "tmp/public-contacts/shard-${{ matrix.shard }}" \
+            --output "tmp/official-hiring-contacts/shard-${{ matrix.shard }}" \
             --shard-index "${{ matrix.shard }}" \
             --shard-count 4 \
             --workers 12 \
@@ -57,8 +57,8 @@ jobs:
       - name: Upload shard result
         uses: actions/upload-artifact@v4
         with:
-          name: global-public-contacts-shard-${{ matrix.shard }}
-          path: tmp/public-contacts/shard-${{ matrix.shard }}/
+          name: official-hiring-contacts-shard-${{ matrix.shard }}
+          path: tmp/official-hiring-contacts/shard-${{ matrix.shard }}/
           if-no-files-found: error
           retention-days: 14
 
@@ -83,35 +83,37 @@ jobs:
       - name: Download all shard results
         uses: actions/download-artifact@v4
         with:
-          pattern: global-public-contacts-shard-*
-          path: tmp/public-contact-shards
+          pattern: official-hiring-contacts-shard-*
+          path: tmp/official-hiring-contact-shards
           merge-multiple: false
 
       - name: Merge and verify complete bundle
         run: |
           job-contact-discovery merge \
-            --input-root tmp/public-contact-shards \
-            --output tmp/global-public-contacts
-          test -s tmp/global-public-contacts/Global_Public_Contacts.xlsx
-          test -s tmp/global-public-contacts/All_Public_Contacts.csv
-          test -s tmp/global-public-contacts/summary.json
-          test -s tmp/global-public-contacts/Global_Public_Contacts_Bundle.zip
+            --input-root tmp/official-hiring-contact-shards \
+            --output tmp/global-official-hiring-contacts
+          test -s tmp/global-official-hiring-contacts/Global_Official_Hiring_Contacts.xlsx
+          test -s tmp/global-official-hiring-contacts/All_Official_Contacts.csv
+          test -s tmp/global-official-hiring-contacts/summary.json
+          test -s tmp/global-official-hiring-contacts/Global_Official_Hiring_Contacts_Bundle.zip
           python - <<'PY'
           import json
           from pathlib import Path
 
           summary = json.loads(
-              Path("tmp/global-public-contacts/summary.json").read_text(encoding="utf-8")
+              Path("tmp/global-official-hiring-contacts/summary.json").read_text(
+                  encoding="utf-8"
+              )
           )
           assert summary["targets_scanned"] > 0
-          assert summary["all_public_contacts"] >= summary["verified_job_contacts"]
+          assert summary["all_official_contacts"] >= summary["official_job_mailboxes"]
           print(json.dumps(summary, indent=2))
           PY
 
       - name: Publish full global contact bundle
         uses: actions/upload-artifact@v4
         with:
-          name: Global-Public-Contacts-Full
-          path: tmp/global-public-contacts/
+          name: Global-Official-Hiring-Contacts-Full
+          path: tmp/global-official-hiring-contacts/
           if-no-files-found: error
           retention-days: 30
