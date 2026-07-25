@@ -1,0 +1,18 @@
+Cloud verification now confirms latest tests workflow is green on commit ea6b768.
+
+Next task:
+1. Treat this as a process-hardening phase.
+2. Propose and implement safeguards so broken commits do not keep landing on main.
+3. Recommend exact branch protection settings and required status checks.
+4. Separate authoritative CI workflows from non-essential/agent workflows.
+5. Generate one final repo truth report that distinguishes:
+   - cloud green status,
+   - local green status,
+   - source coverage,
+   - direct ingestible coverage,
+   - gmail-only coverage,
+   - staged sources,
+   - remaining measurable gaps.
+
+Do not use inflated completion wording.
+Keep the report evidence-backed and operational.
