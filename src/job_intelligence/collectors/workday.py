@@ -105,7 +105,7 @@ def _job_from_detail(
         or _text(detail.get("jobRequisitionId"))
         or join_nonempty(fallback_row.get("bulletFields", []), "; ")
     )
-    searchable = " ".join((title, location, description, job_req_id)).lower()
+    searchable = f"{title} {location} {description} {job_req_id}".lower()
     include_terms = spec.text_list_option("include_terms")
     location_terms = spec.text_list_option("location_terms")
     if not _matches_terms(searchable, include_terms):

@@ -213,7 +213,7 @@ def _is_recent(published_at: str, days: int) -> bool:
     if not published_at:
         return False
     try:
-        parsed = datetime.fromisoformat(published_at.replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(published_at)
         if parsed.tzinfo is None:
             parsed = parsed.replace(tzinfo=UTC)
         return parsed >= datetime.now(UTC) - timedelta(days=days)

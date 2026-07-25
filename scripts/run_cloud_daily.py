@@ -81,9 +81,9 @@ def _build_summary(
                 "## Run proof",
                 "",
                 f"- Run ID: `{run['run_id']}`",
-                f"- Sources attempted/passed/failed: "
+                (f"- Sources attempted/passed/failed: "
                 f"`{run['sources_attempted']}/{run['sources_passed']}/"
-                f"{run['sources_failed']}`",
+                f"{run['sources_failed']}`"),
                 f"- Filtered jobs collected: `{run['jobs_collected']}`",
                 f"- New jobs: `{run['new_jobs']}`",
                 f"- Export status: `{run['export_status']}`",

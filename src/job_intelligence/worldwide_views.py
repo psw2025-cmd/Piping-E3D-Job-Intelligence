@@ -25,7 +25,7 @@ def duplicate_group(row: pd.Series) -> str:
     if not published:
         published = _normalize(row.get("description"))[:120]
     return hashlib.sha256(
-        "|".join((role, company, location, published)).encode("utf-8")
+        f"{role}|{company}|{location}|{published}".encode()
     ).hexdigest()[:20]
 
 

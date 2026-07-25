@@ -1,0 +1,15 @@
+Cloud repo cross-check found an important issue:
+the latest main-branch commit on GitHub is showing failure.
+
+Now do a full cloud-vs-local verification and do not assume local green means cloud green.
+I need:
+1. exact failed GitHub Action/workflow name,
+2. exact failing job/step/log root cause,
+3. whether local repo still passes the same checks,
+4. fix if needed,
+5. re-run and confirm green on cloud,
+6. check whether main branch protection should be enabled,
+7. give final table comparing local status vs cloud status vs remaining gaps.
+
+Also verify that recent docs/config/src/tests changes are all mutually consistent.
+Do not give broad completion claims until GitHub cloud is green.
