@@ -23,7 +23,60 @@ jobs:
           run-id: 30170526306
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish summary
+      - name: Prepare concise contact listings
+        shell: python
+        run: |
+          import csv
+          import json
+          from pathlib import Path
+
+          root = Path("tmp/result")
+          fields = (
+              "organization",
+              "record_type",
+              "country",
+              "email",
+              "mailbox_type",
+              "verification_status",
+              "mail_route_status",
+              "source_url",
+          )
+
+          def write_listing(input_name: str, output_name: str, heading: str) -> None:
+              rows = []
+              with (root / input_name).open(encoding="utf-8-sig", newline="") as handle:
+                  for row in csv.DictReader(handle):
+                      rows.append({field: str(row.get(field, "")).strip() for field in fields})
+              rows.sort(key=lambda row: (row["organization"].casefold(), row["email"]))
+              lines = [f"# {heading}", "", f"Total rows: **{len(rows)}**", ""]
+              for index, row in enumerate(rows, start=1):
+                  lines.extend(
+                      [
+                          f"## {index}. {row['organization']}",
+                          f"- Email: `{row['email']}`",
+                          f"- Type: `{row['mailbox_type']}`",
+                          f"- Status: `{row['verification_status']}`",
+                          f"- DNS: `{row['mail_route_status']}`",
+                          f"- Country: {row['country']}",
+                          f"- Source: {row['source_url']}",
+                          "",
+                      ]
+                  )
+              Path(output_name).write_text("\n".join(lines), encoding="utf-8")
+
+          write_listing(
+              "Official_Job_Mailboxes.csv",
+              "tmp/job_mailboxes.md",
+              "Official job and recruitment mailboxes",
+          )
+          write_listing(
+              "Official_General_Mailboxes.csv",
+              "tmp/general_mailboxes.md",
+              "Official general business mailboxes",
+          )
+          print(json.dumps(json.loads((root / "summary.json").read_text()), indent=2))
+
+      - name: Publish summary and listings
         uses: actions/github-script@v7
         with:
           script: |
@@ -40,34 +93,6 @@ jobs:
 
             Artifact source workflow run: \`30170526306\`.
             `;
-            const comments = await github.paginate(
-              github.rest.issues.listComments,
-              {
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                per_page: 100,
-              }
-            );
-            const existing = comments.find(comment =>
-              comment.body && comment.body.includes('<!-- public-contact-final-summary -->')
-            );
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body,
-              });
-            }
-            const title = 'Verified public contact result 30170526306';
             const openIssues = await github.paginate(
               github.rest.issues.listForRepo,
               {
@@ -77,21 +102,34 @@ jobs:
                 per_page: 100,
               }
             );
-            const resultIssue = openIssues.find(issue =>
-              !issue.pull_request && issue.title === title
-            );
-            if (resultIssue) {
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: resultIssue.number,
-                body,
-              });
-            } else {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title,
-                body,
-              });
+
+            async function upsertIssue(title, issueBody) {
+              const existing = openIssues.find(issue =>
+                !issue.pull_request && issue.title === title
+              );
+              if (existing) {
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: existing.number,
+                  body: issueBody,
+                });
+              } else {
+                await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title,
+                  body: issueBody,
+                });
+              }
             }
+
+            await upsertIssue('Verified public contact result 30170526306', body);
+            await upsertIssue(
+              'Official job mailboxes 30170526306',
+              fs.readFileSync('tmp/job_mailboxes.md', 'utf8')
+            );
+            await upsertIssue(
+              'Official general mailboxes 30170526306',
+              fs.readFileSync('tmp/general_mailboxes.md', 'utf8')
+            );
