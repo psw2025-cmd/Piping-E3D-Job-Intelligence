@@ -36,6 +36,7 @@ dev = [
 [project.scripts]
 job-intel = "job_intelligence.cli:main"
 job-contact-discovery = "job_intelligence.public_contacts:main"
+job-contact-finalize = "job_intelligence.contact_quality:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
