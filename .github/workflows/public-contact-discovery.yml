@@ -13,6 +13,7 @@ on:
       - "config/recruiters.yaml"
       - "pyproject.toml"
       - "src/job_intelligence/public_contacts.py"
+      - "src/job_intelligence/contact_quality.py"
   push:
     branches:
       - feat/public-contact-discovery-v1
@@ -23,6 +24,7 @@ on:
       - "config/recruiters.yaml"
       - "pyproject.toml"
       - "src/job_intelligence/public_contacts.py"
+      - "src/job_intelligence/contact_quality.py"
 
 permissions:
   contents: read
@@ -76,7 +78,7 @@ jobs:
           retention-days: 14
 
   merge:
-    name: Merge full global result
+    name: Merge and quality-gate full global result
     needs: scan
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -100,13 +102,18 @@ jobs:
           path: tmp/official-hiring-contact-shards
           merge-multiple: false
 
-      - name: Merge and verify complete bundle
+      - name: Merge, clean and verify complete bundle
         run: |
           job-contact-discovery merge \
             --input-root tmp/official-hiring-contact-shards \
             --output tmp/global-official-hiring-contacts
+          job-contact-finalize \
+            --output tmp/global-official-hiring-contacts
           test -s tmp/global-official-hiring-contacts/Global_Official_Hiring_Contacts.xlsx
           test -s tmp/global-official-hiring-contacts/All_Official_Contacts.csv
+          test -s tmp/global-official-hiring-contacts/Official_Job_Mailboxes.csv
+          test -s tmp/global-official-hiring-contacts/Official_General_Mailboxes.csv
+          test -s tmp/global-official-hiring-contacts/Excluded_Quality.csv
           test -s tmp/global-official-hiring-contacts/summary.json
           test -s tmp/global-official-hiring-contacts/Global_Official_Hiring_Contacts_Bundle.zip
           python - <<'PY'
@@ -119,6 +126,8 @@ jobs:
               )
           )
           assert summary["targets_scanned"] > 0
+          assert summary["raw_contact_rows"] >= summary["all_official_contacts"]
+          assert summary["all_official_contacts"] == summary["unique_emails"]
           assert summary["all_official_contacts"] >= summary["official_job_mailboxes"]
           print(json.dumps(summary, indent=2))
           PY
