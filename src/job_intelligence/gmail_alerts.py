@@ -28,7 +28,7 @@ from .private_import import init_private_import_tables
 
 GMAIL_READONLY_SCOPE = "https://www.googleapis.com/auth/gmail.readonly"
 DEFAULT_GMAIL_QUERY = (
-    "newer_than:30d (job OR jobs OR vacancy OR vacancies OR hiring OR career)"
+    "newer_than:30d (job OR jobs OR vacancy OR vacancies OR hiring OR career) -from:notifications@github.com -from:github -subject:Run failed -subject:failed"
 )
 _ROLE_TERMS = (
     "piping",

@@ -245,7 +245,8 @@ def export_excel(db_path: str | Path, output_path: str | Path) -> Path:
     rejected = jobs[statuses.eq("rejected")]
     expired = jobs[statuses.eq("expired")]
     emails = jobs.get("recruiter_email", pd.Series(dtype="string"))
-    contacts = jobs[emails.fillna("").astype(str).str.len() > 0]
+    direct_contacts = jobs[emails.fillna("").astype(str).str.len() > 0]
+    contacts = direct_contacts if not direct_contacts.empty else recruiter_coverage
     country_summary = summary_by(active, "country")
     company_summary = summary_by(active, "company")
     daily_summary = _daily_summary(
