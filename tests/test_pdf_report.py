@@ -28,6 +28,7 @@ def test_generate_executive_digest(tmp_path: Path) -> None:
     
     generated = generate_executive_digest(db_path, out_path, min_score=80)
     assert generated.exists()
+    assert out_path.with_suffix(".pdf").exists()
     
     content = generated.read_text(encoding="utf-8")
     assert "Executive Job Intelligence Digest" in content
