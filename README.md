@@ -1,5 +1,7 @@
 # Piping-E3D-Job-Intelligence
 
+[![CI / Quality Gate](https://github.com/psw2025-cmd/Piping-E3D-Job-Intelligence/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/psw2025-cmd/Piping-E3D-Job-Intelligence/actions/workflows/tests.yml)
+
 Worldwide, local-first job intelligence, matching and tracking for piping, AVEVA E3D,
 PDMS, SP3D, offshore, refinery, nuclear, energy and EPC opportunities.
 
