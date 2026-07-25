@@ -161,7 +161,7 @@ def clean_contacts(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
         chosen["email"] = email
         chosen["organization_aliases"] = _join_unique(group["organization"])
         chosen["source_urls"] = _join_unique(group["source_url"])
-        chosen["duplicate_source_count"] = int(len(group))
+        chosen["duplicate_source_count"] = len(group)
         grouped_rows.append(chosen)
     clean = pd.DataFrame(grouped_rows)
     if not clean.empty:
@@ -229,16 +229,16 @@ def finalize_output(output_dir: str | Path) -> Path:
     summary = {
         "generated_at_utc": _now(),
         "targets_scanned": int(previous_summary.get("targets_scanned", 0)),
-        "raw_contact_rows": int(len(raw)),
-        "all_official_contacts": int(len(clean)),
-        "official_job_mailboxes": int(len(verified_job)),
-        "official_general_mailboxes": int(len(verified_general)),
-        "manual_review_dns": int(len(manual_review)),
-        "excluded_by_quality_gate": int(len(excluded)),
-        "failures": int(len(failures)),
-        "unique_emails": int(clean["email"].nunique()) if not clean.empty else 0,
+        "raw_contact_rows": len(raw),
+        "all_official_contacts": len(clean),
+        "official_job_mailboxes": len(verified_job),
+        "official_general_mailboxes": len(verified_general),
+        "manual_review_dns": len(manual_review),
+        "excluded_by_quality_gate": len(excluded),
+        "failures": len(failures),
+        "unique_emails": clean["email"].nunique() if not clean.empty else 0,
         "organizations_with_contacts": (
-            int(clean["organization"].nunique()) if not clean.empty else 0
+            clean["organization"].nunique() if not clean.empty else 0
         ),
     }
     summary_frame = pd.DataFrame(summary.items(), columns=["metric", "value"])
