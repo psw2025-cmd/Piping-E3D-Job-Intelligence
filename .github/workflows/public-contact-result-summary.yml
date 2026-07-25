@@ -7,6 +7,7 @@ on:
 permissions:
   actions: read
   contents: read
+  issues: write
   pull-requests: write
 
 jobs:
@@ -22,7 +23,7 @@ jobs:
           run-id: 30170526306
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish summary to pull request
+      - name: Publish summary
         uses: actions/github-script@v7
         with:
           script: |
@@ -63,6 +64,34 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
+                body,
+              });
+            }
+            const title = 'Verified public contact result 30170526306';
+            const openIssues = await github.paginate(
+              github.rest.issues.listForRepo,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                per_page: 100,
+              }
+            );
+            const resultIssue = openIssues.find(issue =>
+              !issue.pull_request && issue.title === title
+            );
+            if (resultIssue) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: resultIssue.number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
                 body,
               });
             }
