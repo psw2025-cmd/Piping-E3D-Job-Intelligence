@@ -1,0 +1,35 @@
+name: public-contact-diagnostics
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install
+        run: python -m pip install --upgrade pip && pip install -e ".[dev]"
+      - name: Capture Ruff report
+        run: |
+          mkdir -p tmp/diagnostics
+          ruff check src tests scripts --output-format=json > tmp/diagnostics/ruff.json || true
+      - name: Capture focused pytest report
+        run: |
+          pytest tests/test_public_contacts.py -q > tmp/diagnostics/pytest.txt 2>&1 || true
+      - name: Upload diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-contact-diagnostics
+          path: tmp/diagnostics/
+          if-no-files-found: error
+          retention-days: 2
