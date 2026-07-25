@@ -43,11 +43,20 @@ URL_FIELDS = (
     "careers_page",
     "contact_url",
     "direct_ats_endpoint",
+    "official_careers_url",
+    "official_jobs_url",
     "official_domain",
     "official_url",
+    "public_job_url",
     "source_url",
     "url",
     "website",
+)
+NAME_FIELDS = (
+    "canonical_company_name",
+    "name",
+    "company",
+    "organization",
 )
 COMMON_PATHS = (
     "/careers",
@@ -176,9 +185,17 @@ def _host_variants(urls: Iterable[str]) -> frozenset[str]:
     return frozenset(hosts)
 
 
+def _record_name(row: dict[str, Any]) -> str:
+    for field in NAME_FIELDS:
+        value = str(row.get(field) or "").strip()
+        if value:
+            return value
+    return ""
+
+
 def _iter_records(payload: Any) -> Iterable[dict[str, Any]]:
     if isinstance(payload, dict):
-        if payload.get("name") or payload.get("canonical_company_name"):
+        if _record_name(payload):
             yield payload
         for value in payload.values():
             yield from _iter_records(value)
@@ -202,7 +219,7 @@ def load_targets(
     for registry_path in registry_paths:
         payload = yaml.safe_load(Path(registry_path).read_text(encoding="utf-8")) or {}
         for row in _iter_records(payload):
-            name = str(row.get("canonical_company_name") or row.get("name") or "").strip()
+            name = _record_name(row)
             if not name:
                 continue
             urls: list[str] = []
@@ -220,10 +237,14 @@ def load_targets(
             position += 1
             if not selected:
                 continue
+            record_type = str(
+                row.get("record_type")
+                or ("recruiter" if "recruiter" in Path(str(registry_path)).name.lower() else "employer")
+            ).strip().lower()
             targets.append(
                 Target(
                     organization=name,
-                    record_type=str(row.get("record_type") or "employer").strip().lower(),
+                    record_type=record_type,
                     country=str(row.get("country") or "").strip(),
                     urls=tuple(urls),
                     hosts=_host_variants(urls),

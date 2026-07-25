@@ -41,6 +41,29 @@ def test_extract_emails_handles_mailto_obfuscation_and_cloudflare() -> None:
     assert found["talent@example.com"][0] == "cloudflare_obfuscation"
 
 
+def test_load_targets_accepts_company_and_official_jobs_url(tmp_path: Path) -> None:
+    registry = tmp_path / "recruiters_like.yaml"
+    registry.write_text(
+        """
+recruiters:
+  - company: Airswift Proof
+    official_jobs_url: https://www.airswift-proof.example/jobs
+  - company: Registry Proof
+    official_careers_url: https://careers.registry-proof.example/
+    public_job_url: https://jobs.registry-proof.example/
+""",
+        encoding="utf-8",
+    )
+    targets = public_contacts.load_targets([registry])
+    assert len(targets) == 2
+    by_name = {t.organization: t for t in targets}
+    assert by_name["Airswift Proof"].urls == ("https://www.airswift-proof.example/jobs",)
+    assert by_name["Registry Proof"].urls == (
+        "https://careers.registry-proof.example/",
+        "https://jobs.registry-proof.example/",
+    )
+
+
 def test_load_targets_recurses_deduplicates_and_shards(tmp_path: Path) -> None:
     registry = tmp_path / "registry.yaml"
     registry.write_text(
