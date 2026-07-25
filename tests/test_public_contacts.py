@@ -11,11 +11,16 @@ from job_intelligence.public_contacts import Contact, Failure, Target
 
 
 def _cf_encode(value: str, key: int = 0x12) -> str:
-    return f"{key:02x}" + "".join(f"{ord(character) ^ key:02x}" for character in value)
+    return f"{key:02x}" + "".join(
+        f"{ord(character) ^ key:02x}" for character in value
+    )
 
 
 def test_normalize_email_rejects_invalid_and_file_extensions() -> None:
-    assert public_contacts.normalize_email("MAILTO:Jobs@Example.COM?subject=CV") == "jobs@example.com"
+    assert (
+        public_contacts.normalize_email("MAILTO:Jobs@Example.COM?subject=CV")
+        == "jobs@example.com"
+    )
     assert public_contacts.normalize_email("bad..name@example.com") == ""
     assert public_contacts.normalize_email("asset@logo.png") == ""
     assert public_contacts.normalize_email("missing-at.example.com") == ""
@@ -66,35 +71,45 @@ nested:
         "Agency One",
         "Company Three",
     ]
-    shard_zero = public_contacts.load_targets([registry], shard_index=0, shard_count=2)
-    shard_one = public_contacts.load_targets([registry], shard_index=1, shard_count=2)
+    shard_zero = public_contacts.load_targets(
+        [registry], shard_index=0, shard_count=2
+    )
+    shard_one = public_contacts.load_targets(
+        [registry], shard_index=1, shard_count=2
+    )
     assert len(shard_zero) + len(shard_one) == len(all_targets)
     assert {target.organization for target in shard_zero}.isdisjoint(
         {target.organization for target in shard_one}
     )
 
 
-def test_classification_domain_relation_and_verification() -> None:
+def test_mailbox_type_official_domain_and_verification() -> None:
     hosts = frozenset({"example.co.uk", "www.example.co.uk"})
-    assert public_contacts.classify_contact("careers@example.co.uk", "") == (
-        "recruitment_role_mailbox"
+    assert public_contacts.mailbox_type("careers@example.co.uk") == (
+        "job_or_recruitment"
     )
-    assert public_contacts.domain_relation("careers@jobs.example.co.uk", hosts) == (
-        "official_domain"
+    assert public_contacts.mailbox_type("info@example.co.uk") == "general_business"
+    assert public_contacts.mailbox_type("person.name@example.co.uk") == (
+        "excluded_non_role"
     )
-    assert public_contacts.domain_relation("example@gmail.com", hosts) == "free_mail"
-    assert public_contacts.verification_decision(
-        "recruitment_role_mailbox", "official_domain", "mx"
-    ) == ("verified_public_job_contact", 100, "")
+    assert public_contacts.is_official_domain(
+        "careers@jobs.example.co.uk", hosts
+    )
+    assert not public_contacts.is_official_domain("careers@gmail.com", hosts)
+    assert public_contacts.verification_decision("job_or_recruitment", "mx") == (
+        "verified_official_job_mailbox",
+        100,
+        "",
+    )
     status, score, reason = public_contacts.verification_decision(
-        "named_recruitment_contact", "free_mail", "mx"
+        "general_business", "dns_timeout"
     )
-    assert status == "manual_review"
-    assert score == 45
-    assert "free-mail" in reason
+    assert status == "manual_review_dns"
+    assert score == 30
+    assert "dns_timeout" in reason
 
 
-def test_scan_target_extracts_public_job_contact(monkeypatch) -> None:
+def test_scan_target_keeps_only_official_role_mailboxes(monkeypatch) -> None:
     class FakeResponse:
         def __init__(self, url: str, status: int, text: str, content_type: str) -> None:
             self.url = url
@@ -121,6 +136,8 @@ def test_scan_target_extracts_public_job_contact(monkeypatch) -> None:
                     url,
                     200,
                     '<a href="mailto:careers@example.com">Send your CV</a>'
+                    '<a href="mailto:person.name@example.com">Recruiter</a>'
+                    '<a href="mailto:jobs@gmail.com">External</a>'
                     '<a href="/contact">Contact</a>',
                     "text/html",
                 )
@@ -148,13 +165,17 @@ def test_scan_target_extracts_public_job_contact(monkeypatch) -> None:
         rate_limit=100,
     )
     by_email = {contact.email: contact for contact in contacts}
+    assert set(by_email) == {"careers@example.com", "info@example.com"}
     assert by_email["careers@example.com"].verification_status == (
-        "verified_public_job_contact"
+        "verified_official_job_mailbox"
     )
     assert by_email["info@example.com"].verification_status == (
-        "verified_public_general_contact"
+        "verified_official_general_mailbox"
     )
-    assert all(failure.stage in {"http", "robots", "fetch", "parse"} for failure in failures)
+    assert all(
+        failure.stage in {"http", "robots", "fetch", "parse"}
+        for failure in failures
+    )
 
 
 def _sample_contact(email: str, status: str, score: int) -> Contact:
@@ -163,9 +184,8 @@ def _sample_contact(email: str, status: str, score: int) -> Contact:
         record_type="employer",
         country="India",
         email=email,
-        classification="recruitment_role_mailbox",
+        mailbox_type="job_or_recruitment",
         verification_status=status,
-        domain_relation="official_domain",
         mail_route_status="mx",
         priority_score=score,
         source_url="https://example.com/careers",
@@ -182,25 +202,37 @@ def test_write_and_merge_outputs(tmp_path: Path) -> None:
     shard_two = tmp_path / "shards" / "two"
     public_contacts.write_outputs(
         shard_one,
-        [_sample_contact("careers@example.com", "verified_public_job_contact", 100)],
+        [
+            _sample_contact(
+                "careers@example.com",
+                "verified_official_job_mailbox",
+                100,
+            )
+        ],
         [Failure("Example EPC", "https://example.com/jobs", "http", "HTTP 404")],
         1,
     )
     public_contacts.write_outputs(
         shard_two,
-        [_sample_contact("hr@example.com", "verified_public_job_contact", 100)],
+        [
+            _sample_contact(
+                "hr@example.com",
+                "verified_official_job_mailbox",
+                100,
+            )
+        ],
         [],
         1,
     )
     merged = tmp_path / "merged"
     archive = public_contacts.merge_outputs(tmp_path / "shards", merged)
     assert archive.exists()
-    assert (merged / "Global_Public_Contacts.xlsx").exists()
-    contacts = pd.read_csv(merged / "All_Public_Contacts.csv")
+    assert (merged / "Global_Official_Hiring_Contacts.xlsx").exists()
+    contacts = pd.read_csv(merged / "All_Official_Contacts.csv")
     assert set(contacts["email"]) == {"careers@example.com", "hr@example.com"}
     summary = json.loads((merged / "summary.json").read_text(encoding="utf-8"))
     assert summary["targets_scanned"] == 2
-    assert summary["verified_job_contacts"] == 2
+    assert summary["official_job_mailboxes"] == 2
     with zipfile.ZipFile(archive) as bundle:
-        assert "Global_Public_Contacts.xlsx" in bundle.namelist()
+        assert "Global_Official_Hiring_Contacts.xlsx" in bundle.namelist()
         assert "SUMMARY.md" in bundle.namelist()
