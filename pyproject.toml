@@ -53,3 +53,6 @@ target-version = "py311"
 
 [tool.ruff.lint]
 ignore = ["TRY004", "BLE001", "FLY002", "UP035", "RUF012"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/job_intelligence/public_contacts.py" = ["SIM102"]
