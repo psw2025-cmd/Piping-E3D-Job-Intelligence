@@ -2,7 +2,7 @@ name: daily-live-job-intelligence
 
 on:
   schedule:
-    - cron: "0 9 * * *"
+    - cron: "0 9,18 * * *"
       timezone: "Asia/Kolkata"
   workflow_dispatch:
 
