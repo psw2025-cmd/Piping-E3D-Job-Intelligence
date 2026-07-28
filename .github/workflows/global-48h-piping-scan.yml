@@ -9,10 +9,12 @@ on:
     paths:
       - ".github/workflows/global-48h-piping-scan.yml"
       - "scripts/build_48h_urgent_report.py"
+      - "scripts/discover_official_sources.py"
       - "scripts/run_cloud_daily.py"
       - "config/**"
       - "src/job_intelligence/**"
       - "tests/test_48h_urgent_report.py"
+      - "tests/test_source_discovery.py"
 
 permissions:
   contents: write
@@ -24,7 +26,7 @@ concurrency:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 50
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,11 +44,54 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
-      - name: Test 48-hour classification
-        run: pytest -q tests/test_48h_urgent_report.py
+      - name: Run complete regression suite
+        run: pytest -q
+
+      - name: Discover and verify official public sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/source-discovery docs
+          if python scripts/discover_official_sources.py \
+            --registry config/employer_registry.yaml \
+            --base-sources config/sources.yaml \
+            --report-json docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json \
+            --report-md docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md \
+            --runtime-sources output/source-discovery/runtime-sources.yaml; then
+            echo "PASS: official ATS and sitemap discovery completed"
+          else
+            echo "WARN: discovery failed; using verified base sources only" >&2
+            cp config/sources.yaml output/source-discovery/runtime-sources.yaml
+            cat > docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md <<'EOF'
+          # Latest Official Source Autodiscovery
+
+          Overall result: **FALLBACK**
+
+          The discovery stage failed safely. The scan continued with the previously verified official source configuration. Gmail was not used.
+          EOF
+            cat > docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json <<'EOF'
+          {"schema_version":1,"status":"fallback","gmail_used":false,"verified":0,"records":[]}
+          EOF
+          fi
+
+      - name: Validate runtime source configuration
+        run: |
+          python - <<'PY'
+          from job_intelligence.source_config import load_source_config
+          config = load_source_config("output/source-discovery/runtime-sources.yaml")
+          enabled = [source for source in config.sources if source.enabled]
+          assert enabled, "runtime source configuration has no enabled sources"
+          assert config.policy["respect_robots_txt"] is True
+          assert config.policy["bypass_captcha"] is False
+          assert config.policy["use_rotating_proxies"] is False
+          print(f"PASS: runtime source configuration valid; enabled={len(enabled)} total={len(config.sources)}")
+          PY
 
       - name: Collect permitted official sources
-        run: python scripts/run_cloud_daily.py --output output/global-48h
+        run: |
+          python scripts/run_cloud_daily.py \
+            --sources output/source-discovery/runtime-sources.yaml \
+            --output output/global-48h
 
       - name: Build strict recent and urgent report
         run: |
@@ -57,16 +102,23 @@ jobs:
             --hours 48 \
             --timezone Asia/Kolkata
 
-      - name: Publish report in workflow summary
-        run: cat docs/LATEST_48H_GLOBAL_PIPING_SCAN.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Publish reports in workflow summary
+        shell: bash
+        run: |
+          cat docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md >> "$GITHUB_STEP_SUMMARY"
+          printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"
+          cat docs/LATEST_48H_GLOBAL_PIPING_SCAN.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload proof artifact
         uses: actions/upload-artifact@v4
         with:
           name: global-48h-piping-scan-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
+            docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md
+            docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json
             docs/LATEST_48H_GLOBAL_PIPING_SCAN.md
             docs/LATEST_48H_GLOBAL_PIPING_SCAN.json
+            output/source-discovery/runtime-sources.yaml
             output/global-48h/SUMMARY.md
             output/global-48h/status.json
             output/global-48h/run.log
@@ -75,18 +127,22 @@ jobs:
           retention-days: 14
           compression-level: 6
 
-      - name: Commit latest evidence-backed report
+      - name: Commit latest evidence-backed reports
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/LATEST_48H_GLOBAL_PIPING_SCAN.md docs/LATEST_48H_GLOBAL_PIPING_SCAN.json
+          git add \
+            docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md \
+            docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json \
+            docs/LATEST_48H_GLOBAL_PIPING_SCAN.md \
+            docs/LATEST_48H_GLOBAL_PIPING_SCAN.json
           if git diff --cached --quiet; then
             echo "No report change to commit."
             exit 0
           fi
-          git commit -m "report: refresh global 48-hour piping scan [skip ci]"
+          git commit -m "report: refresh official-source global piping intelligence [skip ci]"
           for attempt in 1 2 3; do
             if git pull --rebase origin main && git push origin HEAD:main; then
               exit 0
