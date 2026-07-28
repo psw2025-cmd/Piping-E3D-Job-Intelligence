@@ -1,8 +1,109 @@
 from __future__ import annotations
 
 import argparse
+from collections.abc import Iterable
+from pathlib import Path
+from typing import Any
+
+import yaml
 
 from job_intelligence.source_discovery import discover_registry, write_outputs
+
+NAME_FIELDS = (
+    "canonical_company_name",
+    "name",
+    "company",
+    "organization",
+)
+URL_FIELDS = (
+    "direct_ats_endpoint",
+    "public_job_url",
+    "official_jobs_url",
+    "official_careers_url",
+    "careers_url",
+    "career_url",
+    "careers_page",
+    "official_url",
+    "official_domain",
+    "website",
+    "url",
+)
+
+
+def _record_name(record: dict[str, Any]) -> str:
+    for field in NAME_FIELDS:
+        value = str(record.get(field) or "").strip()
+        if value:
+            return value
+    return ""
+
+
+def _iter_records(payload: Any) -> Iterable[dict[str, Any]]:
+    if isinstance(payload, dict):
+        if _record_name(payload):
+            yield payload
+        for value in payload.values():
+            yield from _iter_records(value)
+    elif isinstance(payload, list):
+        for item in payload:
+            yield from _iter_records(item)
+
+
+def _http_urls(record: dict[str, Any]) -> list[str]:
+    values: list[str] = []
+    for field in URL_FIELDS:
+        raw = record.get(field)
+        candidates = raw if isinstance(raw, list) else [raw]
+        for candidate in candidates:
+            value = str(candidate or "").strip().split("#", 1)[0]
+            if value.startswith(("http://", "https://")) and value not in values:
+                values.append(value)
+    return values
+
+
+def build_combined_registry(
+    registry_paths: list[str],
+    output_path: Path,
+    *,
+    shard_index: int,
+    shard_count: int,
+    max_organizations: int,
+) -> int:
+    if shard_count < 1 or not 0 <= shard_index < shard_count:
+        raise ValueError("invalid shard configuration")
+    targets: list[dict[str, str]] = []
+    seen: set[tuple[str, tuple[str, ...]]] = set()
+    position = 0
+    for registry_path in registry_paths:
+        payload = yaml.safe_load(Path(registry_path).read_text(encoding="utf-8")) or {}
+        for record in _iter_records(payload):
+            company = _record_name(record)
+            urls = _http_urls(record)
+            if not company or not urls or company.endswith("Job Alerts"):
+                continue
+            key = (company.casefold(), tuple(url.casefold() for url in urls))
+            if key in seen:
+                continue
+            seen.add(key)
+            if position % shard_count == shard_index:
+                targets.append(
+                    {
+                        "company": company,
+                        "official_careers_url": urls[0],
+                        "public_job_url": urls[1] if len(urls) > 1 else "",
+                    }
+                )
+                if max_organizations and len(targets) >= max_organizations:
+                    break
+            position += 1
+        if max_organizations and len(targets) >= max_organizations:
+            break
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(
+        yaml.safe_dump({"employers": targets}, sort_keys=False),
+        encoding="utf-8",
+    )
+    return len(targets)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -12,7 +113,12 @@ def build_parser() -> argparse.ArgumentParser:
             "without using Gmail."
         )
     )
-    parser.add_argument("--registry", default="config/employer_registry.yaml")
+    parser.add_argument(
+        "--registry",
+        action="append",
+        default=[],
+        help="Repeat for each employer or recruiter registry to scan.",
+    )
     parser.add_argument("--base-sources", default="config/sources.yaml")
     parser.add_argument(
         "--report-json",
@@ -26,12 +132,24 @@ def build_parser() -> argparse.ArgumentParser:
         "--runtime-sources",
         default="output/source-discovery/runtime-sources.yaml",
     )
+    parser.add_argument("--shard-index", type=int, default=0)
+    parser.add_argument("--shard-count", type=int, default=1)
+    parser.add_argument("--max-organizations", type=int, default=0)
     return parser
 
 
 def main() -> int:
     args = build_parser().parse_args()
-    records, runtime = discover_registry(args.registry, args.base_sources)
+    registries = args.registry or ["config/employer_registry.yaml"]
+    combined_path = Path(args.runtime_sources).with_name("combined-registry.yaml")
+    target_count = build_combined_registry(
+        registries,
+        combined_path,
+        shard_index=args.shard_index,
+        shard_count=args.shard_count,
+        max_organizations=args.max_organizations,
+    )
+    records, runtime = discover_registry(combined_path, args.base_sources)
     write_outputs(
         records,
         runtime,
@@ -41,8 +159,9 @@ def main() -> int:
     )
     verified = sum(record.probe_status == "pass" for record in records)
     print(
-        f"PASS: official-source discovery completed; "
-        f"detected={len(records)} verified={verified}"
+        "PASS: official-source discovery completed; "
+        f"targets={target_count} detected={len(records)} verified={verified} "
+        f"shard={args.shard_index}/{args.shard_count}"
     )
     return 0
 
