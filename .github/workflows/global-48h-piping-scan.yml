@@ -10,6 +10,7 @@ on:
       - ".github/workflows/global-48h-piping-scan.yml"
       - "scripts/build_48h_urgent_report.py"
       - "scripts/discover_official_sources.py"
+      - "scripts/merge_official_source_discovery.py"
       - "scripts/run_cloud_daily.py"
       - "config/**"
       - "src/job_intelligence/**"
@@ -47,27 +48,32 @@ jobs:
       - name: Run complete regression suite
         run: pytest -q
 
-      - name: Discover and verify official public sources
+      - name: Discover and verify priority official public sources
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p output/source-discovery docs
+          BASE_SOURCES="config/sources.yaml"
+          if [ -s config/runtime_sources.generated.yaml ]; then
+            BASE_SOURCES="config/runtime_sources.generated.yaml"
+            echo "Using deep verified runtime source registry."
+          fi
           if python scripts/discover_official_sources.py \
             --registry config/employer_registry.yaml \
-            --base-sources config/sources.yaml \
+            --base-sources "${BASE_SOURCES}" \
             --report-json docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json \
             --report-md docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md \
             --runtime-sources output/source-discovery/runtime-sources.yaml; then
             echo "PASS: official ATS and sitemap discovery completed"
           else
-            echo "WARN: discovery failed; using verified base sources only" >&2
-            cp config/sources.yaml output/source-discovery/runtime-sources.yaml
+            echo "WARN: priority discovery failed; using last verified runtime sources" >&2
+            cp "${BASE_SOURCES}" output/source-discovery/runtime-sources.yaml
             cat > docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md <<'EOF'
           # Latest Official Source Autodiscovery
 
           Overall result: **FALLBACK**
 
-          The discovery stage failed safely. The scan continued with the previously verified official source configuration. Gmail was not used.
+          The priority discovery stage failed safely. The scan continued with the last verified official-source registry. Gmail was not used.
           EOF
             cat > docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json <<'EOF'
           {"schema_version":1,"status":"fallback","gmail_used":false,"verified":0,"records":[]}
