@@ -19,7 +19,7 @@ permissions:
 
 concurrency:
   group: global-48h-piping-scan
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   scan:
@@ -28,6 +28,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -85,4 +87,13 @@ jobs:
             exit 0
           fi
           git commit -m "report: refresh global 48-hour piping scan [skip ci]"
-          git push origin HEAD:main
+          for attempt in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "Report push attempt ${attempt} failed; retrying after refresh."
+            git rebase --abort 2>/dev/null || true
+            sleep $((attempt * 5))
+          done
+          echo "Unable to publish report after three attempts." >&2
+          exit 1
