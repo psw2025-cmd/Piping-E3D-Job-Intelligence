@@ -1,0 +1,199 @@
+name: deep-official-source-discovery
+
+on:
+  schedule:
+    - cron: "15 1 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deep-official-source-discovery.yml"
+      - "scripts/discover_official_sources.py"
+      - "scripts/merge_official_source_discovery.py"
+      - "src/job_intelligence/source_discovery.py"
+      - "config/employers_master_verified.yaml"
+      - "config/employer_registry.yaml"
+      - "config/recruiters.yaml"
+      - "config/sources.yaml"
+      - "tests/test_source_discovery.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deep-official-source-discovery
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    name: Discover official sources shard ${{ matrix.shard }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Test discovery engine
+        run: pytest -q tests/test_source_discovery.py
+
+      - name: Scan global employer and recruiter registries
+        run: |
+          python scripts/discover_official_sources.py \
+            --registry config/employers_master_verified.yaml \
+            --registry config/employer_registry.yaml \
+            --registry config/recruiters.yaml \
+            --base-sources config/sources.yaml \
+            --shard-index "${{ matrix.shard }}" \
+            --shard-count 8 \
+            --report-json "tmp/source-discovery/shard-${{ matrix.shard }}/report.json" \
+            --report-md "tmp/source-discovery/shard-${{ matrix.shard }}/report.md" \
+            --runtime-sources "tmp/source-discovery/shard-${{ matrix.shard }}/runtime-sources.yaml"
+
+      - name: Verify shard outputs
+        run: |
+          test -s "tmp/source-discovery/shard-${{ matrix.shard }}/report.json"
+          test -s "tmp/source-discovery/shard-${{ matrix.shard }}/report.md"
+          test -s "tmp/source-discovery/shard-${{ matrix.shard }}/runtime-sources.yaml"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          shard = "${{ matrix.shard }}"
+          payload = json.loads(
+              Path(f"tmp/source-discovery/shard-{shard}/report.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          assert payload["schema_version"] == 1
+          assert "Gmail is not used" in payload["principle"]
+          assert isinstance(payload["records"], list)
+          print(json.dumps({
+              "shard": shard,
+              "detected": payload["detected"],
+              "verified": payload["verified"],
+          }, indent=2))
+          PY
+
+      - name: Upload shard proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-source-discovery-shard-${{ matrix.shard }}
+          path: tmp/source-discovery/shard-${{ matrix.shard }}/
+          if-no-files-found: error
+          retention-days: 14
+
+  merge:
+    name: Merge and verify global official-source registry
+    needs: scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Download discovery shards
+        uses: actions/download-artifact@v4
+        with:
+          pattern: official-source-discovery-shard-*
+          path: tmp/source-discovery-shards
+          merge-multiple: false
+
+      - name: Merge verified connectors and sitemap sources
+        run: |
+          python scripts/merge_official_source_discovery.py \
+            --input-root tmp/source-discovery-shards \
+            --base-sources config/sources.yaml \
+            --report-json docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json \
+            --report-md docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md \
+            --runtime-sources config/runtime_sources.generated.yaml
+
+      - name: Run complete regression and policy gates
+        run: |
+          pytest -q
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from job_intelligence.source_config import load_source_config
+
+          config = load_source_config("config/runtime_sources.generated.yaml")
+          enabled = [source for source in config.sources if source.enabled]
+          report = json.loads(
+              Path("docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          assert enabled
+          assert config.policy["respect_robots_txt"] is True
+          assert config.policy["bypass_captcha"] is False
+          assert config.policy["use_rotating_proxies"] is False
+          assert "Gmail is not used" in report["principle"]
+          print(json.dumps({
+              "configured_sources": len(config.sources),
+              "enabled_sources": len(enabled),
+              "detected_candidates": report["detected"],
+              "verified_candidates": report["verified"],
+          }, indent=2))
+          PY
+
+      - name: Upload merged proof bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: Global-Official-Source-Discovery-Proof
+          path: |
+            docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json
+            docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md
+            config/runtime_sources.generated.yaml
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Commit verified runtime source registry
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json \
+            docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md \
+            config/runtime_sources.generated.yaml
+          if git diff --cached --quiet; then
+            echo "No verified source-registry change to commit."
+            exit 0
+          fi
+          git commit -m "report: refresh verified global official source registry [skip ci]"
+          for attempt in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              exit 0
+            fi
+            git rebase --abort 2>/dev/null || true
+            sleep $((attempt * 5))
+          done
+          echo "Unable to publish verified source registry." >&2
+          exit 1
