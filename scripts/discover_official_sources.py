@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import argparse
 from collections.abc import Iterable
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
 import yaml
 
+import job_intelligence.source_discovery as source_discovery
 from job_intelligence.source_discovery import discover_registry, write_outputs
 
 NAME_FIELDS = (
@@ -28,6 +30,34 @@ URL_FIELDS = (
     "website",
     "url",
 )
+
+_ORIGINAL_PROBE = source_discovery.probe_record
+
+
+def _bounded_probe(record: source_discovery.DiscoveryRecord):
+    production_source = deepcopy(record.source)
+    probe_source = deepcopy(record.source)
+    source_type = str(probe_source.get("type", ""))
+    probe_source["max_items"] = 3
+    probe_source["max_pages"] = 3
+    if source_type in {"workday", "oracle_hcm"}:
+        probe_source["max_scan_items"] = 80
+        probe_source["page_size"] = 20
+    elif source_type == "smartrecruiters":
+        probe_source["page_size"] = 3
+        probe_source["fetch_details"] = True
+    elif source_type == "lever":
+        probe_source["page_size"] = 3
+    if source_type == "workday":
+        probe_source["search_terms"] = ["piping"]
+    record.source = probe_source
+    result = _ORIGINAL_PROBE(record)
+    if result.probe_status == "pass":
+        result.source = production_source
+    else:
+        production_source["enabled"] = False
+        result.source = production_source
+    return result
 
 
 def _record_name(record: dict[str, Any]) -> str:
@@ -149,6 +179,7 @@ def main() -> int:
         shard_count=args.shard_count,
         max_organizations=args.max_organizations,
     )
+    source_discovery.probe_record = _bounded_probe
     records, runtime = discover_registry(combined_path, args.base_sources)
     write_outputs(
         records,
