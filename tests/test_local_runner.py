@@ -101,3 +101,4 @@ def test_task_design_fails_closed_before_registration() -> None:
     assert "IgnoreNew" in script
     assert "if ($Install)" in script
     assert "Register-ScheduledTask -TaskName $TaskName -InputObject $task" in script
+    assert "-WorkingDirectory $RepoRoot" in script
