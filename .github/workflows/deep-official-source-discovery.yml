@@ -31,10 +31,10 @@ jobs:
     timeout-minutes: 12
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
@@ -63,10 +63,10 @@ jobs:
         shard: [0, 1, 2, 3, 4, 5, 6, 7]
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
@@ -115,7 +115,7 @@ jobs:
 
       - name: Upload shard proof
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: official-source-discovery-shard-${{ matrix.shard }}
           path: tmp/source-discovery/shard-${{ matrix.shard }}/
@@ -129,12 +129,12 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
@@ -145,7 +145,7 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Download discovery shards
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@v4
         with:
           pattern: official-source-discovery-shard-*
           path: tmp/source-discovery-shards
@@ -189,7 +189,7 @@ jobs:
           PY
 
       - name: Upload merged proof bundle
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: Global-Official-Source-Discovery-Proof
           path: |
