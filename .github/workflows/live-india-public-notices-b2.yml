@@ -28,10 +28,10 @@ jobs:
     timeout-minutes: 12
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
@@ -74,7 +74,7 @@ jobs:
 
       - name: Upload live proof
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: live-india-notices-b2-${{ github.run_id }}-${{ github.run_attempt }}
           path: output/live-india-notices-b2
