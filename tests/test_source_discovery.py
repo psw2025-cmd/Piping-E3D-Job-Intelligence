@@ -120,3 +120,44 @@ def test_write_outputs_validates_runtime_and_declares_no_gmail(tmp_path: Path) -
     assert "Gmail dependency: **NONE**" in markdown
     loaded_runtime = yaml.safe_load(runtime_path.read_text(encoding="utf-8"))
     assert loaded_runtime["sources"][0]["company_identifier"] == "Ramboll3"
+
+
+def test_workday_ids_distinguish_multiple_sites_for_same_company(tmp_path: Path) -> None:
+    company = "Occidental Petroleum (Oxy)"
+    first = detect_source(
+        company,
+        "https://oxy.wd5.myworkdayjobs.com/en-US/Oxy_Careers/jobs",
+    )
+    second = detect_source(
+        company,
+        "https://oxy.wd5.myworkdayjobs.com/en-US/Oxy_Experienced_Hires/jobs",
+    )
+    repeated = detect_source(
+        company,
+        "https://oxy.wd5.myworkdayjobs.com/en-US/Oxy_Careers/jobs",
+    )
+    assert first is not None
+    assert second is not None
+    assert repeated is not None
+    assert first.source["id"] != second.source["id"]
+    assert first.source["id"] == repeated.source["id"]
+    assert len(first.source["id"]) <= 64
+    assert len(second.source["id"]) <= 64
+
+    runtime_path = tmp_path / "multiple-workday-sites.yaml"
+    runtime_path.write_text(
+        yaml.safe_dump(
+            {
+                "sources": [first.source, second.source],
+                "policy": {
+                    "respect_robots_txt": True,
+                    "bypass_captcha": False,
+                    "use_rotating_proxies": False,
+                },
+            },
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    loaded = load_source_config(runtime_path)
+    assert len(loaded.sources) == 2

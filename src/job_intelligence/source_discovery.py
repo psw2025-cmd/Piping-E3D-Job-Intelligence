@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import hashlib
 import json
+import logging
 import re
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -16,6 +18,8 @@ from .collectors import COLLECTORS
 from .collectors.http_client import DEFAULT_USER_AGENT, SafeHttpClient
 from .collectors.schema_org import parse_job_postings
 from .source_config import SourceSpec, load_source_config
+
+LOGGER = logging.getLogger(__name__)
 
 PIPING_TERMS = [
     "piping",
@@ -74,8 +78,12 @@ def _path_parts(url: str) -> list[str]:
     return [part for part in urlsplit(url).path.split("/") if part]
 
 
-def _source_id(company: str, suffix: str) -> str:
-    return f"auto-{slugify(company)}-{suffix}"[:64].rstrip("-")
+def _source_id(company: str, suffix: str, identity: str = "") -> str:
+    base = f"auto-{slugify(company)}-{suffix}"
+    if not identity:
+        return base[:64].rstrip("-")
+    digest = hashlib.sha256(identity.casefold().encode("utf-8")).hexdigest()[:10]
+    return f"{base[:53].rstrip('-')}-{digest}"
 
 
 def detect_source(company: str, url: str) -> DiscoveryRecord | None:
@@ -92,7 +100,7 @@ def detect_source(company: str, url: str) -> DiscoveryRecord | None:
             platform="greenhouse",
             evidence_url=url,
             source={
-                "id": _source_id(company, "greenhouse"),
+                "id": _source_id(company, "greenhouse", f"{host}:{token}"),
                 "name": f"{company} official Greenhouse board",
                 "type": "greenhouse",
                 "company": company,
@@ -112,7 +120,7 @@ def detect_source(company: str, url: str) -> DiscoveryRecord | None:
             platform="lever",
             evidence_url=url,
             source={
-                "id": _source_id(company, "lever"),
+                "id": _source_id(company, "lever", f"{host}:{site}"),
                 "name": f"{company} official Lever board",
                 "type": "lever",
                 "company": company,
@@ -134,7 +142,7 @@ def detect_source(company: str, url: str) -> DiscoveryRecord | None:
             platform="smartrecruiters",
             evidence_url=url,
             source={
-                "id": _source_id(company, "smartrecruiters"),
+                "id": _source_id(company, "smartrecruiters", identifier),
                 "name": f"{company} official SmartRecruiters postings",
                 "type": "smartrecruiters",
                 "company": company,
@@ -170,7 +178,7 @@ def detect_source(company: str, url: str) -> DiscoveryRecord | None:
                 platform="workday",
                 evidence_url=url,
                 source={
-                    "id": _source_id(company, "workday"),
+                    "id": _source_id(company, "workday", f"{host}:{tenant}:{site}"),
                     "name": f"{company} official Workday careers",
                     "type": "workday",
                     "company": company,
@@ -202,7 +210,7 @@ def detect_source(company: str, url: str) -> DiscoveryRecord | None:
                 platform="oracle_hcm",
                 evidence_url=url,
                 source={
-                    "id": _source_id(company, "oracle"),
+                    "id": _source_id(company, "oracle", f"{host}:{match.group(1)}"),
                     "name": f"{company} official Oracle HCM careers",
                     "type": "oracle_hcm",
                     "company": company,
@@ -345,7 +353,8 @@ def discover_sitemap(
             for line in lines:
                 if line.lower().startswith("sitemap:"):
                     sitemap_candidates.append(line.split(":", 1)[1].strip())
-    except Exception:
+    except Exception as exc:
+        LOGGER.warning("Skipping sitemap discovery for %s: %s", seed_url, exc)
         return None
     if not sitemap_candidates:
         sitemap_candidates.append(f"{origin}/sitemap.xml")
@@ -364,7 +373,8 @@ def discover_sitemap(
             if response.status_code == 404:
                 continue
             root_name, urls = _sitemap_urls(response.content)
-        except Exception:
+        except Exception as exc:
+            LOGGER.warning("Skipping unreadable sitemap %s: %s", sitemap_url, exc)
             continue
         root_sitemap = root_sitemap or sitemap_url
         if root_name == "sitemapindex":
@@ -379,7 +389,7 @@ def discover_sitemap(
         return None
 
     sample_spec = SourceSpec(
-        source_id=_source_id(company, "sitemap-sample"),
+        source_id=_source_id(company, "sitemap-sample", root_sitemap),
         name=f"{company} official careers sitemap sample",
         source_type="sitemap",
         enabled=True,
@@ -393,7 +403,8 @@ def discover_sitemap(
                 continue
             response = client.get(job_url)
             jobs_found += len(parse_job_postings(response.text, response.url, sample_spec))
-        except Exception:
+        except Exception as exc:
+            LOGGER.warning("Skipping unreadable sample job %s: %s", job_url, exc)
             continue
     if jobs_found == 0:
         return None
@@ -407,7 +418,7 @@ def discover_sitemap(
         probe_status="pass",
         probe_jobs=jobs_found,
         source={
-            "id": _source_id(company, "sitemap"),
+            "id": _source_id(company, "sitemap", root_sitemap),
             "name": f"{company} official JobPosting sitemap",
             "type": "sitemap",
             "company": company,
@@ -466,7 +477,8 @@ def discover_registry(
         for seed in seeds:
             try:
                 response = client.get(seed)
-            except Exception:
+            except Exception as exc:
+                LOGGER.warning("Skipping unreachable discovery seed %s: %s", seed, exc)
                 continue
             discovered_urls.append(response.url)
             content_type = response.headers.get("content-type", "").lower()

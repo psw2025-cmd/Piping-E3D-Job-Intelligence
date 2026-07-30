@@ -2,7 +2,7 @@ name: deep-official-source-discovery
 
 on:
   schedule:
-    - cron: "15 1 * * *"
+    - cron: "15 1 * * 0"
   workflow_dispatch:
   push:
     branches: [main]
@@ -18,15 +18,43 @@ on:
       - "tests/test_source_discovery.py"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: deep-official-source-discovery
   cancel-in-progress: true
 
 jobs:
+  validate:
+    name: Validate discovery engine once
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install project with test tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Lint and test discovery engine
+        run: |
+          ruff check \
+            scripts/discover_official_sources.py \
+            src/job_intelligence/source_discovery.py \
+            tests/test_source_discovery.py
+          pytest -q tests/test_source_discovery.py
+
   scan:
     name: Discover official sources shard ${{ matrix.shard }}
+    needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 55
     strategy:
@@ -35,21 +63,18 @@ jobs:
         shard: [0, 1, 2, 3, 4, 5, 6, 7]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
 
-      - name: Install project
+      - name: Install runtime project
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev]"
-
-      - name: Test discovery engine
-        run: pytest -q tests/test_source_discovery.py
+          pip install -e .
 
       - name: Scan global employer and recruiter registries
         run: |
@@ -89,11 +114,12 @@ jobs:
           PY
 
       - name: Upload shard proof
-        uses: actions/upload-artifact@v4
+        if: always()
+        uses: actions/upload-artifact@v7
         with:
           name: official-source-discovery-shard-${{ matrix.shard }}
           path: tmp/source-discovery/shard-${{ matrix.shard }}/
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 14
 
   merge:
@@ -103,12 +129,12 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -119,7 +145,7 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Download discovery shards
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: official-source-discovery-shard-*
           path: tmp/source-discovery-shards
@@ -163,7 +189,7 @@ jobs:
           PY
 
       - name: Upload merged proof bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Global-Official-Source-Discovery-Proof
           path: |
@@ -172,28 +198,3 @@ jobs:
             config/runtime_sources.generated.yaml
           if-no-files-found: error
           retention-days: 30
-
-      - name: Commit verified runtime source registry
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add \
-            docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json \
-            docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md \
-            config/runtime_sources.generated.yaml
-          if git diff --cached --quiet; then
-            echo "No verified source-registry change to commit."
-            exit 0
-          fi
-          git commit -m "report: refresh verified global official source registry [skip ci]"
-          for attempt in 1 2 3; do
-            if git pull --rebase origin main && git push origin HEAD:main; then
-              exit 0
-            fi
-            git rebase --abort 2>/dev/null || true
-            sleep $((attempt * 5))
-          done
-          echo "Unable to publish verified source registry." >&2
-          exit 1
