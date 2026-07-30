@@ -30,12 +30,12 @@ jobs:
     timeout-minutes: 50
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
@@ -117,7 +117,7 @@ jobs:
           cat docs/LATEST_48H_GLOBAL_PIPING_SCAN.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload proof artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: global-48h-piping-scan-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
