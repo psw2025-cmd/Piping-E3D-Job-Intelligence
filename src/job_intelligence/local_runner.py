@@ -163,26 +163,18 @@ def run_logged(
         creationflags=flags,
         start_new_session=os.name != "nt",
     )
-    started = time.monotonic()
-    assert process.stdout is not None
     try:
-        while True:
-            if time.monotonic() - started > timeout_seconds:
-                _kill_tree(process)
-                raise TimeoutError(f"child exceeded timeout: {command[1]}")
-            line = process.stdout.readline()
-            if line:
-                clean = redact(line.rstrip())
-                log.write(f"{now_utc().isoformat()} {clean}\n")
-                log.flush()
-            elif process.poll() is not None:
-                break
-            else:
-                time.sleep(0.1)
-        return int(process.wait())
+        output, _ = process.communicate(timeout=timeout_seconds)
+    except subprocess.TimeoutExpired as exc:
+        _kill_tree(process)
+        raise TimeoutError(f"child exceeded timeout: {command[1]}") from exc
     except BaseException:
         _kill_tree(process)
         raise
+    for line in output.splitlines():
+        log.write(f"{now_utc().isoformat()} {redact(line)}\n")
+    log.flush()
+    return int(process.returncode)
 
 
 def _source_hosts(config_path: Path) -> set[str]:

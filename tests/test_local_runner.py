@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import sys
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -10,6 +12,7 @@ from job_intelligence.local_runner import (
     exclusive_lock,
     is_transient_failure,
     redact,
+    run_logged,
     run_name,
 )
 
@@ -56,6 +59,32 @@ def test_transient_failure_classification() -> None:
 def test_run_name_is_deterministic() -> None:
     stamp = datetime(2026, 7, 30, 12, 34, 56, tzinfo=UTC)
     assert run_name(stamp, 2) == "run-20260730-123456-attempt-2"
+
+
+def test_run_logged_enforces_hard_timeout(tmp_path: Path) -> None:
+    started = time.monotonic()
+    with (
+        (tmp_path / "run.log").open("w", encoding="utf-8") as log,
+        pytest.raises(TimeoutError, match="child exceeded timeout"),
+    ):
+        run_logged(
+            [sys.executable, "-c", "import time; time.sleep(5)"],
+            cwd=tmp_path,
+            log=log,
+            timeout_seconds=0.2,
+        )
+    assert time.monotonic() - started < 3
+
+
+def test_run_logged_propagates_exit_code(tmp_path: Path) -> None:
+    with (tmp_path / "run.log").open("w", encoding="utf-8") as log:
+        code = run_logged(
+            [sys.executable, "-c", "raise SystemExit(7)"],
+            cwd=tmp_path,
+            log=log,
+            timeout_seconds=5,
+        )
+    assert code == 7
 
 
 def test_powershell_wrapper_has_public_safety_contract() -> None:
