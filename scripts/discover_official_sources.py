@@ -8,7 +8,7 @@ from typing import Any
 
 import yaml
 
-import job_intelligence.source_discovery as source_discovery
+from job_intelligence import source_discovery
 from job_intelligence.source_discovery import discover_registry, write_outputs
 
 NAME_FIELDS = (
