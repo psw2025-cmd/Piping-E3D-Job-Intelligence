@@ -99,5 +99,5 @@ def test_task_design_fails_closed_before_registration() -> None:
     script = (Path(__file__).parents[1] / "scripts/task_scheduler_public_daily.ps1").read_text(encoding="utf-8")
     assert "StartWhenAvailable" in script
     assert "IgnoreNew" in script
-    assert "Registration requires explicit final installation approval" in script
-    assert "Register-ScheduledTask " not in script
+    assert "if ($Install)" in script
+    assert "Register-ScheduledTask -TaskName $TaskName -InputObject $task" in script

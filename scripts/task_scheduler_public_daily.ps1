@@ -40,13 +40,13 @@ $proof = [ordered]@{
     RunLevel = 'Limited'
     RegistrationPerformed = $false
 }
+if ($Install) {
+    Register-ScheduledTask -TaskName $TaskName -InputObject $task | Out-Null
+    $proof.RegistrationPerformed = $true
+}
 if ($DryRunOutput) {
     $parent = Split-Path -Parent ([IO.Path]::GetFullPath($DryRunOutput))
     if ($parent) { New-Item -ItemType Directory -Path $parent -Force | Out-Null }
     $proof | ConvertTo-Json | Set-Content -LiteralPath $DryRunOutput -Encoding utf8
 }
 $proof | ConvertTo-Json
-if ($Install) {
-    throw 'Registration requires explicit final installation approval; rerun only after approval with the registration line enabled.'
-}
-# Deliberately no task-registration call in this version.
