@@ -103,7 +103,7 @@ Install the combined daily Windows task:
 
 ## Automatic public collection
 
-The `daily-live-job-intelligence` workflow runs every day at 09:00 Asia/Kolkata and can
+The `daily-live-job-intelligence` workflow runs every day at 09:00 and 18:00 Asia/Kolkata and can
 also be started manually from GitHub Actions. It validates enabled official sources,
 collects jobs, retains evidence, exports Excel, verifies all proof and uploads a 14-day
 portable artifact.
