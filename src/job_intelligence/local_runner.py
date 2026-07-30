@@ -375,10 +375,14 @@ def main() -> int:
             output = contained_child(data_root, data_root / run_name(stamp, attempt))
             if output.exists():
                 raise SystemExit(f"refusing to overwrite existing run: {output}")
-            output.mkdir(parents=True)
-            log_path = output / "local-runner.log"
+            temporary_log = data_root / f"{output.name}.local-runner.log"
+            if temporary_log.exists():
+                raise SystemExit(f"refusing to overwrite existing log: {temporary_log}")
             started = now_utc()
-            with log_path.open("w", encoding="utf-8") as log:
+            code = 2
+            coverage_code = 2
+            failure: Exception | None = None
+            with temporary_log.open("w", encoding="utf-8") as log:
                 log.write(f"{started.isoformat()} START commit={commit} attempt={attempt}\n")
                 command = [sys.executable, str(repo / "scripts/run_cloud_daily.py"), "--sources", str(config), "--output", str(output)]
                 if args.allow_no_sources:
@@ -391,11 +395,19 @@ def main() -> int:
                         log=log,
                         timeout_seconds=deadline - time.monotonic(),
                     )
+                except Exception as exc:
+                    failure = exc
+            output.mkdir(parents=True, exist_ok=True)
+            temporary_log.replace(output / "local-runner.log")
+            if failure is None:
+                try:
                     proof = verify_output(output, started)
                     final_status = {**proof, "daily_exit": code, "coverage_exit": coverage_code, "attempt": attempt, "commit": commit, "branch": branch, "started_at": started.isoformat(), "ended_at": now_utc().isoformat(), "output": str(output)}
                 except Exception as exc:
-                    final_status = {"result": "FAIL", "error": redact(f"{type(exc).__name__}: {exc}"), "attempt": attempt, "commit": commit, "branch": branch, "output": str(output)}
-                (output / "local-runner-status.json").write_text(json.dumps(final_status, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+                    failure = exc
+            if failure is not None:
+                final_status = {"result": "FAIL", "error": redact(f"{type(failure).__name__}: {failure}"), "attempt": attempt, "commit": commit, "branch": branch, "output": str(output)}
+            (output / "local-runner-status.json").write_text(json.dumps(final_status, indent=2, sort_keys=True) + "\n", encoding="utf-8")
             if final_status.get("result") == "PASS" and final_status.get("daily_exit") == 0 and final_status.get("coverage_exit") == 0:
                 retention_cleanup(data_root, keep_days=args.keep_days, keep_runs=args.keep_runs)
                 print(json.dumps(final_status, sort_keys=True))
