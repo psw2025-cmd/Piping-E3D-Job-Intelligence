@@ -2,7 +2,7 @@ name: global-48h-piping-scan
 
 on:
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "17 0,12 * * *"
   workflow_dispatch:
   push:
     branches: [main]
@@ -18,7 +18,7 @@ on:
       - "tests/test_source_discovery.py"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: global-48h-piping-scan
@@ -30,12 +30,12 @@ jobs:
     timeout-minutes: 50
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -45,7 +45,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
-      - name: Run complete regression suite
+      - name: Run complete regression suite for changed code
+        if: github.event_name != 'schedule'
         run: pytest -q
 
       - name: Discover and verify priority official public sources
@@ -116,7 +117,7 @@ jobs:
           cat docs/LATEST_48H_GLOBAL_PIPING_SCAN.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload proof artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: global-48h-piping-scan-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
@@ -132,30 +133,3 @@ jobs:
           if-no-files-found: error
           retention-days: 14
           compression-level: 6
-
-      - name: Commit latest evidence-backed reports
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add \
-            docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md \
-            docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json \
-            docs/LATEST_48H_GLOBAL_PIPING_SCAN.md \
-            docs/LATEST_48H_GLOBAL_PIPING_SCAN.json
-          if git diff --cached --quiet; then
-            echo "No report change to commit."
-            exit 0
-          fi
-          git commit -m "report: refresh official-source global piping intelligence [skip ci]"
-          for attempt in 1 2 3; do
-            if git pull --rebase origin main && git push origin HEAD:main; then
-              exit 0
-            fi
-            echo "Report push attempt ${attempt} failed; retrying after refresh."
-            git rebase --abort 2>/dev/null || true
-            sleep $((attempt * 5))
-          done
-          echo "Unable to publish report after three attempts." >&2
-          exit 1
