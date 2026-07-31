@@ -93,6 +93,9 @@ def test_powershell_wrapper_has_public_safety_contract() -> None:
     assert all(value in script for value in required)
     assert "gmail-auth" not in script
     assert "gmail-import" not in script
+    assert "Start-Process" in script
+    assert "-Wait" in script
+    assert "exit $process.ExitCode" in script
 
 
 def test_task_design_fails_closed_before_registration() -> None:

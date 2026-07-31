@@ -33,8 +33,14 @@ $arguments = @(
 if ($AllowNoSources) { $arguments += '--allow-no-sources' }
 if ($SkipConnectivity) { $arguments += '--skip-connectivity' }
 
-& $Py @arguments
-exit $LASTEXITCODE
+$process = Start-Process `
+    -FilePath $Py `
+    -ArgumentList $arguments `
+    -WorkingDirectory $RepoRoot `
+    -NoNewWindow `
+    -Wait `
+    -PassThru
+exit $process.ExitCode
 
 <#
 Emergency stop:
