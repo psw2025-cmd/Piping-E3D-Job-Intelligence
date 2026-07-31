@@ -211,6 +211,62 @@ def test_workday_location_filter_and_malformed_response() -> None:
     assert len(result.evidence) == 2
 
 
+def test_workday_retains_first_page_total_when_later_total_is_zero() -> None:
+    first_paths = [f"/job/India/Piping-{index}_R{index}" for index in range(20)]
+    final_paths = ["/job/India/Piping-20_R20"]
+    searches = [
+        {
+            "total": 21,
+            "jobPostings": [
+                {
+                    "title": f"Piping Engineer {index}",
+                    "externalPath": path,
+                    "locationsText": "India",
+                }
+                for index, path in enumerate(first_paths)
+            ],
+        },
+        {
+            "total": 0,
+            "jobPostings": [
+                {
+                    "title": "Piping Engineer 20",
+                    "externalPath": final_paths[0],
+                    "locationsText": "India",
+                }
+            ],
+        },
+    ]
+    all_paths = first_paths + final_paths
+    client = FakeClient(
+        searches=searches,
+        details={
+            detail_url(path): {
+                "jobPostingInfo": {
+                    "title": f"Piping Engineer {index}",
+                    "location": "India",
+                    "jobDescription": "<p>Piping engineering.</p>",
+                }
+            }
+            for index, path in enumerate(all_paths)
+        },
+    )
+
+    result = collect_workday(
+        workday_spec(
+            search_terms=["piping"],
+            max_items=50,
+            max_scan_items=100,
+            page_size=20,
+        ),
+        client,
+    )
+
+    assert len(result.jobs) == 21
+    assert len(client.post_calls) == 2
+    assert [call[1]["offset"] for call in client.post_calls] == [0, 20]
+
+
 def test_production_kbr_and_atkins_workday_sources_are_enabled() -> None:
     root = Path(__file__).resolve().parents[1]
     config = load_source_config(root / "config" / "sources.yaml")
