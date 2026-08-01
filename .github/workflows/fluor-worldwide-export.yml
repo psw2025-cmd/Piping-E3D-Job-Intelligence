@@ -39,6 +39,14 @@ jobs:
       - name: Static compile gate
         run: python -m py_compile scripts/export_fluor_worldwide.py
 
+      - name: Initialize failure-proof diagnostics
+        shell: bash
+        run: |
+          mkdir -p output/fluor
+          cat > output/fluor/Fluor_Workflow_Diagnostic.json <<EOF
+          {"status":"started","workflow":"${{ github.workflow }}","run_id":"${{ github.run_id }}","run_attempt":"${{ github.run_attempt }}","sha":"${{ github.sha }}"}
+          EOF
+
       - name: Primary exhaustive export
         id: primary
         continue-on-error: true
@@ -109,13 +117,15 @@ jobs:
         shell: bash
         run: |
           echo "# Fluor Worldwide Official Job Export" >> "$GITHUB_STEP_SUMMARY"
-          if [ -f output/fluor/Fluor_Worldwide_Summary.json ]; then
-            echo '```json' >> "$GITHUB_STEP_SUMMARY"
-            cat output/fluor/Fluor_Worldwide_Summary.json >> "$GITHUB_STEP_SUMMARY"
-            echo '```' >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "Exporter did not create a verified summary." >> "$GITHUB_STEP_SUMMARY"
+          mkdir -p output/fluor
+          if [ ! -f output/fluor/Fluor_Worldwide_Summary.json ]; then
+            cat > output/fluor/Fluor_Worldwide_Summary.json <<EOF
+          {"status":"failed_before_verified_summary","workflow":"${{ github.workflow }}","run_id":"${{ github.run_id }}","run_attempt":"${{ github.run_attempt }}","sha":"${{ github.sha }}"}
+          EOF
           fi
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat output/fluor/Fluor_Worldwide_Summary.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload CSV and failure-proof deliverables
         if: always()
@@ -125,6 +135,6 @@ jobs:
           path: |
             output/fluor/
             output/fluor-recovery/
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 30
           compression-level: 6
