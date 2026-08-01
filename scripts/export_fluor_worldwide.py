@@ -18,6 +18,7 @@ import requests
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+
 BASE='https://careers.fluor.com'; LISTING=f'{BASE}/careers'; UA='Piping-E3D-Job-Intelligence/0.7 (+official public-source audit)'
 LISTING_VARIANTS=[LISTING,f'{LISTING}?query=piping',f'{LISTING}?query=e3d',f'{LISTING}?query=pdms',f'{LISTING}?query=layout',f'{LISTING}?query=3d']
 KEYWORDS={
