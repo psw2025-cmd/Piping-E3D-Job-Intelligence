@@ -1,0 +1,91 @@
+name: fluor-worldwide-export
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/fluor-worldwide-csv
+    paths:
+      - scripts/export_fluor_worldwide.py
+      - .github/workflows/fluor-worldwide-export.yml
+  schedule:
+    - cron: "30 3 * * *"
+      timezone: "Asia/Kolkata"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fluor-worldwide-export
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install exporter dependencies
+        run: python -m pip install --upgrade pip requests beautifulsoup4
+
+      - name: Export all Fluor worldwide jobs and piping/E3D matches
+        run: python scripts/export_fluor_worldwide.py --output output/fluor --delay 0.45
+
+      - name: Verify deliverables
+        shell: bash
+        run: |
+          python - <<'PY'
+          import csv
+          import json
+          from pathlib import Path
+
+          root = Path("output/fluor")
+          expected = [
+              root / "Fluor_All_Worldwide_Jobs.csv",
+              root / "Fluor_Piping_E3D_All_Matches.csv",
+              root / "Fluor_Direct_Piping_E3D_Matches.csv",
+              root / "Fluor_Worldwide_Summary.json",
+          ]
+          missing = [str(path) for path in expected if not path.exists()]
+          if missing:
+              raise SystemExit(f"Missing outputs: {missing}")
+          summary = json.loads(expected[-1].read_text(encoding="utf-8"))
+          with expected[0].open(encoding="utf-8-sig", newline="") as handle:
+              rows = list(csv.DictReader(handle))
+          if len(rows) != int(summary["catalogue_count"]):
+              raise SystemExit("CSV row count does not match summary catalogue_count")
+          if len(rows) < 100:
+              raise SystemExit(f"Coverage unexpectedly low: {len(rows)} catalogue rows")
+          if len({row["position_id"] for row in rows}) != len(rows):
+              raise SystemExit("Duplicate Fluor position_id values found")
+          print(f"PASS: {len(rows)} unique official Fluor catalogue rows exported")
+          PY
+
+      - name: Publish summary
+        if: always()
+        shell: bash
+        run: |
+          echo "# Fluor Worldwide Official Job Export" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f output/fluor/Fluor_Worldwide_Summary.json ]; then
+            cat output/fluor/Fluor_Worldwide_Summary.json >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Exporter did not create summary." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload CSV deliverables
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fluor-worldwide-jobs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: output/fluor/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
