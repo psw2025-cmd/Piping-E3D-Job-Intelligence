@@ -1,0 +1,36 @@
+schema_version: 1
+verified_at: 2026-08-01
+
+employers:
+  - company: Cenovus Energy
+    priority: 2
+    official_careers_url: https://www.cenovus.com/Careers/Current-opportunities
+    public_job_url: https://cenovus.wd3.myworkdayjobs.com/careers
+    public_job_host: cenovus.wd3.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: 2026-08-01
+    notes: Tenant-specific Workday JSON endpoint returned HTTP 200 and 24 jobs; robots allows /careers/ and disallows /refreshFacet/. Production source configuration and tests remain pending.
+
+  - company: Monadelphous
+    priority: 2
+    official_careers_url: https://careers.monadelphous.com.au/
+    public_job_url: https://jobs.monadelphous.com.au/careers/SearchJobs
+    public_job_host: jobs.monadelphous.com.au
+    ats_type: avature_public_html
+    status: connector_planned
+    source_ids: []
+    verified_at: 2026-08-01
+    notes: Official careers page links to the monadelphous.avature.net tenant, which resolves to the branded host. Robots explicitly allows /careers. Search, pagination, folder IDs, job details and apply routes passed browser proof; no generic JSON feed was proven.
+
+  - company: BASF
+    priority: 2
+    official_careers_url: https://www.basf.com/global/en/careers
+    public_job_url: https://basf.jobs/search/
+    public_job_host: basf.jobs
+    ats_type: successfactors_rmk_public_html
+    status: connector_planned
+    source_ids: []
+    verified_at: 2026-08-01
+    notes: Google and official-site proof confirmed BASF SuccessFactors Recruiting Marketing / Jobs2Web. Search returned 479 server-rendered jobs. The proposed format=json endpoint returned HTML and was rejected. Robots permits search/job pages but restricts application and account routes.
