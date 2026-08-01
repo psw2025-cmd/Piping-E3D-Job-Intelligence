@@ -22,7 +22,7 @@ concurrency:
 jobs:
   export:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -36,10 +36,28 @@ jobs:
       - name: Install exporter dependencies
         run: python -m pip install --upgrade pip requests beautifulsoup4
 
-      - name: Export all Fluor worldwide jobs and piping/E3D matches
-        run: python scripts/export_fluor_worldwide.py --output output/fluor --delay 0.45
+      - name: Static compile gate
+        run: python -m py_compile scripts/export_fluor_worldwide.py
 
-      - name: Verify deliverables
+      - name: Primary exhaustive export
+        id: primary
+        continue-on-error: true
+        run: python scripts/export_fluor_worldwide.py --output output/fluor --delay 0.45 --timeout 30 --max-details 2000 --minimum-catalogue 100
+
+      - name: Conservative recovery export
+        if: steps.primary.outcome != 'success'
+        run: |
+          rm -rf output/fluor-recovery
+          python scripts/export_fluor_worldwide.py \
+            --output output/fluor-recovery \
+            --delay 0.8 \
+            --timeout 60 \
+            --max-details 2000 \
+            --minimum-catalogue 100
+          rm -rf output/fluor
+          mv output/fluor-recovery output/fluor
+
+      - name: Verify deliverables and internal reconciliation
         shell: bash
         run: |
           python - <<'PY'
@@ -52,21 +70,38 @@ jobs:
               root / "Fluor_All_Worldwide_Jobs.csv",
               root / "Fluor_Piping_E3D_All_Matches.csv",
               root / "Fluor_Direct_Piping_E3D_Matches.csv",
+              root / "Fluor_Detail_Failures.csv",
+              root / "Fluor_Source_Evidence.json",
               root / "Fluor_Worldwide_Summary.json",
           ]
           missing = [str(path) for path in expected if not path.exists()]
           if missing:
               raise SystemExit(f"Missing outputs: {missing}")
-          summary = json.loads(expected[-1].read_text(encoding="utf-8"))
-          with expected[0].open(encoding="utf-8-sig", newline="") as handle:
+          summary = json.loads((root / "Fluor_Worldwide_Summary.json").read_text(encoding="utf-8"))
+          evidence = json.loads((root / "Fluor_Source_Evidence.json").read_text(encoding="utf-8"))
+          with (root / "Fluor_All_Worldwide_Jobs.csv").open(encoding="utf-8-sig", newline="") as handle:
               rows = list(csv.DictReader(handle))
+          with (root / "Fluor_Piping_E3D_All_Matches.csv").open(encoding="utf-8-sig", newline="") as handle:
+              matches = list(csv.DictReader(handle))
+          with (root / "Fluor_Direct_Piping_E3D_Matches.csv").open(encoding="utf-8-sig", newline="") as handle:
+              direct = list(csv.DictReader(handle))
           if len(rows) != int(summary["catalogue_count"]):
-              raise SystemExit("CSV row count does not match summary catalogue_count")
+              raise SystemExit("All-jobs CSV count disagrees with summary")
+          if len(matches) != int(summary["keyword_matches"]):
+              raise SystemExit("Keyword-match CSV count disagrees with summary")
+          if len(direct) != int(summary["direct_matches"]):
+              raise SystemExit("Direct-match CSV count disagrees with summary")
           if len(rows) < 100:
-              raise SystemExit(f"Coverage unexpectedly low: {len(rows)} catalogue rows")
-          if len({row["position_id"] for row in rows}) != len(rows):
-              raise SystemExit("Duplicate Fluor position_id values found")
-          print(f"PASS: {len(rows)} unique official Fluor catalogue rows exported")
+              raise SystemExit(f"Coverage unexpectedly low: {len(rows)} rows")
+          ids = [row["position_id"] for row in rows]
+          if not all(ids) or len(set(ids)) != len(ids):
+              raise SystemExit("Missing or duplicate Fluor position IDs")
+          if not evidence or not any(item.get("status") == 200 for item in evidence):
+              raise SystemExit("No successful official-source evidence response")
+          bad_urls = [row["official_url"] for row in rows if not row["official_url"].startswith("https://careers.fluor.com/")]
+          if bad_urls:
+              raise SystemExit(f"Non-Fluor application URLs detected: {bad_urls[:3]}")
+          print(f"PASS: {len(rows)} unique jobs, {len(matches)} keyword matches, {len(direct)} direct matches")
           PY
 
       - name: Publish summary
@@ -75,17 +110,21 @@ jobs:
         run: |
           echo "# Fluor Worldwide Official Job Export" >> "$GITHUB_STEP_SUMMARY"
           if [ -f output/fluor/Fluor_Worldwide_Summary.json ]; then
+            echo '```json' >> "$GITHUB_STEP_SUMMARY"
             cat output/fluor/Fluor_Worldwide_Summary.json >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "Exporter did not create summary." >> "$GITHUB_STEP_SUMMARY"
+            echo "Exporter did not create a verified summary." >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Upload CSV deliverables
+      - name: Upload CSV and failure-proof deliverables
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: fluor-worldwide-jobs-${{ github.run_id }}-${{ github.run_attempt }}
-          path: output/fluor/
-          if-no-files-found: error
+          path: |
+            output/fluor/
+            output/fluor-recovery/
+          if-no-files-found: warn
           retention-days: 30
           compression-level: 6
