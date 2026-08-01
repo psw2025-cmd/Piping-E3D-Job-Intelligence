@@ -1,12 +1,19 @@
-#!/usr/bin/env python3
 """Resilient official-source Fluor worldwide job exporter."""
+
 from __future__ import annotations
-import argparse,csv,hashlib,json,re,time
-from datetime import datetime,timezone
+
+import argparse
+import csv
+import hashlib
+import json
+import re
+import time
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any,Iterable
-from urllib.parse import urljoin,urlparse
+from typing import Any, Iterable
+from urllib.parse import urljoin, urlparse
 from urllib.robotparser import RobotFileParser
+
 import requests
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
@@ -82,12 +89,12 @@ def get(s:requests.Session,url:str,timeout:int)->requests.Response:
  r=s.get(url,timeout=timeout,allow_redirects=True);r.raise_for_status();return r
 
 def epoch(v:Any)->str:
- try:return datetime.fromtimestamp(int(v),timezone.utc).isoformat()
+ try:return datetime.fromtimestamp(int(v), UTC).isoformat()
  except (TypeError,ValueError,OSError):return ''
 
 def find_text(ps:list[str],text:str)->str:
  for p in ps:
-  m=re.search(p,text,re.I|re.S)
+  m=re.search(p,text,re.IGNORECASE | re.DOTALL)
   if m:return re.sub(r'\s+',' ',m.group(0)).strip()[:700]
  return ''
 
@@ -104,7 +111,7 @@ def write_csv(path:Path,data:list[dict[str,Any]],fields=FIELDS):
 
 def main()->int:
  p=argparse.ArgumentParser();p.add_argument('--output',default='output/fluor');p.add_argument('--delay',type=float,default=.45);p.add_argument('--timeout',type=int,default=30);p.add_argument('--max-details',type=int,default=2000);p.add_argument('--minimum-catalogue',type=int,default=100);a=p.parse_args()
- out=Path(a.output);out.mkdir(parents=True,exist_ok=True);collected=datetime.now(timezone.utc).isoformat();s=session();evidence=[]
+ out=Path(a.output);out.mkdir(parents=True,exist_ok=True);collected=datetime.now(UTC).isoformat();s=session();evidence=[]
  robots=RobotFileParser(urljoin(BASE,'/robots.txt'));robots.set_url(urljoin(BASE,'/robots.txt'))
  try:robots.read()
  except Exception as exc:raise SystemExit(f'robots.txt unavailable; fail closed: {type(exc).__name__}')
@@ -142,7 +149,7 @@ def main()->int:
    except requests.RequestException as exc:notes=f'detail request failed after retries: {type(exc).__name__}';failures.append({'position_id':job.get('id',''),'official_url':url,'error':notes})
    time.sleep(max(a.delay,0))
   else:notes='detail not fetched because of configured limit/domain/robots policy'
-  title=str(job.get('name') or job.get('posting_name') or '');posting=str(job.get('posting_name') or '');locs=job.get('locations') or [];loc=str(job.get('location') or (locs[0] if locs else ''));hay=' '.join((title,posting,desc));flags={k:bool(re.search(v,hay,re.I)) for k,v in KEYWORDS.items()};matched=[k for k,v in flags.items() if v]
+  title=str(job.get('name') or job.get('posting_name') or '');posting=str(job.get('posting_name') or '');locs=job.get('locations') or [];loc=str(job.get('location') or (locs[0] if locs else ''));hay=' '.join((title,posting,desc));flags={k:bool(re.search(v, hay, re.IGNORECASE)) for k,v in KEYWORDS.items()};matched=[k for k,v in flags.items() if v]
   row={'company':'Fluor','position_id':job.get('id',''),'ats_job_id':job.get('ats_job_id',''),'display_job_id':job.get('display_job_id',''),'title':title,'posting_name':posting,'city_state_country':loc,'all_locations':' | '.join(map(str,locs)),'country':country(loc),'department':' | '.join(map(str,job.get('department') or [])),'business_unit':job.get('business_unit',''),'seniority':job.get('seniority',''),'workplace_type':job.get('work_location_option',''),'hot':job.get('hot',''),'posted_utc':epoch(job.get('t_create')),'updated_utc':epoch(job.get('t_update')),'official_url':url,'detail_http_status':status,'active_status':'confirmed_active' if status=='200' else 'potentially_active','description':desc,**facts,**{f'kw_{k}':int(v) for k,v in flags.items()},'matched_keywords':' | '.join(matched),'match_count':len(matched),'source':LISTING,'discovery_method':method,'collected_utc':collected,'content_sha256':hashlib.sha256(desc.encode()).hexdigest() if desc else '','extraction_notes':notes};rows.append(row)
  relevant=[r for r in rows if int(r['match_count'])>0];direct=[r for r in relevant if any(int(r[f'kw_{k}']) for k in ('piping','e3d','pdms','sp3d_s3d','plant_layout'))]
  write_csv(out/'Fluor_All_Worldwide_Jobs.csv',rows);write_csv(out/'Fluor_Piping_E3D_All_Matches.csv',relevant);write_csv(out/'Fluor_Direct_Piping_E3D_Matches.csv',direct);write_csv(out/'Fluor_Detail_Failures.csv',failures,['position_id','official_url','error'])
