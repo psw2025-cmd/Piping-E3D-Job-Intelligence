@@ -179,6 +179,7 @@ def collect_workday(spec: SourceSpec, client: HttpClient) -> CollectionResult:
 
     for search_term in search_terms:
         offset = 0
+        expected_total = 0
         while len(jobs) < max_items and scanned < max_scan_items:
             if search_pages >= max_pages:
                 warnings.append(
@@ -197,6 +198,8 @@ def collect_workday(spec: SourceSpec, client: HttpClient) -> CollectionResult:
             )
             payload = response.json()
             rows, total = _search_rows(payload)
+            if offset == 0 and total > 0:
+                expected_total = total
             evidence.append(
                 EvidenceArtifact(
                     source_url=response.url,
@@ -271,7 +274,10 @@ def collect_workday(spec: SourceSpec, client: HttpClient) -> CollectionResult:
                         break
 
             offset += len(rows)
-            if (total and offset >= total) or len(rows) < requested:
+            if (
+                (expected_total and offset >= expected_total)
+                or len(rows) < requested
+            ):
                 break
 
         if len(jobs) >= max_items or scanned >= max_scan_items:
