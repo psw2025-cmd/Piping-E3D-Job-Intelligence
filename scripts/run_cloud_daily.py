@@ -253,9 +253,9 @@ def run(args: argparse.Namespace) -> int:
             raise ValueError(" | ".join(verification_errors))
 
         acceptable_statuses = {"pass"}
-        if args.allow_no_sources:
+        if getattr(args, "allow_no_sources", False):
             acceptable_statuses.add("no_sources")
-        if args.allow_partial:
+        if getattr(args, "allow_partial", False):
             acceptable_statuses.add("partial")
         if collection.status not in acceptable_statuses:
             raise RuntimeError(f"collection finished with status {collection.status}")
