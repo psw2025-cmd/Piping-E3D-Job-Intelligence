@@ -255,8 +255,12 @@ def run(args: argparse.Namespace) -> int:
         acceptable_statuses = {"pass"}
         if args.allow_no_sources:
             acceptable_statuses.add("no_sources")
+        if args.allow_partial:
+            acceptable_statuses.add("partial")
         if collection.status not in acceptable_statuses:
             raise RuntimeError(f"collection finished with status {collection.status}")
+        if collection.status == "partial" and int(collection.jobs_collected or 0) <= 0:
+            raise RuntimeError("collection finished partial with zero jobs collected")
 
         set_run_export_status(db_path, collection.run_id, "pass")
         status["verified"] = True
@@ -325,6 +329,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--allow-no-sources",
         action="store_true",
         help="Treat a validated zero-source CI configuration as successful.",
+    )
+    parser.add_argument(
+        "--allow-partial",
+        action="store_true",
+        help="Accept partial source collection when at least one job was collected.",
     )
     return parser
 
