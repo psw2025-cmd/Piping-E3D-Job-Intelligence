@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
+from job_intelligence import coverage_registry as coverage_registry_module
 from job_intelligence.coverage_registry import (
     COVERAGE_STATUSES,
     coverage_frames,
@@ -77,18 +79,30 @@ def test_gmail_query_groups_cover_portals_psus_employers_and_recruiters() -> Non
     assert all(1 <= group["max_messages"] <= 1000 for group in groups)
 
 
-def test_coverage_frames_compute_country_metrics_and_company_jobs() -> None:
+def test_coverage_frames_compute_country_metrics_and_company_jobs(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    now = datetime(2026, 7, 23, 6, 0, tzinfo=UTC)
+
+    class FrozenDateTime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            if tz is None:
+                return now.replace(tzinfo=None)
+            return now.astimezone(tz)
+
+    monkeypatch.setattr(coverage_registry_module, "datetime", FrozenDateTime)
     jobs = pd.DataFrame(
         [
             {
                 "company": "Reliance Industries",
-                "found_at": "2026-07-23T06:00:00+00:00",
-                "last_seen_at": "2026-07-23T06:00:00+00:00",
+                "found_at": (now - timedelta(days=1)).isoformat(),
+                "last_seen_at": (now - timedelta(days=1)).isoformat(),
             },
             {
                 "company": "McDermott",
-                "found_at": "2026-07-22T06:00:00+00:00",
-                "last_seen_at": "2026-07-22T06:00:00+00:00",
+                "found_at": (now - timedelta(days=2)).isoformat(),
+                "last_seen_at": (now - timedelta(days=2)).isoformat(),
             },
         ]
     )
