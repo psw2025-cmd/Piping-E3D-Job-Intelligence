@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pandas as pd
@@ -78,17 +79,18 @@ def test_gmail_query_groups_cover_portals_psus_employers_and_recruiters() -> Non
 
 
 def test_coverage_frames_compute_country_metrics_and_company_jobs() -> None:
+    now = datetime.now(UTC)
     jobs = pd.DataFrame(
         [
             {
                 "company": "Reliance Industries",
-                "found_at": "2026-07-23T06:00:00+00:00",
-                "last_seen_at": "2026-07-23T06:00:00+00:00",
+                "found_at": (now - timedelta(days=1)).isoformat(),
+                "last_seen_at": (now - timedelta(days=1)).isoformat(),
             },
             {
                 "company": "McDermott",
-                "found_at": "2026-07-22T06:00:00+00:00",
-                "last_seen_at": "2026-07-22T06:00:00+00:00",
+                "found_at": (now - timedelta(days=2)).isoformat(),
+                "last_seen_at": (now - timedelta(days=2)).isoformat(),
             },
         ]
     )
