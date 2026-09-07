@@ -243,6 +243,7 @@ def test_repeated_page_can_stop_only_the_current_search_term() -> None:
             max_items=20,
             max_scan_items=100,
             max_pages=10,
+            page_size=1,
         ),
         client,
     )
