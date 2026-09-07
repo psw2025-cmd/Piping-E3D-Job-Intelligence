@@ -211,6 +211,49 @@ def test_workday_location_filter_and_malformed_response() -> None:
     assert len(result.evidence) == 2
 
 
+def test_repeated_page_can_stop_only_the_current_search_term() -> None:
+    client = FakeClient(
+        searches=[
+            {
+                "total": 100,
+                "jobPostings": [
+                    {
+                        "title": "Piping Engineer",
+                        "locationsText": "Mumbai, India",
+                    }
+                ],
+            },
+            {
+                "total": 100,
+                "jobPostings": [
+                    {
+                        "title": "Piping Engineer",
+                        "locationsText": "Mumbai, India",
+                    }
+                ],
+            },
+        ],
+        details={},
+    )
+
+    result = collect_workday(
+        workday_spec(
+            search_terms=["piping"],
+            pagination_repeat_action="stop_search_term",
+            max_items=20,
+            max_scan_items=100,
+            max_pages=10,
+            page_size=1,
+        ),
+        client,
+    )
+
+    assert result.jobs == []
+    assert len(result.evidence) == 2
+    assert result.warnings
+    assert "stopped this search term" in result.warnings[0]
+
+
 def test_production_kbr_and_atkins_workday_sources_are_enabled() -> None:
     root = Path(__file__).resolve().parents[1]
     config = load_source_config(root / "config" / "sources.yaml")
@@ -228,3 +271,4 @@ def test_production_kbr_and_atkins_workday_sources_are_enabled() -> None:
         assert "piping" in source.text_list_option("search_terms")
         assert source.int_option("page_size", 20) <= 100
         assert source.int_option("timeout_seconds", 30) <= 30
+        assert source.options["pagination_repeat_action"] == "stop_search_term"

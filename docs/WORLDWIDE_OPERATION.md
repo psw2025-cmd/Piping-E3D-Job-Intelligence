@@ -16,6 +16,14 @@ The runner performs these steps:
 3. Export one worldwide deduplicated workbook.
 4. Verify the database, public/private/Gmail evidence and workbook contract.
 
+The GitHub daily workflow is strict: a partial source run, failed source, cancelled scan,
+missing evidence, invalid workbook or missing coverage proof is a failed run. The
+--allow-partial escape hatch is intentionally not available to the cloud runner.
+The global 48-hour workflow runs official-source discovery and collection as separate
+jobs, transfers the verified runtime registry as an artifact, then applies the same
+zero-failure gate. This prevents a long discovery phase from consuming the collection
+job timeout and ensures discovered official company sources are actually collected.
+
 Install the recurring local task:
 
 ```powershell
@@ -72,3 +80,6 @@ email-alert representations in the operating view.
 GitHub Actions processes only public sources and uploads a verified artifact. Gmail OAuth
 credentials, CVs, private vacancy files, application status and local recruiter records
 remain on the user's Windows computer.
+## Current strict source contract
+
+The repository-managed baseline currently enables nine official source entries across McDermott, Wood, KBR, AtkinsRealis, Bechtel, three Petrofac feeds, and NPCIL. Workday sources use the provider-compatible page size of 20; if a provider repeats a page, the collector stops only that search term and records the warning so other terms and sources continue. The all-source contract verifies every enabled source's health and retained evidence. Staged sources are not silently enabled until they have live official-source proof.
