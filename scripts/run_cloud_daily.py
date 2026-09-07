@@ -236,12 +236,28 @@ def run(args: argparse.Namespace) -> int:
         status["run_id"] = collection.run_id
         status.update(
             {
-                "sources_attempted": collection.sources_attempted,
-                "sources_passed": collection.sources_passed,
-                "sources_failed": collection.sources_failed,
-                "jobs_collected": collection.jobs_collected,
-                "new_jobs": collection.new_jobs,
-                "updated_jobs": collection.updated_jobs,
+                "sources_attempted": int(
+                    getattr(collection, "sources_attempted", 0)
+                ),
+                "sources_passed": int(
+                    getattr(collection, "sources_passed", 0)
+                ),
+                "sources_failed": int(
+                    getattr(
+                        collection,
+                        "sources_failed",
+                        max(
+                            0,
+                            int(getattr(collection, "sources_attempted", 0))
+                            - int(getattr(collection, "sources_passed", 0)),
+                        ),
+                    )
+                ),
+                "jobs_collected": int(
+                    getattr(collection, "jobs_collected", 0)
+                ),
+                "new_jobs": int(getattr(collection, "new_jobs", 0)),
+                "updated_jobs": int(getattr(collection, "updated_jobs", 0)),
             }
         )
         log_lines.append(
@@ -267,7 +283,7 @@ def run(args: argparse.Namespace) -> int:
             acceptable_statuses.add("no_sources")
         if collection.status not in acceptable_statuses:
             raise RuntimeError(
-                f"collection finished with non-success status {collection.status}; "
+                f"collection finished with status {collection.status}; "
                 "partial source results are not verified"
             )
 
