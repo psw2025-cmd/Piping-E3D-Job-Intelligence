@@ -151,15 +151,9 @@ jobs:
       - name: Publish reports in workflow summary
         run: |
           cat docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md >> "$GITHUB_STEP_SUMMARY"
-          printf '
----
-
-' >> "$GITHUB_STEP_SUMMARY"
+          printf '%s\n\n' '---' >> "$GITHUB_STEP_SUMMARY"
           cat docs/LATEST_48H_GLOBAL_PIPING_SCAN.md >> "$GITHUB_STEP_SUMMARY"
-          printf '
----
-
-' >> "$GITHUB_STEP_SUMMARY"
+          printf '%s\n\n' '---' >> "$GITHUB_STEP_SUMMARY"
           cat output/global-48h/SUMMARY.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload strict global proof artifact
