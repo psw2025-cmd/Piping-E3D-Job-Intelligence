@@ -253,6 +253,14 @@ def _validate_workday_source(spec: SourceSpec) -> None:
     _require_text_list(spec, "search_terms")
     _require_text_list(spec, "include_terms")
     _validate_optional_text_list(spec, "location_terms")
+    repeat_action = str(
+        spec.options.get("pagination_repeat_action", "fail")
+    ).strip().casefold()
+    if repeat_action not in {"fail", "stop_search_term"}:
+        raise ValueError(
+            f"source {spec.source_id!r} pagination_repeat_action must be "
+            "fail or stop_search_term"
+        )
     spec.int_option("page_size", 20)
     spec.int_option("max_scan_items", 3000)
 
