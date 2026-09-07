@@ -199,6 +199,7 @@ def detect_source(company: str, url: str) -> DiscoveryRecord | None:
                     "max_pages": 40,
                     "page_size": 20,
                     "max_redirects": 3,
+                    "pagination_repeat_action": "stop_search_term",
                 },
             )
 
