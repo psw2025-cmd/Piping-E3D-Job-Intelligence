@@ -73,8 +73,9 @@ sources:
   max_items: 250
   max_scan_items: 3000
   max_pages: 40
-  page_size: 20
+  page_size: 100
   max_redirects: 3
+  pagination_repeat_action: stop_search_term
 - id: atkinsrealis_workday
   name: AtkinsRealis official Workday careers
   type: workday
@@ -101,8 +102,9 @@ sources:
   max_items: 250
   max_scan_items: 3000
   max_pages: 40
-  page_size: 20
+  page_size: 100
   max_redirects: 3
+  pagination_repeat_action: stop_search_term
 - id: bechtel_successfactors
   name: Bechtel official SAP SuccessFactors careers
   type: public_html

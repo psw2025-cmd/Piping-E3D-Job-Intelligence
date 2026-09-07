@@ -33,7 +33,7 @@ jobs:
       - name: Collect and verify official sources
         id: daily
         continue-on-error: true
-        run: python scripts/run_cloud_daily.py --output output/daily --allow-partial
+        run: python scripts/run_cloud_daily.py --output output/daily
 
       - name: Append worldwide coverage proof
         id: coverage
@@ -81,20 +81,27 @@ jobs:
           exit_code = int(status.get("exit_code", 2))
           verified = status.get("verified") is True
           workbook = Path("output/daily/Piping_E3D_Jobs.xlsx")
-          if exit_code != 0 and not (verified and workbook.exists()):
+          attempted = int(status.get("sources_attempted", 0))
+          passed = int(status.get("sources_passed", 0))
+          failed = int(status.get("sources_failed", 0))
+          if exit_code != 0 or not verified or not workbook.exists():
               raise SystemExit(
-                  f"Daily collection failed: {status.get('error') or status.get('collection_status')}"
+                  f"Daily collection failed verification: "
+                  f"{status.get('error') or status.get('collection_status')}"
+              )
+          if status.get("collection_status") != "pass":
+              raise SystemExit(
+                  f"Daily collection status is not pass: {status.get('collection_status')}"
+              )
+          if attempted == 0 or passed != attempted or failed != 0:
+              raise SystemExit(
+                  f"Daily source gate failed: attempted={attempted} "
+                  f"passed={passed} failed={failed}"
               )
           if status.get("coverage_verified") is not True:
-              if verified and workbook.exists():
-                  print(
-                      "WARN: coverage_verified false but collection/workbook verified; "
-                      "accepting partial worldwide coverage for CI continuity"
-                  )
-              else:
-                  raise SystemExit("Worldwide coverage workbook proof did not pass")
+              raise SystemExit("Worldwide coverage workbook proof did not pass")
           print(
-              "PASS: daily collection, evidence, workbook and worldwide coverage "
-              "verification completed"
+              "PASS: strict daily collection, all-source evidence, workbook and "
+              "worldwide coverage verification completed"
           )
           PY

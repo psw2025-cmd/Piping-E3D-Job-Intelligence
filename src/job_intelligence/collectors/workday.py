@@ -168,6 +168,14 @@ def collect_workday(spec: SourceSpec, client: HttpClient) -> CollectionResult:
     max_scan_items = spec.int_option("max_scan_items", 3000)
     page_size = min(spec.int_option("page_size", 20), 100)
     max_pages = spec.int_option("max_pages", 40)
+    repeat_action = _text(
+        spec.options.get("pagination_repeat_action", "fail")
+    ).casefold()
+    if repeat_action not in {"fail", "stop_search_term"}:
+        raise ValueError(
+            f"source {spec.source_id!r} pagination_repeat_action must be "
+            "fail or stop_search_term"
+        )
 
     jobs: list[JobRecord] = []
     evidence: list[EvidenceArtifact] = []
@@ -215,9 +223,15 @@ def collect_workday(spec: SourceSpec, client: HttpClient) -> CollectionResult:
                 f"{search_term}|{_page_fingerprint(rows)}".encode()
             ).hexdigest()
             if fingerprint in seen_pages:
-                raise ValueError(
-                    f"source {spec.source_id!r} repeated Workday pagination page"
+                message = (
+                    f"source {spec.source_id!r} repeated Workday pagination page "
+                    f"for search_term={search_term!r} at offset={offset}; "
+                    "the provider returned no new page"
                 )
+                if repeat_action == "stop_search_term":
+                    warnings.append(f"{message}; stopped this search term")
+                    break
+                raise ValueError(message)
             seen_pages.add(fingerprint)
 
             for row in rows:

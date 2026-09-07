@@ -234,6 +234,16 @@ def run(args: argparse.Namespace) -> int:
         )
         status["collection_status"] = collection.status
         status["run_id"] = collection.run_id
+        status.update(
+            {
+                "sources_attempted": collection.sources_attempted,
+                "sources_passed": collection.sources_passed,
+                "sources_failed": collection.sources_failed,
+                "jobs_collected": collection.jobs_collected,
+                "new_jobs": collection.new_jobs,
+                "updated_jobs": collection.updated_jobs,
+            }
+        )
         log_lines.append(
             f"{_now()} collection status={collection.status} "
             f"sources={collection.sources_passed}/{collection.sources_attempted} "
@@ -255,12 +265,11 @@ def run(args: argparse.Namespace) -> int:
         acceptable_statuses = {"pass"}
         if getattr(args, "allow_no_sources", False):
             acceptable_statuses.add("no_sources")
-        if getattr(args, "allow_partial", False):
-            acceptable_statuses.add("partial")
         if collection.status not in acceptable_statuses:
-            raise RuntimeError(f"collection finished with status {collection.status}")
-        if collection.status == "partial" and int(collection.jobs_collected or 0) <= 0:
-            raise RuntimeError("collection finished partial with zero jobs collected")
+            raise RuntimeError(
+                f"collection finished with non-success status {collection.status}; "
+                "partial source results are not verified"
+            )
 
         set_run_export_status(db_path, collection.run_id, "pass")
         status["verified"] = True
@@ -329,11 +338,6 @@ def build_parser() -> argparse.ArgumentParser:
         "--allow-no-sources",
         action="store_true",
         help="Treat a validated zero-source CI configuration as successful.",
-    )
-    parser.add_argument(
-        "--allow-partial",
-        action="store_true",
-        help="Accept partial source collection when at least one job was collected.",
     )
     return parser
 

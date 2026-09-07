@@ -12,8 +12,9 @@ on:
       - "scripts/discover_official_sources.py"
       - "scripts/merge_official_source_discovery.py"
       - "scripts/run_cloud_daily.py"
-      - "config/**"
+      - "scripts/append_daily_coverage.py"
       - "src/job_intelligence/**"
+      - "config/**"
       - "tests/test_48h_urgent_report.py"
       - "tests/test_source_discovery.py"
 
@@ -22,17 +23,16 @@ permissions:
 
 concurrency:
   group: global-48h-piping-scan
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  scan:
+  discover:
+    name: Discover and verify official company sources
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v7
@@ -45,79 +45,125 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
-      - name: Run complete regression suite for changed code
+      - name: Run discovery regression checks
         if: github.event_name != 'schedule'
-        run: pytest -q
+        run: pytest -q tests/test_source_discovery.py tests/test_source_config_strict.py
 
       - name: Discover and verify priority official public sources
-        shell: bash
         run: |
           set -euo pipefail
           mkdir -p output/source-discovery docs
-          BASE_SOURCES="config/sources.yaml"
-          if [ -s config/runtime_sources.generated.yaml ]; then
-            BASE_SOURCES="config/runtime_sources.generated.yaml"
-            echo "Using deep verified runtime source registry."
-          fi
-          if python scripts/discover_official_sources.py \
-            --registry config/employer_registry.yaml \
-            --base-sources "${BASE_SOURCES}" \
-            --report-json docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json \
-            --report-md docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md \
-            --runtime-sources output/source-discovery/runtime-sources.yaml; then
-            echo "PASS: official ATS and sitemap discovery completed"
-          else
-            echo "WARN: priority discovery failed; using last verified runtime sources" >&2
-            cp "${BASE_SOURCES}" output/source-discovery/runtime-sources.yaml
-            cat > docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md <<'EOF'
-          # Latest Official Source Autodiscovery
-
-          Overall result: **FALLBACK**
-
-          The priority discovery stage failed safely. The scan continued with the last verified official-source registry. Gmail was not used.
-          EOF
-            cat > docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json <<'EOF'
-          {"schema_version":1,"status":"fallback","gmail_used":false,"verified":0,"records":[]}
-          EOF
-          fi
+          python scripts/discover_official_sources.py             --registry config/employer_registry.yaml             --base-sources config/sources.yaml             --report-json docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json             --report-md docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md             --runtime-sources output/source-discovery/runtime-sources.yaml
 
       - name: Validate runtime source configuration
         run: |
           python - <<'PY'
+          import json
+          from pathlib import Path
           from job_intelligence.source_config import load_source_config
+
           config = load_source_config("output/source-discovery/runtime-sources.yaml")
           enabled = [source for source in config.sources if source.enabled]
+          report = json.loads(
+              Path("docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json").read_text(
+                  encoding="utf-8"
+              )
+          )
           assert enabled, "runtime source configuration has no enabled sources"
           assert config.policy["respect_robots_txt"] is True
           assert config.policy["bypass_captcha"] is False
           assert config.policy["use_rotating_proxies"] is False
-          print(f"PASS: runtime source configuration valid; enabled={len(enabled)} total={len(config.sources)}")
+          assert report["schema_version"] == 1
+          print(
+              f"PASS: runtime source configuration valid; "
+              f"enabled={len(enabled)} total={len(config.sources)} "
+              f"detected={report['detected']} verified={report['verified']}"
+          )
           PY
 
-      - name: Collect permitted official sources
+      - name: Upload verified discovery registry
+        uses: actions/upload-artifact@v7
+        with:
+          name: global-source-discovery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md
+            docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json
+            output/source-discovery/runtime-sources.yaml
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 6
+
+  collect:
+    name: Collect every verified runtime source and build 48-hour report
+    needs: discover
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install project
         run: |
-          python scripts/run_cloud_daily.py \
-            --sources output/source-discovery/runtime-sources.yaml \
-            --output output/global-48h \
-            --allow-partial
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Download verified discovery registry
+        uses: actions/download-artifact@v8
+        with:
+          name: global-source-discovery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: output/source-discovery
+
+      - name: Validate transferred runtime source configuration
+        run: |
+          python - <<'PY'
+          from job_intelligence.source_config import load_source_config
+
+          config = load_source_config("output/source-discovery/runtime-sources.yaml")
+          enabled = [source for source in config.sources if source.enabled]
+          assert enabled, "transferred runtime source configuration has no enabled sources"
+          print(
+              f"PASS: transferred runtime configuration valid; "
+              f"enabled={len(enabled)} total={len(config.sources)}"
+          )
+          PY
+
+      - name: Run complete regression suite for changed code
+        if: github.event_name != 'schedule'
+        run: pytest -q
+
+      - name: Collect all permitted official sources with strict status
+        run: |
+          python scripts/run_cloud_daily.py             --sources output/source-discovery/runtime-sources.yaml             --output output/global-48h
+
+      - name: Append worldwide coverage proof
+        run: python scripts/append_daily_coverage.py --output output/global-48h
 
       - name: Build strict recent and urgent report
         run: |
-          python scripts/build_48h_urgent_report.py \
-            --db output/global-48h/jobs.db \
-            --output-md docs/LATEST_48H_GLOBAL_PIPING_SCAN.md \
-            --output-json docs/LATEST_48H_GLOBAL_PIPING_SCAN.json \
-            --hours 48 \
-            --timezone Asia/Kolkata
+          python scripts/build_48h_urgent_report.py             --db output/global-48h/jobs.db             --output-md docs/LATEST_48H_GLOBAL_PIPING_SCAN.md             --output-json docs/LATEST_48H_GLOBAL_PIPING_SCAN.json             --hours 48             --timezone Asia/Kolkata
 
       - name: Publish reports in workflow summary
-        shell: bash
         run: |
           cat docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md >> "$GITHUB_STEP_SUMMARY"
-          printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"
-          cat docs/LATEST_48H_GLOBAL_PIPING_SCAN.md >> "$GITHUB_STEP_SUMMARY"
+          printf '
+---
 
-      - name: Upload proof artifact
+' >> "$GITHUB_STEP_SUMMARY"
+          cat docs/LATEST_48H_GLOBAL_PIPING_SCAN.md >> "$GITHUB_STEP_SUMMARY"
+          printf '
+---
+
+' >> "$GITHUB_STEP_SUMMARY"
+          cat output/global-48h/SUMMARY.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload strict global proof artifact
+        if: always()
         uses: actions/upload-artifact@v7
         with:
           name: global-48h-piping-scan-${{ github.run_id }}-${{ github.run_attempt }}
@@ -130,7 +176,47 @@ jobs:
             output/global-48h/SUMMARY.md
             output/global-48h/status.json
             output/global-48h/run.log
+            output/global-48h/Piping_E3D_Jobs.xlsx
             output/global-48h/Piping_E3D_Daily_Bundle.zip
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 14
           compression-level: 6
+
+      - name: Enforce strict global success
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          status_path = Path("output/global-48h/status.json")
+          if not status_path.exists():
+              raise SystemExit("Global runner did not create status.json")
+          status = json.loads(status_path.read_text(encoding="utf-8"))
+          attempted = int(status.get("sources_attempted", 0))
+          passed = int(status.get("sources_passed", 0))
+          failed = int(status.get("sources_failed", 0))
+          required = [
+              status.get("exit_code") == 0,
+              status.get("verified") is True,
+              status.get("collection_status") == "pass",
+              attempted > 0,
+              passed == attempted,
+              failed == 0,
+              status.get("coverage_verified") is True,
+              Path("output/global-48h/Piping_E3D_Jobs.xlsx").exists(),
+              Path("docs/LATEST_48H_GLOBAL_PIPING_SCAN.json").exists(),
+          ]
+          if not all(required):
+              raise SystemExit(
+                  "Global strict gate failed: "
+                  f"status={status.get('collection_status')} "
+                  f"attempted={attempted} passed={passed} failed={failed} "
+                  f"verified={status.get('verified')} "
+                  f"coverage={status.get('coverage_verified')}"
+              )
+          print(
+              "PASS: strict discovery, all-source collection, evidence, workbook, "
+              "coverage and 48-hour report verification completed"
+          )
+          PY
