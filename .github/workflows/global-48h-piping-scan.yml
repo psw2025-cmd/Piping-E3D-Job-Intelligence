@@ -117,7 +117,7 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: global-source-discovery-${{ github.run_id }}-${{ github.run_attempt }}
-          path: output/source-discovery
+          path: .
 
       - name: Validate transferred runtime source configuration
         run: |
