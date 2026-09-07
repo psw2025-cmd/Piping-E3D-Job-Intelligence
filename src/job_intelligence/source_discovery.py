@@ -454,6 +454,11 @@ def discover_registry(
         for source in existing_sources
         if isinstance(source, dict)
     }
+    existing_companies = {
+        str(source.get("company", "")).strip().casefold()
+        for source in existing_sources
+        if isinstance(source, dict) and source.get("enabled", True)
+    }
     records: list[DiscoveryRecord] = []
     seen_candidates: set[tuple[str, str]] = set()
 
@@ -491,7 +496,11 @@ def discover_registry(
             if record is None:
                 continue
             identity = _source_identity(record.source)
-            if identity in existing_identities or identity in seen_candidates:
+            if (
+                identity in existing_identities
+                or identity in seen_candidates
+                or company.casefold() in existing_companies
+            ):
                 continue
             seen_candidates.add(identity)
             records.append(probe_record(record))
@@ -501,7 +510,11 @@ def discover_registry(
             if sitemap_record is None:
                 continue
             identity = _source_identity(sitemap_record.source)
-            if identity not in existing_identities and identity not in seen_candidates:
+            if (
+                identity not in existing_identities
+                and identity not in seen_candidates
+                and company.casefold() not in existing_companies
+            ):
                 seen_candidates.add(identity)
                 records.append(sitemap_record)
 
