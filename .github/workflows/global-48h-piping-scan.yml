@@ -23,7 +23,7 @@ permissions:
 
 concurrency:
   group: global-48h-piping-scan
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   discover:
