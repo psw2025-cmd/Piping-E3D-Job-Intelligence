@@ -22,7 +22,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: global-48h-piping-scan-v2
+  group: global-48h-piping-scan-v3
   cancel-in-progress: true
 
 jobs:
