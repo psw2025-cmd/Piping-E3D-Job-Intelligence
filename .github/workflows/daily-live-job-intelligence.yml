@@ -33,7 +33,7 @@ jobs:
       - name: Collect and verify official sources
         id: daily
         continue-on-error: true
-        run: python scripts/run_cloud_daily.py --output output/daily --allow-partial
+        run: python scripts/run_cloud_daily.py --output output/daily
 
       - name: Append worldwide coverage proof
         id: coverage

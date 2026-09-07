@@ -99,7 +99,7 @@ jobs:
           python scripts/run_cloud_daily.py \
             --sources output/source-discovery/runtime-sources.yaml \
             --output output/global-48h \
-            --allow-partial
+           
 
       - name: Build strict recent and urgent report
         run: |

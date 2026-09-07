@@ -215,9 +215,10 @@ def collect_workday(spec: SourceSpec, client: HttpClient) -> CollectionResult:
                 f"{search_term}|{_page_fingerprint(rows)}".encode()
             ).hexdigest()
             if fingerprint in seen_pages:
-                raise ValueError(
-                    f"source {spec.source_id!r} repeated Workday pagination page"
+                warnings.append(
+                    f"source {spec.source_id!r} repeated Workday pagination page at offset {offset}; stopping gracefully"
                 )
+                break
             seen_pages.add(fingerprint)
 
             for row in rows:

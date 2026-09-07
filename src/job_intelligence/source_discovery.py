@@ -296,7 +296,7 @@ def probe_record(record: DiscoveryRecord) -> DiscoveryRecord:
     try:
         spec = _spec_from_mapping(record.source)
         client = SafeHttpClient(
-            timeout_seconds=20,
+            timeout_seconds=10,
             max_response_bytes=5_000_000,
             rate_limit_per_minute=30,
             max_redirects=3,
@@ -468,7 +468,7 @@ def discover_registry(
         ]
         seeds = [seed for seed in dict.fromkeys(seeds) if seed]
         client = SafeHttpClient(
-            timeout_seconds=20,
+            timeout_seconds=10,
             max_response_bytes=5_000_000,
             rate_limit_per_minute=30,
             max_redirects=4,
