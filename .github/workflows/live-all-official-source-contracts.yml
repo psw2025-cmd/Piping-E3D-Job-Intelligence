@@ -1,0 +1,138 @@
+name: live-all-official-source-contracts
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-all-official-source-contracts
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify every enabled official source
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Validate source registry
+        run: job-intel validate-sources --sources config/sources.yaml
+
+      - name: Collect every enabled source with strict status
+        run: |
+          python scripts/run_cloud_daily.py             --sources config/sources.yaml             --output output/live-all
+
+      - name: Append coverage proof
+        if: always()
+        continue-on-error: true
+        run: python scripts/append_daily_coverage.py --output output/live-all
+
+      - name: Publish proof summary
+        if: always()
+        run: |
+          if [ -f output/live-all/SUMMARY.md ]; then
+            cat output/live-all/SUMMARY.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload all-source proof
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: live-all-official-sources-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            output/live-all/SUMMARY.md
+            output/live-all/status.json
+            output/live-all/run.log
+            output/live-all/Piping_E3D_Jobs.xlsx
+            output/live-all/Piping_E3D_Daily_Bundle.zip
+          if-no-files-found: warn
+          retention-days: 14
+          compression-level: 6
+
+      - name: Enforce every-source proof
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          import sqlite3
+          from pathlib import Path
+
+          from job_intelligence.source_config import load_source_config
+
+          output = Path("output/live-all")
+          status = json.loads((output / "status.json").read_text(encoding="utf-8"))
+          config = load_source_config("config/sources.yaml")
+          enabled_ids = {source.source_id for source in config.sources if source.enabled}
+          attempted = int(status.get("sources_attempted", 0))
+          passed = int(status.get("sources_passed", 0))
+          failed = int(status.get("sources_failed", 0))
+          required = [
+              status.get("exit_code") == 0,
+              status.get("verified") is True,
+              status.get("collection_status") == "pass",
+              attempted == len(enabled_ids),
+              passed == attempted,
+              failed == 0,
+              status.get("coverage_verified") is True,
+              (output / "Piping_E3D_Jobs.xlsx").exists(),
+              (output / "Piping_E3D_Daily_Bundle.zip").exists(),
+          ]
+          if not all(required):
+              raise SystemExit(
+                  "all-source status gate failed: "
+                  f"enabled={len(enabled_ids)} attempted={attempted} "
+                  f"passed={passed} failed={failed} "
+                  f"status={status.get('collection_status')} "
+                  f"verified={status.get('verified')} "
+                  f"coverage={status.get('coverage_verified')}"
+              )
+
+          with sqlite3.connect(output / "jobs.db") as connection:
+              health_rows = connection.execute(
+                  "SELECT source_id, status FROM source_health"
+              ).fetchall()
+              evidence_rows = connection.execute(
+                  "SELECT source_id, COUNT(*) FROM source_evidence "
+                  "GROUP BY source_id"
+              ).fetchall()
+          health = dict(health_rows)
+          evidence = dict(evidence_rows)
+          if set(health) != enabled_ids:
+              raise SystemExit(
+                  f"source health coverage mismatch: enabled={sorted(enabled_ids)} "
+                  f"health={sorted(health)}"
+              )
+          bad = {
+              source_id: source_status
+              for source_id, source_status in health.items()
+              if source_status not in {"pass", "pass_with_warnings"}
+          }
+          if bad:
+              raise SystemExit(f"enabled source failures: {bad}")
+          missing_evidence = [
+              source_id for source_id in enabled_ids if evidence.get(source_id, 0) < 1
+          ]
+          if missing_evidence:
+              raise SystemExit(f"enabled source evidence missing: {missing_evidence}")
+          print(
+              "PASS: every enabled official source returned verified health and "
+              "retained evidence"
+          )
+          PY
