@@ -80,3 +80,6 @@ email-alert representations in the operating view.
 GitHub Actions processes only public sources and uploads a verified artifact. Gmail OAuth
 credentials, CVs, private vacancy files, application status and local recruiter records
 remain on the user's Windows computer.
+## Current strict source contract
+
+The repository-managed baseline currently enables nine official source entries across McDermott, Wood, KBR, AtkinsRealis, Bechtel, three Petrofac feeds, and NPCIL. Workday sources use the provider-compatible page size of 20; if a provider repeats a page, the collector stops only that search term and records the warning so other terms and sources continue. The all-source contract verifies every enabled source's health and retained evidence. Staged sources are not silently enabled until they have live official-source proof.
