@@ -1,0 +1,140 @@
+name: fluor-worldwide-export
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/fluor-worldwide-csv
+    paths:
+      - scripts/export_fluor_worldwide.py
+      - .github/workflows/fluor-worldwide-export.yml
+  schedule:
+    - cron: "30 3 * * *"
+      timezone: "Asia/Kolkata"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fluor-worldwide-export
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install exporter dependencies
+        run: python -m pip install --upgrade pip requests beautifulsoup4
+
+      - name: Static compile gate
+        run: python -m py_compile scripts/export_fluor_worldwide.py
+
+      - name: Initialize failure-proof diagnostics
+        shell: bash
+        run: |
+          mkdir -p output/fluor
+          cat > output/fluor/Fluor_Workflow_Diagnostic.json <<EOF
+          {"status":"started","workflow":"${{ github.workflow }}","run_id":"${{ github.run_id }}","run_attempt":"${{ github.run_attempt }}","sha":"${{ github.sha }}"}
+          EOF
+
+      - name: Primary exhaustive export
+        id: primary
+        continue-on-error: true
+        run: python scripts/export_fluor_worldwide.py --output output/fluor --delay 0.45 --timeout 30 --max-details 2000 --minimum-catalogue 100
+
+      - name: Conservative recovery export
+        if: steps.primary.outcome != 'success'
+        run: |
+          rm -rf output/fluor-recovery
+          python scripts/export_fluor_worldwide.py \
+            --output output/fluor-recovery \
+            --delay 0.8 \
+            --timeout 60 \
+            --max-details 2000 \
+            --minimum-catalogue 100
+          rm -rf output/fluor
+          mv output/fluor-recovery output/fluor
+
+      - name: Verify deliverables and internal reconciliation
+        shell: bash
+        run: |
+          python - <<'PY'
+          import csv
+          import json
+          from pathlib import Path
+
+          root = Path("output/fluor")
+          expected = [
+              root / "Fluor_All_Worldwide_Jobs.csv",
+              root / "Fluor_Piping_E3D_All_Matches.csv",
+              root / "Fluor_Direct_Piping_E3D_Matches.csv",
+              root / "Fluor_Detail_Failures.csv",
+              root / "Fluor_Source_Evidence.json",
+              root / "Fluor_Worldwide_Summary.json",
+          ]
+          missing = [str(path) for path in expected if not path.exists()]
+          if missing:
+              raise SystemExit(f"Missing outputs: {missing}")
+          summary = json.loads((root / "Fluor_Worldwide_Summary.json").read_text(encoding="utf-8"))
+          evidence = json.loads((root / "Fluor_Source_Evidence.json").read_text(encoding="utf-8"))
+          with (root / "Fluor_All_Worldwide_Jobs.csv").open(encoding="utf-8-sig", newline="") as handle:
+              rows = list(csv.DictReader(handle))
+          with (root / "Fluor_Piping_E3D_All_Matches.csv").open(encoding="utf-8-sig", newline="") as handle:
+              matches = list(csv.DictReader(handle))
+          with (root / "Fluor_Direct_Piping_E3D_Matches.csv").open(encoding="utf-8-sig", newline="") as handle:
+              direct = list(csv.DictReader(handle))
+          if len(rows) != int(summary["catalogue_count"]):
+              raise SystemExit("All-jobs CSV count disagrees with summary")
+          if len(matches) != int(summary["keyword_matches"]):
+              raise SystemExit("Keyword-match CSV count disagrees with summary")
+          if len(direct) != int(summary["direct_matches"]):
+              raise SystemExit("Direct-match CSV count disagrees with summary")
+          if len(rows) < 100:
+              raise SystemExit(f"Coverage unexpectedly low: {len(rows)} rows")
+          ids = [row["position_id"] for row in rows]
+          if not all(ids) or len(set(ids)) != len(ids):
+              raise SystemExit("Missing or duplicate Fluor position IDs")
+          if not evidence or not any(item.get("status") == 200 for item in evidence):
+              raise SystemExit("No successful official-source evidence response")
+          bad_urls = [row["official_url"] for row in rows if not row["official_url"].startswith("https://careers.fluor.com/")]
+          if bad_urls:
+              raise SystemExit(f"Non-Fluor application URLs detected: {bad_urls[:3]}")
+          print(f"PASS: {len(rows)} unique jobs, {len(matches)} keyword matches, {len(direct)} direct matches")
+          PY
+
+      - name: Publish summary
+        if: always()
+        shell: bash
+        run: |
+          echo "# Fluor Worldwide Official Job Export" >> "$GITHUB_STEP_SUMMARY"
+          mkdir -p output/fluor
+          if [ ! -f output/fluor/Fluor_Worldwide_Summary.json ]; then
+            cat > output/fluor/Fluor_Worldwide_Summary.json <<EOF
+          {"status":"failed_before_verified_summary","workflow":"${{ github.workflow }}","run_id":"${{ github.run_id }}","run_attempt":"${{ github.run_attempt }}","sha":"${{ github.sha }}"}
+          EOF
+          fi
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat output/fluor/Fluor_Worldwide_Summary.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload CSV and failure-proof deliverables
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fluor-worldwide-jobs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            output/fluor/
+            output/fluor-recovery/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
