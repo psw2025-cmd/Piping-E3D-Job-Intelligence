@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - feature/fluor-worldwide-csv
+      - main
     paths:
       - scripts/export_fluor_worldwide.py
       - .github/workflows/fluor-worldwide-export.yml
