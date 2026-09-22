@@ -5,7 +5,7 @@ from pathlib import Path
 from job_intelligence.database import init_database
 from job_intelligence.excel_export import export_excel, verify_excel
 from job_intelligence.proof import init_proof_tables
-from job_intelligence.run_cloud_daily import _build_summary
+from run_cloud_daily import _build_summary
 
 TABLES = ('jobs','job_identity_aliases','source_health','runs','source_evidence')
 SHARD = re.compile(r'shard-\d{3}')
