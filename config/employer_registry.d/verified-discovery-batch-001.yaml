@@ -70,17 +70,6 @@ employers:
     verified_at: '2026-09-20'
     notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
 
-  - company: "Kent"
-    priority: 1
-    official_careers_url: https://fa-emqh-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/?mode=location
-    public_job_url: https://fa-emqh-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/?mode=location
-    public_job_host: fa-emqh-saasfaprod1.fa.ocs.oraclecloud.com
-    ats_type: oracle_hcm
-    status: connector_planned
-    source_ids: []
-    verified_at: '2026-09-20'
-    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
-
   - company: "Matchtech"
     priority: 1
     official_careers_url: https://www.matchtech.com/api/sitemap.xml
@@ -109,17 +98,6 @@ employers:
     public_job_url: https://www.orionjobs.com/api/sitemap.xml
     public_job_host: www.orionjobs.com
     ats_type: schema_org_sitemap
-    status: connector_planned
-    source_ids: []
-    verified_at: '2026-09-20'
-    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
-
-  - company: "Ramboll"
-    priority: 1
-    official_careers_url: https://jobs.smartrecruiters.com/Ramboll3/744000150292314-lead-o-m-and-asset-management-engineer
-    public_job_url: https://jobs.smartrecruiters.com/Ramboll3/744000150292314-lead-o-m-and-asset-management-engineer
-    public_job_host: jobs.smartrecruiters.com
-    ats_type: smartrecruiters
     status: connector_planned
     source_ids: []
     verified_at: '2026-09-20'
@@ -213,17 +191,6 @@ employers:
     verified_at: '2026-09-20'
     notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
 
-  - company: "Chevron"
-    priority: 2
-    official_careers_url: https://chevron.wd5.myworkdayjobs.com/jobs
-    public_job_url: https://chevron.wd5.myworkdayjobs.com/jobs
-    public_job_host: chevron.wd5.myworkdayjobs.com
-    ats_type: workday
-    status: connector_planned
-    source_ids: []
-    verified_at: '2026-09-20'
-    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
-
   - company: "ConocoPhillips"
     priority: 2
     official_careers_url: https://conocophillips.wd1.myworkdayjobs.com/External/
@@ -294,17 +261,6 @@ employers:
     priority: 2
     official_careers_url: https://oxy.wd5.myworkdayjobs.com/Corporate
     public_job_url: https://oxy.wd5.myworkdayjobs.com/Corporate
-    public_job_host: oxy.wd5.myworkdayjobs.com
-    ats_type: workday
-    status: connector_planned
-    source_ids: []
-    verified_at: '2026-09-20'
-    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
-
-  - company: "Occidental Petroleum (Oxy)"
-    priority: 2
-    official_careers_url: https://oxy.wd5.myworkdayjobs.com/UniversityRelations
-    public_job_url: https://oxy.wd5.myworkdayjobs.com/UniversityRelations
     public_job_host: oxy.wd5.myworkdayjobs.com
     ats_type: workday
     status: connector_planned
@@ -410,4 +366,3 @@ employers:
     source_ids: []
     verified_at: '2026-09-20'
     notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
-
