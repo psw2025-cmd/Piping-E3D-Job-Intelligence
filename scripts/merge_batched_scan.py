@@ -1,253 +1,85 @@
-_from __future__ import annotations
-
-import argparse
-import json
-import re
-import shutil
-import sqlite3
+from __future__ import annotations
+import argparse, json, re, shutil, sqlite3
 from datetime import UTC, datetime
 from pathlib import Path
-
-from job_intelligence.database import JOB_COLUMNS, init_database
+from job_intelligence.database import init_database
 from job_intelligence.excel_export import export_excel, verify_excel
 from job_intelligence.proof import init_proof_tables
 from job_intelligence.run_cloud_daily import _build_summary
 
-_TABLES = (
-    "jobs",
-    "job_identity_aliases",
-    "source_health",
-    "runs",
-    "source_evidence",
-    "private_imports",
-    "gmail_alert_messages",
-    "gmail_alert_jobs",
-)
-_SHARD_RE = re.compile(r"shard-\d{3}")
+TABLES = ('jobs','job_identity_aliases','source_health','runs','source_evidence')
+SHARD = re.compile(r'shard-\d{3}')
 
+def exists(db, table):
+    return db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone() is not None
 
-def now() -> str:
-    return datetime.now(UTC).replace(microsecond=0).isoformat()
+def cols(db, table):
+    return [r[1] for r in db.execute(f'PRAGMA table_info("{table}")')]
 
-
-def table_exists(connection: sqlite3.Connection, table: str) -> bool:
-    return connection.execute(
-        "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)
-    ).fetchone() is not None
-
-
-def columns(connection: sqlite3.Connection, table: str) -> list[str]:
-    return [str(row[1]) for row in connection.execute(f'PRAGMA table_info("{table}")')]
-
-
-def shard_id_for(path: Path) -> str | None:
+def shard_id(path):
     for part in reversed(path.parts):
-        match = _SHARD_RE.search(part)
-        if match:
-            return match.group(0)
+        m=SHARD.search(part)
+        if m: return m.group(0)
     return None
 
+def copy_table(src, dst, table, raw_dest=None):
+    if not exists(src, table) or not exists(dst, table): return 0
+    names=[x for x in cols(src, table) if x in cols(dst, table)]
+    q=', '.join(f'"{x}"' for x in names); marks=', '.join('?' for _ in names)
+    sql=f'INSERT OR REPLACE INTO "{table}" ({q}) VALUES ({marks})'
+    path_i=names.index('file_path') if table=='source_evidence' and 'file_path' in names else -1
+    n=0
+    for row in src.execute(f'SELECT {q} FROM "{table}"'):
+        values=list(row)
+        if path_i >= 0 and raw_dest:
+            parts=list(Path(str(values[path_i])).parts)
+            rel=Path(*parts[parts.index('raw')+1:]) if 'raw' in parts else Path(Path(str(values[path_i])).name)
+            values[path_i]=str(raw_dest/rel)
+        dst.execute(sql, values); n+=1
+    return n
 
-def evidence_destination(old_path: str, raw_destination: Path) -> str:
-    path = Path(old_path)
-    parts = list(path.parts)
-    if "raw" in parts:
-        relative = Path(*parts[parts.index("raw") + 1 :])
-    else:
-        relative = Path(path.name)
-    return str(raw_destination / relative)
+def bundle(out):
+    zip_path=out/'Piping_E3D_Daily_Bundle.zip'; zip_path.unlink(missing_ok=True)
+    base=Path(shutil.make_archive(str(out.parent/'Piping_E3D_Daily_Bundle_batched'),'zip',root_dir=out.parent,base_dir=out.name))
+    base.replace(zip_path)
 
-
-def copy_table(
-    source: sqlite3.Connection,
-    destination: sqlite3.Connection,
-    table: str,
-    *,
-    raw_destination: Path | None = None,
-) -> int:
-    if not table_exists(source, table) or not table_exists(destination, table):
-        return 0
-    source_columns = columns(source, table)
-    destination_columns = columns(destination, table)
-    selected = [column for column in source_columns if column in destination_columns]
-    if not selected:
-        return 0
-    placeholders = ", ".join("?" for _ in selected)
-    quoted = ", ".join(f'"{column}"' for column in selected)
-    sql = (
-        f'INSERT OR REPLACE INTO "{table}" ({quoted}) '
-        f"VALUES ({placeholders})"
-    )
-    path_index = selected.index("file_path") if table == "source_evidence" and "file_path" in selected else None
-    count = 0
-    for row in source.execute(f'SELECT {quoted} FROM "{table}"'):
-        values = list(row)
-        if path_index is not None and raw_destination is not None:
-            values[path_index] = evidence_destination(str(values[path_index]), raw_destination)
-        destination.execute(sql, values)
-        count += 1
-    return count
-
-
-def write_bundle(output_dir: Path) -> None:
-    destination = output_dir / "Piping_E3D_Daily_Bundle.zip"
-    destination.unlink(missing_ok=True)
-    archive_base = output_dir.parent / "Piping_E3D_Daily_Bundle_batched"
-    archive_path = Path(
-        shutil.make_archive(
-            str(archive_base),
-            "zip",
-            root_dir=output_dir.parent,
-            base_dir=output_dir.name,
-        )
-    )
-    archive_path.replace(destination)
-
-
-def merge(plan_path: Path, shards_root: Path, output_dir: Path) -> int:
-    plan = json.loads(plan_path.read_text(encoding="utf-8"))
-    expected = {item["id"] for item in plan.get("shards", [])}
-    status_files = list(shards_root.rglob("status.json"))
-    statuses: dict[str, dict] = {}
-    shard_dirs: dict[str, Path] = {}
-    for status_path in status_files:
-        shard_id = shard_id_for(status_path.parent)
-        if not shard_id:
-            continue
-        statuses[shard_id] = json.loads(status_path.read_text(encoding="utf-8"))
-        shard_dirs[shard_id] = status_path.parent
-
-    missing = sorted(expected - set(statuses))
-    shard_errors = []
-    for shard_id in sorted(expected):
-        status = statuses.get(shard_id)
-        if status is None:
-            shard_errors.append(f"missing shard artifact: {shard_id}")
-        elif status.get("exit_code") != 0 or status.get("verified") is not True:
-            shard_errors.append(
-                f"{shard_id}: {status.get('error') or status.get('collection_status') or 'unverified'}"
-            )
-
-    shutil.rmtree(output_dir, ignore_errors=True)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    merged_db = output_dir / "jobs.db"
-    init_database(merged_db)
-    init_proof_tables(merged_db)
-    raw_root = output_dir / "raw"
-    raw_root.mkdir(parents=True, exist_ok=True)
-    copied_tables = {table: 0 for table in _TABLES}
-
-    with sqlite3.connect(merged_db) as destination:
-        for shard_id in sorted(shard_dirs):
-            shard_dir = shard_dirs[shard_id]
-            shard_db = shard_dir / "jobs.db"
-            if not shard_db.exists():
-                shard_errors.append(f"{shard_id}: jobs.db missing")
-                continue
-            source_raw = shard_dir / "raw"
-            raw_destination = raw_root / shard_id
-            if source_raw.exists():
-                shutil.copytree(source_raw, raw_destination, dirs_exist_ok=True)
-            with sqlite3.connect(shard_db) as source:
-                for table in _TABLES:
-                    copied_tables[table] += copy_table(
-                        source,
-                        destination,
-                        table,
-                        raw_destination=raw_destination if source_raw.exists() else None,
-                    )
-        destination.commit()
-
-    attempted = sum(int(item.get("sources_attempted", 0)) for item in statuses.values())
-    passed = sum(int(item.get("sources_passed", 0)) for item in statuses.values())
-    failed = sum(int(item.get("sources_failed", 0)) for item in statuses.values())
-    jobs = sum(int(item.get("jobs_collected", 0)) for item in statuses.values())
-    new_jobs = sum(int(item.get("new_jobs", 0)) for item in statuses.values())
-    updated_jobs = sum(int(item.get("updated_jobs", 0)) for item in statuses.values())
-    all_shards_passed = not shard_errors and expected == set(statuses)
-
-    status = {
-        "generated_at": now(),
-        "run_id": f"batched-{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}",
-        "exit_code": 1 if not all_shards_passed else 0,
-        "collection_status": "pass" if all_shards_passed else ("partial" if passed else "fail"),
-        "verified": False,
-        "coverage_verified": False,
-        "error": " | ".join(shard_errors),
-        "sources_attempted": attempted,
-        "sources_passed": passed,
-        "sources_failed": failed,
-        "jobs_collected": jobs,
-        "new_jobs": new_jobs,
-        "updated_jobs": updated_jobs,
-        "shards_expected": len(expected),
-        "shards_completed": len(statuses),
-        "shards_failed": len(shard_errors),
-    }
-    (output_dir / "shard_statuses.json").write_text(
-        json.dumps({"plan": plan, "statuses": statuses, "errors": shard_errors}, indent=2)
-        + "\n",
-        encoding="utf-8",
-    )
-
-    export_error = ""
+def main():
+    ap=argparse.ArgumentParser(); ap.add_argument('--plan',type=Path,required=True); ap.add_argument('--shards-root',type=Path,required=True); ap.add_argument('--output',type=Path,required=True); a=ap.parse_args()
+    plan=json.loads(a.plan.read_text()); expected={x['id'] for x in plan['shards']}
+    found={}; dirs={}
+    for sp in a.shards_root.rglob('status.json'):
+        sid=shard_id(sp.parent)
+        if sid: found[sid]=json.loads(sp.read_text()); dirs[sid]=sp.parent
+    errors=[]
+    for sid in sorted(expected):
+        st=found.get(sid)
+        if not st: errors.append(f'{sid}: missing status')
+        elif st.get('exit_code') != 0 or st.get('verified') is not True: errors.append(f"{sid}: {st.get('error') or st.get('collection_status') or 'unverified'}")
+    shutil.rmtree(a.output, ignore_errors=True); a.output.mkdir(parents=True)
+    db_path=a.output/'jobs.db'; init_database(db_path); init_proof_tables(db_path)
+    raw=a.output/'raw'; raw.mkdir()
+    with sqlite3.connect(db_path) as dst:
+        for sid, folder in sorted(dirs.items()):
+            src_path=folder/'jobs.db'
+            if not src_path.exists(): errors.append(f'{sid}: missing jobs.db'); continue
+            src_raw=folder/'raw'; raw_dest=raw/sid
+            if src_raw.exists(): shutil.copytree(src_raw,raw_dest,dirs_exist_ok=True)
+            with sqlite3.connect(src_path) as src:
+                for table in TABLES: copy_table(src,dst,table,raw_dest if src_raw.exists() else None)
+        dst.commit()
+    sums=lambda key: sum(int(x.get(key,0)) for x in found.values())
+    ok=not errors and expected==set(found)
+    status={'generated_at':datetime.now(UTC).replace(microsecond=0).isoformat(),'run_id':'batched-'+datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ'),'exit_code':0 if ok else 1,'collection_status':'pass' if ok else ('partial' if sums('sources_passed') else 'fail'),'verified':False,'coverage_verified':False,'error':' | '.join(errors),'sources_attempted':sums('sources_attempted'),'sources_passed':sums('sources_passed'),'sources_failed':sums('sources_failed'),'jobs_collected':sums('jobs_collected'),'new_jobs':sums('new_jobs'),'updated_jobs':sums('updated_jobs'),'shards_expected':len(expected),'shards_completed':len(found),'shards_failed':len(errors)}
     try:
-        workbook = output_dir / "Piping_E3D_Jobs.xlsx"
-        export_excel(merged_db, workbook)
-        errors = verify_excel(workbook)
-        if errors:
-            export_error = " | ".join(errors)
-    except Exception as exc:  # pragma: no cover - CI reports the exact export failure
-        export_error = f"{type(exc).__name__}: {exc}"
-    if export_error:
-        status["error"] = " | ".join(filter(None, [status["error"], export_error]))
-        status["exit_code"] = 1
-        status["verified"] = False
-    else:
-        status["verified"] = all_shards_passed
+        workbook=a.output/'Piping_E3D_Jobs.xlsx'; export_excel(db_path,workbook); export_errors=verify_excel(workbook)
+        if export_errors: raise RuntimeError(' | '.join(export_errors))
+        status['verified']=ok
+    except Exception as exc:
+        status['exit_code']=1; status['verified']=False; status['error']=' | '.join(filter(None,[status['error'],f'{type(exc).__name__}: {exc}']))
+    (a.output/'shard_statuses.json').write_text(json.dumps({'plan':plan,'statuses':found,'errors':errors},indent=2)+'\n')
+    (a.output/'status.json').write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
+    (a.output/'run.log').write_text(f"merged {len(found)}/{len(expected)} shards; sources={status['sources_passed']}/{status['sources_attempted']}; errors={status['error']}\n")
+    (a.output/'SUMMARY.md').write_text(_build_summary(db_path,status)); bundle(a.output)
+    print(json.dumps(status,sort_keys=True)); return status['exit_code']
 
-    (output_dir / "status.json").write_text(
-        json.dumps(status, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
-    (output_dir / "run.log").write_text(
-        f"{now()} merged {len(statuses)}/{len(expected)} shards; "
-        f"sources={passed}/{attempted}; jobs={jobs}; errors={status['error']}\n",
-        encoding="utf-8",
-    )
-    summary = _build_summary(merged_db, status)
-    (output_dir / "SUMMARY.md").write_text(summary, encoding="utf-8")
-    write_bundle(output_dir)
-    print(json.dumps({"status": status, "copied_tables": copied_tables}, sort_keys=True))
-    return int(status["exit_code"])
-
-
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--plan", required=True, type=Path)
-    parser.add_argument("--shards-root", required=True, type=Path)
-    parser.add_argument("--output", required=True, type=Path)
-    args = parser.parse_args()
-    return merge(args.plan, args.shards_root, args.output)
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
-dir / "shard_statuses.json").write_text(
-          json.dumps({"plan": plan, "statuses": statuses, "errors": shard_errors}, indent=2)
-          + "\n",
-          encoding="utf-8",
-)
-
-    export_error = ""
-    try:
-              workbook = output_dir / "Piping_E3D_Jobs.xlsx"
-              export_excel(merged_db, workbook)
-              errors = verify_excel(workbook)
-              if errors:
-                            export_error = " | ".join(errors)
-    except Exception as exc:  # pragma: no cover - CI reports the exact export failure
-              export_error = f"{type(exc).__name__}: {exc}"
-          if export_error:
-                    status["error"] = " | ".join(filter(None, [status["error"], export_error]))
-                    status["exit_code"] = 1
-                    status
+if __name__=='__main__': raise SystemExit(main())
