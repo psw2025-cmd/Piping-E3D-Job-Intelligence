@@ -13,6 +13,7 @@ from typing import Any
 from job_intelligence.cli import _verify_database
 from job_intelligence.collection_runner import CollectionRunSummary, collect_sources
 from job_intelligence.excel_export import export_excel, verify_excel
+from job_intelligence.local_shortlist import write_shortlist
 from job_intelligence.proof import set_run_export_status
 from job_intelligence.source_config import load_source_config
 
@@ -196,7 +197,13 @@ def _write_status_files(
         json.dumps(status, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    summary_text = _build_summary(db_path, status)
+    local_summary = write_shortlist(
+        [dict(row) for row in _query_rows(db_path, "SELECT * FROM jobs")],
+        output_dir,
+        Path(__file__).resolve().parents[1] / "config",
+        collection_status=status.get("collection_status", "not_started"),
+    )
+    summary_text = local_summary + "\n" + _build_summary(db_path, status)
     (output_dir / "SUMMARY.md").write_text(summary_text, encoding="utf-8")
     return summary_text
 

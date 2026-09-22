@@ -1,4 +1,22 @@
 sources:
+- id: technosoft_india_piping
+  name: Technosoft official India piping openings
+  type: public_html
+  company: Technosoft GmbH
+  url: https://technosoft.gmbh/careers/openings-india/
+  allowed_domains: [technosoft.gmbh]
+  job_link_patterns: [/careers/openings-india/]
+  anchor_text_patterns: [piping, e3d, pdms, sp3d]
+  fetch_details: true
+  deny_on_robots_error: true
+  enabled: true
+  profile_filter: true
+  timeout_seconds: 30
+  rate_limit_per_minute: 12
+  max_response_bytes: 5000000
+  max_items: 20
+  max_pages: 1
+  max_redirects: 5
 - id: mcdermott_oracle
   name: McDermott official Oracle careers
   type: oracle_hcm

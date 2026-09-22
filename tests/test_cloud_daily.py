@@ -86,6 +86,9 @@ def test_partial_collection_is_not_reported_verified(
     summary = (output / "SUMMARY.md").read_text(encoding="utf-8")
     assert "Overall result: **FAIL**" in summary
     assert "Verification: `FAIL`" in summary
+    local = json.loads((output / "MUMBAI_THANE_NAVI_MUMBAI.json").read_text())
+    assert local["collection_status"] == "partial"
+    assert "Mumbai, Thane and Navi Mumbai shortlist" in summary
 
 
 def test_bundle_failure_rewrites_status_as_failure(

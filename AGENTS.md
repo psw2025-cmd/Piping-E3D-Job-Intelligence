@@ -1,5 +1,9 @@
 # Agent instructions
 
+## Job search priority
+
+Prioritize piping/E3D/PDMS/SP3D opportunities in Mumbai, Thane and Navi Mumbai (including New Mumbai/New Bombay aliases). Read docs/MUMBAI_JOB_SEARCH.md and use the dedicated local shortlist. Preserve worldwide collection, distinguish unknown/old dates from fresh postings, and verify job location and closure status before recommending a vacancy. Do not activate new connectors without live extraction and source-evidence proof.
+
 ## Company account maintenance
 
 Read docs/COMPANY_LOGINS.md before working on company accounts. config/company_logins.csv is the shared account index. Passwords belong in the private credential store referenced by each row, never in tracked files, issues, logs or pull requests.

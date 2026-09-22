@@ -75,13 +75,13 @@ locations:
 location_aliases:
   Mumbai:
     country: India
-    aliases: [mumbai, bombay]
+    aliases: [mumbai, bombay, vikhroli, powai, andheri, goregaon, bhandup, mulund, chembur]
   Navi Mumbai:
     country: India
-    aliases: [navi mumbai, new bombay]
+    aliases: [navi mumbai, navi-mumbai, new mumbai, new bombay, navimumbai, airoli, ghansoli, rabale, mahape, vashi, sanpada, juinagar, nerul, cbd belapur, kopar khairane, koparkhairane, turbhe, kharghar]
   Thane:
     country: India
-    aliases: [thane]
+    aliases: [thane, thane west, thane east, wagle estate, ghodbunder]
   Pune:
     country: India
     aliases: [pune, poona]

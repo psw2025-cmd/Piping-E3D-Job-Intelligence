@@ -59,6 +59,8 @@ jobs:
           name: piping-e3d-jobs-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             output/daily/SUMMARY.md
+            output/daily/MUMBAI_THANE_NAVI_MUMBAI.md
+            output/daily/MUMBAI_THANE_NAVI_MUMBAI.json
             output/daily/status.json
             output/daily/run.log
             output/daily/Piping_E3D_Daily_Bundle.zip

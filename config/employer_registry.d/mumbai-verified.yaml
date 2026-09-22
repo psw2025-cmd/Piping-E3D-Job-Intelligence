@@ -1,0 +1,13 @@
+schema_version: 1
+verified_at: 2026-09-23
+employers:
+  - company: Technosoft GmbH
+    priority: 1
+    official_careers_url: https://technosoft.gmbh/careers/openings-india/
+    public_job_url: https://technosoft.gmbh/careers/openings-india/
+    public_job_host: technosoft.gmbh
+    ats_type: public_html
+    status: active_supported
+    source_ids: [technosoft_india_piping]
+    verified_at: 2026-09-23
+    notes: Robots-compliant collector proof returned two piping jobs with explicit Thane/Pune locations; see docs/MUMBAI_JOB_SEARCH.md. Publication dates unknown.

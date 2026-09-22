@@ -1,5 +1,8 @@
 # Piping-E3D-Job-Intelligence
 
+For Mumbai, Thane and Navi Mumbai (New Mumbai), see [local job search](docs/MUMBAI_JOB_SEARCH.md).
+The daily artifact includes a dedicated local shortlist with posting dates, source status and application links.
+
 [![CI / Quality Gate](https://github.com/psw2025-cmd/Piping-E3D-Job-Intelligence/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/psw2025-cmd/Piping-E3D-Job-Intelligence/actions/workflows/tests.yml)
 
 Worldwide, local-first job intelligence, matching and tracking for piping, AVEVA E3D,
