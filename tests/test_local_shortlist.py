@@ -52,6 +52,8 @@ def test_local_aliases_and_multilocation(location, city):
         {"description": "Unfortunately this position has been closed"},
         {"application_status": "closed"},
         {"description": "This vacancy has now expired. Please see similar roles below."},
+        {"description": "Apply by 05 Jul 2026. Deadline passed. Apply Now"},
+        {"description": "DEADLINE\nPASSED"},
         {"closing_at": "2026-09-22"},
         {"apply_url": "javascript:alert(1)"},
     ],

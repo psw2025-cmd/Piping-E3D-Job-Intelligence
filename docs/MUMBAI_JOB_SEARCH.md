@@ -31,12 +31,17 @@ These are source-page observations, not applications or promises of hiring. Publ
 | Thane / Pune | Piping Engineer, Technosoft | [Official role](https://technosoft.gmbh/careers/openings-india/piping-engineer/); location is shared with Pune. |
 | Mumbai, Vikhroli | Staff Engineer – Piping, Black & Veatch | [Official role](https://careers.bv.com/job/Vikhroli%2C-West-Mumbai-Staff-Engineer-Piping-MH/1434643933/): dated 8 September 2026, 10–20+ years piping/layout experience; degree required. |
 | Mumbai | Piping Designer, SSOE | [Official role](https://indcareers-ssoe.icims.com/jobs/3763/piping-designer/job?in_iframe=1): 3–5 years, diploma, AutoCAD/Plant3D; evening coordination with US teams. More junior than the senior target profile. |
-| Navi Mumbai | Piping Design Engineer – 3D Modelling, ANI Integrated Services | [Company careers listing](https://anione.in/careers?page=2): E3D/PDMS, 4–14 years, contract, dated 5 July 2026. Older listing; recheck vacancy and assignment before applying. |
+| Navi Mumbai, CBD Belapur | Piping Engineer, Damodhartech | [Official careers page](https://www.damodhartech.com/careers/): 8–10 years, BE/B.Tech Mechanical plus Diploma in Piping Engineering; layout, isometrics, BOQ/MTO and supports. Undated listing; confirm current availability. |
 
 ## Excluded or needs renewed confirmation
 
+- [ANI Piping Design Engineer – 3D Modelling](https://anione.in/careers/piping-design-engineer-3d-modelling): detailed page explicitly says **Deadline passed** and **Apply by 05 Jul 2026**. The date is an application deadline, not a publication date. This corrects the earlier recommendation based on the careers listing. The local filter now rejects this closure wording even when an application form remains.
 - [Egis E3D Aveva Admin – Nuclear](https://jobs.egis-group.com/job/e3d-aveva-admin-nuclear-in-navi-mumbai-jid-3220): page explicitly says expired.
 - [Worley Senior Piping Stress Engineer](https://worleyparsons.referrals.selectminds.com/jobs/senior-piping-stress-engineer-24213): explicitly closed.
 - [Proton Navi Mumbai Piping Design Engineer](https://www.protonengineering.in/jobs/piping-design-engineer/): application form remains, but page displays 2021 dates. Do not present as a fresh vacancy.
 
-The web-reviewed Black & Veatch, SSOE and ANI pages are research leads, not newly enabled automated connectors. Future agents should verify extraction, location, dates and robots compliance before adding them to the daily sources.
+The web-reviewed Black & Veatch, SSOE and Damodhartech pages are research leads, not newly enabled automated connectors. Future agents should verify extraction, location, dates and robots compliance before adding them to the daily sources.
+
+### Black & Veatch extraction probe
+
+On 23 September 2026, a robots-aware collector probe of the official Mumbai piping search returned seven relevant titles and job links (run `667eceb13c1b4feaaf2788ea27456c60`, PASS 1/1). However, every extracted location and publication date was empty. The source remains disabled: fetch success alone does not establish usable local coverage. Before enabling it, implement and validate location/date extraction against saved official-page evidence. Do not infer a job location solely from its URL or company address.

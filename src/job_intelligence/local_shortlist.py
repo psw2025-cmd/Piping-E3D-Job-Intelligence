@@ -21,7 +21,7 @@ EXCLUDED_ROLE = re.compile(
 CLOSED = re.compile(
     r"position has been closed|job is no longer available|no longer accepting applications|"
     r"vacancy has been filled|applications are closed|vacancy has now expired|"
-    r"job has expired|position is no longer available",
+    r"job has expired|position is no longer available|deadline\s+passed",
     re.IGNORECASE,
 )
 
