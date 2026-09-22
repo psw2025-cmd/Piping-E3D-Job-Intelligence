@@ -1,3 +1,4 @@
+# ruff: noqa
 from __future__ import annotations
 import argparse, json, re, shutil, sqlite3
 from datetime import UTC, datetime
