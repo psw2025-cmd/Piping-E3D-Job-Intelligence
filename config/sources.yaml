@@ -109,11 +109,8 @@ sources:
   name: Bechtel official SAP SuccessFactors careers
   type: public_html
   company: Bechtel
-  url: https://jobs.bechtel.com/go/Professional/4321400/0/?q=&sortColumn=referencedate&sortDirection=desc
-  page_url_template: https://jobs.bechtel.com/go/Professional/4321400/{page}/?q=&sortColumn=referencedate&sortDirection=desc
-  page_start: 0
-  page_step: 25
-  max_pages: 40
+  url: https://jobs.bechtel.com/us/en
+  max_pages: 1
   allowed_domains:
   - jobs.bechtel.com
   job_link_patterns:
