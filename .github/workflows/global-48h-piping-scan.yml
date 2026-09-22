@@ -53,7 +53,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p output/source-discovery docs
-          python scripts/discover_official_sources.py             --registry config/employer_registry.yaml             --base-sources config/sources.yaml             --report-json docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json             --report-md docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md             --runtime-sources output/source-discovery/runtime-sources.yaml
+          python scripts/discover_official_sources.py             --registry config/employer_registry.yaml             --registry config/employer_registry.d/verified-discovery-batch-001.yaml             --base-sources config/sources.yaml             --report-json docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json             --report-md docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md             --runtime-sources output/source-discovery/runtime-sources.yaml
 
       - name: Validate runtime source configuration
         run: |
