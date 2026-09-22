@@ -151,7 +151,7 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: global-source-shards-${{ github.run_id }}-${{ github.run_attempt }}
-          path: .
+          path: output/source-shards
       - name: Collect bounded shard
         run: |
           set -euo pipefail
@@ -189,7 +189,7 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: global-source-shards-${{ github.run_id }}-${{ github.run_attempt }}
-          path: .
+          path: output/source-shards
       - name: Download all shard proofs
         uses: actions/download-artifact@v8
         with:
