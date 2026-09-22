@@ -1,0 +1,413 @@
+schema_version: 1
+verified_at: 2026-09-20
+source_discovery_run: 35481826522
+status: verified_discovery_candidates
+
+employers:
+  - company: "Air Liquide Engineering & Construction"
+    priority: 1
+    official_careers_url: https://airliquidehr.wd3.myworkdayjobs.com/AirLiquideExternalCareer
+    public_job_url: https://airliquidehr.wd3.myworkdayjobs.com/AirLiquideExternalCareer
+    public_job_host: airliquidehr.wd3.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
+
+  - company: "Airswift Holdings Limited"
+    priority: 1
+    official_careers_url: https://www.airswift.com/sitemap.xml
+    public_job_url: https://www.airswift.com/sitemap.xml
+    public_job_host: www.airswift.com
+    ats_type: schema_org_sitemap
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=2. Revalidate live before source promotion."
+
+  - company: "Cheniere Energy, Inc."
+    priority: 1
+    official_careers_url: https://hcgi.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2
+    public_job_url: https://hcgi.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2
+    public_job_host: hcgi.fa.us2.oraclecloud.com
+    ats_type: oracle_hcm
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=1. Revalidate live before source promotion."
+
+  - company: "Chevron"
+    priority: 1
+    official_careers_url: https://careers.chevron.com/sitemap.xml
+    public_job_url: https://careers.chevron.com/sitemap.xml
+    public_job_host: careers.chevron.com
+    ats_type: schema_org_sitemap
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
+
+  - company: "Evonik"
+    priority: 1
+    official_careers_url: https://www.evonik.com/en.sitemap.xml
+    public_job_url: https://www.evonik.com/en.sitemap.xml
+    public_job_host: www.evonik.com
+    ats_type: schema_org_sitemap
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=1. Revalidate live before source promotion."
+
+  - company: "Hargrove Engineers & Constructors"
+    priority: 1
+    official_careers_url: https://hargroveepc.wd12.myworkdayjobs.com/Hargrove_Careers
+    public_job_url: https://hargroveepc.wd12.myworkdayjobs.com/Hargrove_Careers
+    public_job_host: hargroveepc.wd12.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
+
+  - company: "Kent"
+    priority: 1
+    official_careers_url: https://fa-emqh-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/?mode=location
+    public_job_url: https://fa-emqh-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/?mode=location
+    public_job_host: fa-emqh-saasfaprod1.fa.ocs.oraclecloud.com
+    ats_type: oracle_hcm
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
+
+  - company: "Matchtech"
+    priority: 1
+    official_careers_url: https://www.matchtech.com/api/sitemap.xml
+    public_job_url: https://www.matchtech.com/api/sitemap.xml
+    public_job_host: www.matchtech.com
+    ats_type: schema_org_sitemap
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
+
+  - company: "NES Fircroft"
+    priority: 1
+    official_careers_url: https://www.nesfircroft.com/api/sitemap.xml
+    public_job_url: https://www.nesfircroft.com/api/sitemap.xml
+    public_job_host: www.nesfircroft.com
+    ats_type: schema_org_sitemap
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
+
+  - company: "Orion Group"
+    priority: 1
+    official_careers_url: https://www.orionjobs.com/api/sitemap.xml
+    public_job_url: https://www.orionjobs.com/api/sitemap.xml
+    public_job_host: www.orionjobs.com
+    ats_type: schema_org_sitemap
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
+
+  - company: "Ramboll"
+    priority: 1
+    official_careers_url: https://jobs.smartrecruiters.com/Ramboll3/744000150292314-lead-o-m-and-asset-management-engineer
+    public_job_url: https://jobs.smartrecruiters.com/Ramboll3/744000150292314-lead-o-m-and-asset-management-engineer
+    public_job_host: jobs.smartrecruiters.com
+    ats_type: smartrecruiters
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
+
+  - company: "Royal IHC"
+    priority: 1
+    official_careers_url: https://royalihc.wd103.myworkdayjobs.com/External_Career
+    public_job_url: https://royalihc.wd103.myworkdayjobs.com/External_Career
+    public_job_host: royalihc.wd103.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=2. Revalidate live before source promotion."
+
+  - company: "Seatrium"
+    priority: 1
+    official_careers_url: https://seatrium.wd3.myworkdayjobs.com/SeatriumCareers
+    public_job_url: https://seatrium.wd3.myworkdayjobs.com/SeatriumCareers
+    public_job_host: seatrium.wd3.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
+
+  - company: "Spencer Ogden"
+    priority: 1
+    official_careers_url: https://www.spencer-ogden.com/sitemap.xml
+    public_job_url: https://www.spencer-ogden.com/sitemap.xml
+    public_job_host: www.spencer-ogden.com
+    ats_type: schema_org_sitemap
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
+
+  - company: "The Ladders"
+    priority: 1
+    official_careers_url: https://jobs.lever.co/ladders
+    public_job_url: https://jobs.lever.co/ladders
+    public_job_host: jobs.lever.co
+    ats_type: lever
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
+
+  - company: "TRS Staffing Solutions"
+    priority: 1
+    official_careers_url: https://www.trsstaffing.com/sitemap.xml
+    public_job_url: https://www.trsstaffing.com/sitemap.xml
+    public_job_host: www.trsstaffing.com
+    ats_type: schema_org_sitemap
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=3. Revalidate live before source promotion."
+
+  - company: "Valaris"
+    priority: 1
+    official_careers_url: https://efqq.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1008
+    public_job_url: https://efqq.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1008
+    public_job_host: efqq.fa.us6.oraclecloud.com
+    ats_type: oracle_hcm
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=2. Revalidate live before source promotion."
+
+  - company: "Valmet"
+    priority: 1
+    official_careers_url: https://valmet.wd103.myworkdayjobs.com/en-US/External
+    public_job_url: https://valmet.wd103.myworkdayjobs.com/en-US/External
+    public_job_host: valmet.wd103.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=1. Revalidate live before source promotion."
+
+  - company: "Bloom Energy"
+    priority: 2
+    official_careers_url: https://bloomenergy.wd1.myworkdayjobs.com/BloomEnergyCareers
+    public_job_url: https://bloomenergy.wd1.myworkdayjobs.com/BloomEnergyCareers
+    public_job_host: bloomenergy.wd1.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "Chevron"
+    priority: 2
+    official_careers_url: https://chevron.wd5.myworkdayjobs.com/jobs
+    public_job_url: https://chevron.wd5.myworkdayjobs.com/jobs
+    public_job_host: chevron.wd5.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "ConocoPhillips"
+    priority: 2
+    official_careers_url: https://conocophillips.wd1.myworkdayjobs.com/External/
+    public_job_url: https://conocophillips.wd1.myworkdayjobs.com/External/
+    public_job_host: conocophillips.wd1.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "DEME"
+    priority: 2
+    official_careers_url: https://demegroup.wd3.myworkdayjobs.com/careers_external/userHome
+    public_job_url: https://demegroup.wd3.myworkdayjobs.com/careers_external/userHome
+    public_job_host: demegroup.wd3.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "EnQuest"
+    priority: 2
+    official_careers_url: https://enquest.wd3.myworkdayjobs.com/Enquest_Careers
+    public_job_url: https://enquest.wd3.myworkdayjobs.com/Enquest_Careers
+    public_job_host: enquest.wd3.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "Equinor"
+    priority: 2
+    official_careers_url: https://equinor.wd3.myworkdayjobs.com/EQNR
+    public_job_url: https://equinor.wd3.myworkdayjobs.com/EQNR
+    public_job_host: equinor.wd3.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "Fugro"
+    priority: 2
+    official_careers_url: https://fugro.wd3.myworkdayjobs.com/en-US/Careers/login?redirect=%2Fen-US%2FCareers%2FjobAlerts
+    public_job_url: https://fugro.wd3.myworkdayjobs.com/en-US/Careers/login?redirect=%2Fen-US%2FCareers%2FjobAlerts
+    public_job_host: fugro.wd3.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "Heidrick & Struggles"
+    priority: 2
+    official_careers_url: https://heidrick.wd1.myworkdayjobs.com/heidrickandstruggles
+    public_job_url: https://heidrick.wd1.myworkdayjobs.com/heidrickandstruggles
+    public_job_host: heidrick.wd1.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "Occidental Petroleum (Oxy)"
+    priority: 2
+    official_careers_url: https://oxy.wd5.myworkdayjobs.com/Corporate
+    public_job_url: https://oxy.wd5.myworkdayjobs.com/Corporate
+    public_job_host: oxy.wd5.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "Occidental Petroleum (Oxy)"
+    priority: 2
+    official_careers_url: https://oxy.wd5.myworkdayjobs.com/UniversityRelations
+    public_job_url: https://oxy.wd5.myworkdayjobs.com/UniversityRelations
+    public_job_host: oxy.wd5.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "ONEOK"
+    priority: 2
+    official_careers_url: https://oneok.wd1.myworkdayjobs.com/ONEOK
+    public_job_url: https://oneok.wd1.myworkdayjobs.com/ONEOK
+    public_job_host: oneok.wd1.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "Ovintiv"
+    priority: 2
+    official_careers_url: https://ovintiv.wd3.myworkdayjobs.com/ovintivcareers
+    public_job_url: https://ovintiv.wd3.myworkdayjobs.com/ovintivcareers
+    public_job_host: ovintiv.wd3.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "Plug Power"
+    priority: 2
+    official_careers_url: https://plugpower.wd5.myworkdayjobs.com/Plug_Power_Inc
+    public_job_url: https://plugpower.wd5.myworkdayjobs.com/Plug_Power_Inc
+    public_job_host: plugpower.wd5.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "Rockwell Automation"
+    priority: 2
+    official_careers_url: https://rockwellautomation.wd1.myworkdayjobs.com/en-US/External_Rockwell_Automation/introduceYourself
+    public_job_url: https://rockwellautomation.wd1.myworkdayjobs.com/en-US/External_Rockwell_Automation/introduceYourself
+    public_job_host: rockwellautomation.wd1.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "Sandvik"
+    priority: 2
+    official_careers_url: https://sandvik.wd3.myworkdayjobs.com/en-US/sandvik-jobs/login
+    public_job_url: https://sandvik.wd3.myworkdayjobs.com/en-US/sandvik-jobs/login
+    public_job_host: sandvik.wd3.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "Seadrill"
+    priority: 2
+    official_careers_url: https://fa-eykz-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/
+    public_job_url: https://fa-eykz-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/
+    public_job_host: fa-eykz-saasfaprod1.fa.ocs.oraclecloud.com
+    ats_type: oracle_hcm
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "Shell Malaysia"
+    priority: 2
+    official_careers_url: https://shell.wd3.myworkdayjobs.com/ShellCareers
+    public_job_url: https://shell.wd3.myworkdayjobs.com/ShellCareers
+    public_job_host: shell.wd3.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "TC Energy Corporation"
+    priority: 2
+    official_careers_url: https://tcenergy.wd3.myworkdayjobs.com/en-US/CAREER_SITE_TC?jobFamilyGroup=69babe4ce6380100bf60db4e569f0000
+    public_job_url: https://tcenergy.wd3.myworkdayjobs.com/en-US/CAREER_SITE_TC?jobFamilyGroup=69babe4ce6380100bf60db4e569f0000
+    public_job_host: tcenergy.wd3.myworkdayjobs.com
+    ats_type: workday
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
+  - company: "Teekay"
+    priority: 2
+    official_careers_url: https://eipv.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2001/requisitions
+    public_job_url: https://eipv.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2001/requisitions
+    public_job_host: eipv.fa.us6.oraclecloud.com
+    ats_type: oracle_hcm
+    status: connector_planned
+    source_ids: []
+    verified_at: '2026-09-20'
+    notes: "Bounded official-source discovery proof passed in deep-official-source-discovery run 35481826522; probe_jobs=0. Revalidate live before source promotion."
+
