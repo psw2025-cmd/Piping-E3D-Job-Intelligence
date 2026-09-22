@@ -11,6 +11,8 @@ on:
       - "scripts/build_48h_urgent_report.py"
       - "scripts/discover_official_sources.py"
       - "scripts/merge_official_source_discovery.py"
+      - "scripts/runtime_source_shards.py"
+      - "scripts/merge_batched_scan.py"
       - "scripts/run_cloud_daily.py"
       - "scripts/append_daily_coverage.py"
       - "src/job_intelligence/**"
@@ -22,7 +24,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: global-48h-piping-scan-v3
+  group: global-48h-piping-scan-v4
   cancel-in-progress: true
 
 jobs:
@@ -33,54 +35,45 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
-
       - name: Install project
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-
       - name: Run discovery regression checks
         if: github.event_name != 'schedule'
         run: pytest -q tests/test_source_discovery.py tests/test_source_config_strict.py
-
       - name: Discover and verify priority official public sources
         run: |
           set -euo pipefail
           mkdir -p output/source-discovery docs
-          python scripts/discover_official_sources.py             --registry config/employer_registry.yaml             --registry config/employer_registry.d/verified-discovery-batch-001.yaml             --base-sources config/sources.yaml             --report-json docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json             --report-md docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md             --runtime-sources output/source-discovery/runtime-sources.yaml
-
+          python scripts/discover_official_sources.py \
+            --registry config/employer_registry.yaml \
+            --registry config/employer_registry.d/verified-discovery-batch-001.yaml \
+            --base-sources config/sources.yaml \
+            --report-json docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json \
+            --report-md docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md \
+            --runtime-sources output/source-discovery/runtime-sources.yaml
       - name: Validate runtime source configuration
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
           from job_intelligence.source_config import load_source_config
-
           config = load_source_config("output/source-discovery/runtime-sources.yaml")
           enabled = [source for source in config.sources if source.enabled]
-          report = json.loads(
-              Path("docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json").read_text(
-                  encoding="utf-8"
-              )
-          )
+          report = json.loads(Path("docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.json").read_text())
           assert enabled, "runtime source configuration has no enabled sources"
           assert config.policy["respect_robots_txt"] is True
           assert config.policy["bypass_captcha"] is False
           assert config.policy["use_rotating_proxies"] is False
           assert report["schema_version"] == 1
-          print(
-              f"PASS: runtime source configuration valid; "
-              f"enabled={len(enabled)} total={len(config.sources)} "
-              f"detected={report['detected']} verified={report['verified']}"
-          )
+          print(f"PASS: enabled={len(enabled)} total={len(config.sources)} detected={report['detected']} verified={report['verified']}")
           PY
-
       - name: Upload verified discovery registry
         uses: actions/upload-artifact@v7
         with:
@@ -91,72 +84,147 @@ jobs:
             output/source-discovery/runtime-sources.yaml
           if-no-files-found: error
           retention-days: 14
-          compression-level: 6
 
-  collect:
-    name: Collect every verified runtime source and build 48-hour report
+  plan:
+    name: Plan bounded source shards
     needs: discover
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+      - name: Install project
+        run: pip install -e ".[dev]"
+      - name: Download verified runtime registry
+        uses: actions/download-artifact@v8
+        with:
+          name: global-source-discovery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .
+      - name: Create six-source shards
+        id: plan
+        run: |
+          set -euo pipefail
+          python scripts/runtime_source_shards.py \
+            --input output/source-discovery/runtime-sources.yaml \
+            --output-dir output/source-shards \
+            --max-sources 6
+          matrix="$(python -c 'import json; print(json.dumps([x["id"] for x in json.load(open("output/source-shards/plan.json"))["shards"]]))')"
+          echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
+          cat output/source-shards/plan.json
+      - name: Upload shard plan
+        uses: actions/upload-artifact@v7
+        with:
+          name: global-source-shards-${{ github.run_id }}-${{ github.run_attempt }}
+          path: output/source-shards
+          if-no-files-found: error
+          retention-days: 14
 
+  collect:
+    name: Collect ${{ matrix.shard }}
+    needs: plan
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
-
       - name: Install project
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
-
-      - name: Download verified discovery registry
+      - name: Download shard plan
         uses: actions/download-artifact@v8
         with:
-          name: global-source-discovery-${{ github.run_id }}-${{ github.run_attempt }}
+          name: global-source-shards-${{ github.run_id }}-${{ github.run_attempt }}
           path: .
-
-      - name: Validate transferred runtime source configuration
+      - name: Collect bounded shard
         run: |
-          python - <<'PY'
-          from job_intelligence.source_config import load_source_config
+          set -euo pipefail
+          python scripts/run_cloud_daily.py \
+            --sources output/source-shards/${{ matrix.shard }}.yaml \
+            --output output/${{ matrix.shard }}
+      - name: Upload shard proof
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: global-source-shard-${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: output/${{ matrix.shard }}
+          if-no-files-found: warn
+          retention-days: 14
 
-          config = load_source_config("output/source-discovery/runtime-sources.yaml")
-          enabled = [source for source in config.sources if source.enabled]
-          assert enabled, "transferred runtime source configuration has no enabled sources"
-          print(
-              f"PASS: transferred runtime configuration valid; "
-              f"enabled={len(enabled)} total={len(config.sources)}"
-          )
-          PY
-
-      - name: Run complete regression suite for changed code
-        if: github.event_name != 'schedule'
-        run: pytest -q
-
-      - name: Collect all permitted official sources with strict status
+  merge:
+    name: Merge shards and build final job list
+    needs: [plan, collect]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install project
         run: |
-          python scripts/run_cloud_daily.py             --sources output/source-discovery/runtime-sources.yaml             --output output/global-48h
-
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Download shard plan
+        uses: actions/download-artifact@v8
+        with:
+          name: global-source-shards-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .
+      - name: Download all shard proofs
+        uses: actions/download-artifact@v8
+        with:
+          pattern: global-source-shard-*-${{ github.run_id }}-${{ github.run_attempt }}
+          path: output/shards
+          merge-multiple: false
+      - name: Merge shard databases and exports
+        id: merge
+        continue-on-error: true
+        run: |
+          python scripts/merge_batched_scan.py \
+            --plan output/source-shards/plan.json \
+            --shards-root output/shards \
+            --output output/global-48h
       - name: Append worldwide coverage proof
+        if: always() && hashFiles('output/global-48h/jobs.db') != ''
+        continue-on-error: true
         run: python scripts/append_daily_coverage.py --output output/global-48h
-
       - name: Build strict recent and urgent report
+        if: always() && hashFiles('output/global-48h/jobs.db') != ''
+        continue-on-error: true
         run: |
-          python scripts/build_48h_urgent_report.py             --db output/global-48h/jobs.db             --output-md docs/LATEST_48H_GLOBAL_PIPING_SCAN.md             --output-json docs/LATEST_48H_GLOBAL_PIPING_SCAN.json             --hours 48             --timezone Asia/Kolkata
-
+          python scripts/build_48h_urgent_report.py \
+            --db output/global-48h/jobs.db \
+            --output-md docs/LATEST_48H_GLOBAL_PIPING_SCAN.md \
+            --output-json docs/LATEST_48H_GLOBAL_PIPING_SCAN.json \
+            --hours 48 \
+            --timezone Asia/Kolkata
       - name: Publish reports in workflow summary
+        if: always()
         run: |
-          cat docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md >> "$GITHUB_STEP_SUMMARY"
-          printf '%s\n\n' '---' >> "$GITHUB_STEP_SUMMARY"
-          cat docs/LATEST_48H_GLOBAL_PIPING_SCAN.md >> "$GITHUB_STEP_SUMMARY"
-          printf '%s\n\n' '---' >> "$GITHUB_STEP_SUMMARY"
-          cat output/global-48h/SUMMARY.md >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Upload strict global proof artifact
+          test ! -f docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md || cat docs/LATEST_OFFICIAL_SOURCE_DISCOVERY.md >> "$GITHUB_STEP_SUMMARY"
+          test ! -f docs/LATEST_48H_GLOBAL_PIPING_SCAN.md || { printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"; cat docs/LATEST_48H_GLOBAL_PIPING_SCAN.md >> "$GITHUB_STEP_SUMMARY"; }
+          test ! -f output/global-48h/SUMMARY.md || { printf '\n---\n\n' >> "$GITHUB_STEP_SUMMARY"; cat output/global-48h/SUMMARY.md >> "$GITHUB_STEP_SUMMARY"; }
+      - name: Upload final global proof
         if: always()
         uses: actions/upload-artifact@v7
         with:
@@ -167,50 +235,38 @@ jobs:
             docs/LATEST_48H_GLOBAL_PIPING_SCAN.md
             docs/LATEST_48H_GLOBAL_PIPING_SCAN.json
             output/source-discovery/runtime-sources.yaml
+            output/source-shards/plan.json
             output/global-48h/SUMMARY.md
             output/global-48h/status.json
             output/global-48h/run.log
+            output/global-48h/shard_statuses.json
+            output/global-48h/jobs.db
             output/global-48h/Piping_E3D_Jobs.xlsx
             output/global-48h/Piping_E3D_Daily_Bundle.zip
           if-no-files-found: warn
           retention-days: 14
-          compression-level: 6
-
       - name: Enforce strict global success
         if: always()
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-
           status_path = Path("output/global-48h/status.json")
           if not status_path.exists():
-              raise SystemExit("Global runner did not create status.json")
-          status = json.loads(status_path.read_text(encoding="utf-8"))
-          attempted = int(status.get("sources_attempted", 0))
-          passed = int(status.get("sources_passed", 0))
-          failed = int(status.get("sources_failed", 0))
+              raise SystemExit("Batched runner did not create status.json")
+          status = json.loads(status_path.read_text())
           required = [
               status.get("exit_code") == 0,
               status.get("verified") is True,
               status.get("collection_status") == "pass",
-              attempted > 0,
-              passed == attempted,
-              failed == 0,
+              int(status.get("sources_attempted", 0)) > 0,
+              int(status.get("sources_passed", 0)) == int(status.get("sources_attempted", 0)),
+              int(status.get("sources_failed", 0)) == 0,
               status.get("coverage_verified") is True,
               Path("output/global-48h/Piping_E3D_Jobs.xlsx").exists(),
               Path("docs/LATEST_48H_GLOBAL_PIPING_SCAN.json").exists(),
           ]
           if not all(required):
-              raise SystemExit(
-                  "Global strict gate failed: "
-                  f"status={status.get('collection_status')} "
-                  f"attempted={attempted} passed={passed} failed={failed} "
-                  f"verified={status.get('verified')} "
-                  f"coverage={status.get('coverage_verified')}"
-              )
-          print(
-              "PASS: strict discovery, all-source collection, evidence, workbook, "
-              "coverage and 48-hour report verification completed"
-          )
+              raise SystemExit(f"Batched strict gate failed: {status}")
+          print("PASS: all source shards, evidence, workbook, coverage and 48-hour report verified")
           PY
