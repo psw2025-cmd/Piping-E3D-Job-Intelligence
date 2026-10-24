@@ -1,5 +1,7 @@
-import yaml
 from pathlib import Path
+
+import yaml
+
 
 def main():
     master_path = Path("config/employers_master_verified.yaml")
@@ -23,7 +25,8 @@ def main():
             continue
         seen_companies.add(norm_name)
         career_url = org.get("careers_url") or ""
-        source_id = f"oracle_{name.lower().replace(" ", "_").replace(",", "").replace(".", "").replace("(", "").replace(")", "")}"
+        safe_name = name.lower().replace(' ', '_').replace(',', '').replace('.', '').replace('(', '').replace(')', '')
+        source_id = f"oracle_{safe_name}"
         spec = {
             "id": source_id,
             "name": f"{name} Oracle HCM Careers",
