@@ -1,0 +1,322 @@
+sources:
+- id: oracle_john_wood_group_plc_wood
+  name: John Wood Group PLC (Wood) Oracle HCM Careers
+  type: oracle_hcm
+  company: John Wood Group PLC (Wood)
+  enabled: false
+  profile_filter: true
+  base_url: https://careers.woodplc.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_woodside
+  name: Woodside Oracle HCM Careers
+  type: oracle_hcm
+  company: Woodside
+  enabled: false
+  profile_filter: true
+  base_url: https://careers.woodplc.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_woodside_energy
+  name: Woodside Energy Oracle HCM Careers
+  type: oracle_hcm
+  company: Woodside Energy
+  enabled: false
+  profile_filter: true
+  base_url: https://careers.woodplc.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_nmdc_energy_formerly_national_petroleum_construction_company_-_npcc
+  name: NMDC Energy (formerly National Petroleum Construction Company - NPCC) Oracle
+    HCM Careers
+  type: oracle_hcm
+  company: NMDC Energy (formerly National Petroleum Construction Company - NPCC)
+  enabled: false
+  profile_filter: true
+  base_url: https://www.nmdc-energy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_mcdermott_international_ltd
+  name: McDermott International, Ltd Oracle HCM Careers
+  type: oracle_hcm
+  company: McDermott International, Ltd
+  enabled: false
+  profile_filter: true
+  base_url: https://mcdermott.oraclecloud.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_technipfmc_india
+  name: TechnipFMC India Oracle HCM Careers
+  type: oracle_hcm
+  company: TechnipFMC India
+  enabled: false
+  profile_filter: true
+  base_url: https://www.technipfmcindia.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_heerema_marine_contractors
+  name: Heerema Marine Contractors Oracle HCM Careers
+  type: oracle_hcm
+  company: Heerema Marine Contractors
+  enabled: false
+  profile_filter: true
+  base_url: https://www.heeremamarinecontractors.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_technipfmc_norway
+  name: TechnipFMC Norway Oracle HCM Careers
+  type: oracle_hcm
+  company: TechnipFMC Norway
+  enabled: false
+  profile_filter: true
+  base_url: https://www.technipfmcnorway.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_technipfmc_uk
+  name: TechnipFMC UK Oracle HCM Careers
+  type: oracle_hcm
+  company: TechnipFMC UK
+  enabled: false
+  profile_filter: true
+  base_url: https://www.technipfmcuk.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_technipfmc_usa
+  name: TechnipFMC USA Oracle HCM Careers
+  type: oracle_hcm
+  company: TechnipFMC USA
+  enabled: false
+  profile_filter: true
+  base_url: https://www.technipfmcusa.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_valaris
+  name: Valaris Oracle HCM Careers
+  type: oracle_hcm
+  company: Valaris
+  enabled: false
+  profile_filter: true
+  base_url: https://efqq.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1008
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_tata_consulting_engineers_tce
+  name: Tata Consulting Engineers (TCE) Oracle HCM Careers
+  type: oracle_hcm
+  company: Tata Consulting Engineers (TCE)
+  enabled: false
+  profile_filter: true
+  base_url: https://www.tce.co.in/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_nesma_&_partners
+  name: Nesma & Partners Oracle HCM Careers
+  type: oracle_hcm
+  company: Nesma & Partners
+  enabled: false
+  profile_filter: true
+  base_url: https://www.nesmapartners.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_kca_deutag_norge_as
+  name: KCA Deutag Norge AS Oracle HCM Careers
+  type: oracle_hcm
+  company: KCA Deutag Norge AS
+  enabled: false
+  profile_filter: true
+  base_url: https://www.kcadeutag.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_john_wood_group_plc_india
+  name: John Wood Group PLC India Oracle HCM Careers
+  type: oracle_hcm
+  company: John Wood Group PLC India
+  enabled: false
+  profile_filter: true
+  base_url: https://careers.woodplc.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: oracle_rawabi_holding
+  name: Rawabi Holding Oracle HCM Careers
+  type: oracle_hcm
+  company: Rawabi Holding
+  enabled: false
+  profile_filter: true
+  base_url: https://www.rawabiholding.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress

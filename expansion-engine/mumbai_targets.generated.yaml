@@ -1,0 +1,1157 @@
+sources:
+- id: mumbai_target_aker_solutions_india
+  name: Aker Solutions India Regional Openings
+  type: workday
+  company: Aker Solutions India
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: mumbai_target_baker_hughes_india
+  name: Baker Hughes India Regional Openings
+  type: workday
+  company: Baker Hughes India
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: mumbai_target_bechtel_corporation
+  name: Bechtel Corporation Regional Openings
+  type: public_html
+  company: Bechtel Corporation
+  enabled: false
+  profile_filter: true
+  careers_url: https://sjobs.brassring.com/TGnewUI/Search/Home/Home?partnerid=26639&siteid=5507
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_bharat_petroleum_corporation_limited_bpcl
+  name: Bharat Petroleum Corporation Limited (BPCL) Regional Openings
+  type: public_html
+  company: Bharat Petroleum Corporation Limited (BPCL)
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.bharatpetroleum.in/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_fluor_corporation
+  name: Fluor Corporation Regional Openings
+  type: public_html
+  company: Fluor Corporation
+  enabled: false
+  profile_filter: true
+  careers_url: https://jobs.fluor.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_gail_india_limited
+  name: GAIL (India) Limited Regional Openings
+  type: public_html
+  company: GAIL (India) Limited
+  enabled: false
+  profile_filter: true
+  careers_url: https://gailonline.com/CRCareers.html
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_halliburton_india
+  name: Halliburton India Regional Openings
+  type: workday
+  company: Halliburton India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.halliburtonindia.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: mumbai_target_hindustan_petroleum_corporation_limited_hpcl
+  name: Hindustan Petroleum Corporation Limited (HPCL) Regional Openings
+  type: public_html
+  company: Hindustan Petroleum Corporation Limited (HPCL)
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.hindustanpetroleum.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_indian_oil_corporation_limited_iocl
+  name: Indian Oil Corporation Limited (IOCL) Regional Openings
+  type: public_html
+  company: Indian Oil Corporation Limited (IOCL)
+  enabled: false
+  profile_filter: true
+  careers_url: https://iocl.com/contents/careers.aspx
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_jacobs_solutions_inc
+  name: Jacobs Solutions Inc. Regional Openings
+  type: workday
+  company: Jacobs Solutions Inc.
+  enabled: false
+  profile_filter: true
+  careers_url: https://jacobs.wd1.myworkdayjobs.com/Jacobs
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: mumbai_target_kbr_inc_kellogg_brown_&_root
+  name: KBR, Inc. (Kellogg Brown & Root) Regional Openings
+  type: workday
+  company: KBR, Inc. (Kellogg Brown & Root)
+  enabled: false
+  profile_filter: true
+  careers_url: https://kbr.wb.myworkdayjobs.com/KBR_Careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: mumbai_target_larsen_&_toubro_limited_l&t_energy_-_hydrocarbon
+  name: Larsen & Toubro Limited (L&T Energy - Hydrocarbon) Regional Openings
+  type: public_html
+  company: Larsen & Toubro Limited (L&T Energy - Hydrocarbon)
+  enabled: false
+  profile_filter: true
+  careers_url: https://lnt.peoplestrong.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_larsen_&_toubro_limited_l&t_energy_-_hydrocarbon
+  name: Larsen & Toubro Limited (L&T Energy - Hydrocarbon) Regional Openings
+  type: public_html
+  company: Larsen & Toubro Limited (L&T Energy - Hydrocarbon)
+  enabled: false
+  profile_filter: true
+  careers_url: https://lnt.peoplestrong.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_mcdermott_international_ltd
+  name: McDermott International, Ltd Regional Openings
+  type: oracle_hcm
+  company: McDermott International, Ltd
+  enabled: false
+  profile_filter: true
+  careers_url: https://mcdermott.oraclecloud.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: mumbai_target_qatarenergy_formerly_qatargas_/_rasgas
+  name: QatarEnergy (formerly Qatargas / RasGas) Regional Openings
+  type: public_html
+  company: QatarEnergy (formerly Qatargas / RasGas)
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.qatarenergy.qa/en/Careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_oil_and_natural_gas_corporation_ongc
+  name: Oil and Natural Gas Corporation (ONGC) Regional Openings
+  type: public_html
+  company: Oil and Natural Gas Corporation (ONGC)
+  enabled: false
+  profile_filter: true
+  careers_url: https://ongcindia.com/web/eng/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_petrofac_limited
+  name: Petrofac Limited Regional Openings
+  type: public_html
+  company: Petrofac Limited
+  enabled: false
+  profile_filter: true
+  careers_url: https://petrofac.referrals.selectminds.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_reliance_industries
+  name: Reliance Industries Regional Openings
+  type: public_html
+  company: Reliance Industries
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.relianceindustries.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_reliance_industries_hq
+  name: Reliance Industries HQ Regional Openings
+  type: public_html
+  company: Reliance Industries HQ
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.relianceindustrieshq.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_saipem_spa
+  name: Saipem S.p.A. Regional Openings
+  type: sitemap
+  company: Saipem S.p.A.
+  enabled: false
+  profile_filter: true
+  careers_url: https://careers.saipem.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_schlumberger_india
+  name: Schlumberger India Regional Openings
+  type: workday
+  company: Schlumberger India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.schlumbergerindia.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: mumbai_target_engineers_india_limited_eil
+  name: Engineers India Limited (EIL) Regional Openings
+  type: public_html
+  company: Engineers India Limited (EIL)
+  enabled: false
+  profile_filter: true
+  careers_url: https://recruitment.eil.co.in/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_tata_projects
+  name: Tata Projects Regional Openings
+  type: public_html
+  company: Tata Projects
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.tataprojects.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_technip_energies_nv
+  name: Technip Energies N.V. Regional Openings
+  type: public_html
+  company: Technip Energies N.V.
+  enabled: false
+  profile_filter: true
+  careers_url: https://careers.technipenergies.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_technipfmc_india
+  name: TechnipFMC India Regional Openings
+  type: oracle_hcm
+  company: TechnipFMC India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.technipfmcindia.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: mumbai_target_john_wood_group_plc_wood
+  name: John Wood Group PLC (Wood) Regional Openings
+  type: oracle_hcm
+  company: John Wood Group PLC (Wood)
+  enabled: false
+  profile_filter: true
+  careers_url: https://careers.woodplc.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: mumbai_target_worley_limited_formerly_worleyparsons
+  name: Worley Limited (formerly WorleyParsons) Regional Openings
+  type: public_html
+  company: Worley Limited (formerly WorleyParsons)
+  enabled: false
+  profile_filter: true
+  careers_url: https://worley.eightfold.ai/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_nes_fircroft_group
+  name: NES Fircroft Group Regional Openings
+  type: public_html
+  company: NES Fircroft Group
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.nesfircroft.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_trg
+  name: TRG Regional Openings
+  type: public_html
+  company: TRG
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.trg.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_abc_consultants_india
+  name: ABC Consultants India Regional Openings
+  type: public_html
+  company: ABC Consultants India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.abcconsultantsindia.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_jacobs_solutions_inc
+  name: Jacobs Solutions Inc. Regional Openings
+  type: workday
+  company: Jacobs Solutions Inc.
+  enabled: false
+  profile_filter: true
+  careers_url: https://jacobs.wd1.myworkdayjobs.com/Jacobs
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: mumbai_target_airswift_holdings_limited
+  name: Airswift Holdings Limited Regional Openings
+  type: public_html
+  company: Airswift Holdings Limited
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.airswift.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_brunel_international_nv
+  name: Brunel International N.V. Regional Openings
+  type: public_html
+  company: Brunel International N.V.
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.brunel.net/en/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_nuclear_power_corporation_of_india_limited_npcil
+  name: Nuclear Power Corporation of India Limited (NPCIL) Regional Openings
+  type: public_html
+  company: Nuclear Power Corporation of India Limited (NPCIL)
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.npcilcareers.co.in
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_hays_india
+  name: Hays India Regional Openings
+  type: public_html
+  company: Hays India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.haysindia.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_manpower_india
+  name: Manpower India Regional Openings
+  type: public_html
+  company: Manpower India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.manpowerindia.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_michael_page_india
+  name: Michael Page India Regional Openings
+  type: public_html
+  company: Michael Page India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.michaelpageindia.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_nes_fircroft_group
+  name: NES Fircroft Group Regional Openings
+  type: public_html
+  company: NES Fircroft Group
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.nesfircroft.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_randstad_india
+  name: Randstad India Regional Openings
+  type: public_html
+  company: Randstad India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.randstadindia.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_spencer_ogden_india
+  name: Spencer Ogden India Regional Openings
+  type: public_html
+  company: Spencer Ogden India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.spencerogdenindia.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_teamlease_india
+  name: TeamLease India Regional Openings
+  type: public_html
+  company: TeamLease India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.teamleaseindia.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_brunel_international_nv
+  name: Brunel International N.V. Regional Openings
+  type: public_html
+  company: Brunel International N.V.
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.brunel.net/en/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_airswift_holdings_limited
+  name: Airswift Holdings Limited Regional Openings
+  type: public_html
+  company: Airswift Holdings Limited
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.airswift.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_hays
+  name: Hays Regional Openings
+  type: public_html
+  company: Hays
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.hays.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_nes_fircroft_group
+  name: NES Fircroft Group Regional Openings
+  type: public_html
+  company: NES Fircroft Group
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.nesfircroft.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_spencer_ogden
+  name: Spencer Ogden Regional Openings
+  type: public_html
+  company: Spencer Ogden
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.spencerogden.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_reliance_industries_limited_ril_-_jamnagar/hazira
+  name: Reliance Industries Limited (RIL - Jamnagar/Hazira) Regional Openings
+  type: sitemap
+  company: Reliance Industries Limited (RIL - Jamnagar/Hazira)
+  enabled: false
+  profile_filter: true
+  careers_url: https://careers.ril.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_nayara_energy_vadinar_refinery
+  name: Nayara Energy (Vadinar Refinery) Regional Openings
+  type: public_html
+  company: Nayara Energy (Vadinar Refinery)
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.nayaraenergy.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_tata_projects_limited
+  name: Tata Projects Limited Regional Openings
+  type: sitemap
+  company: Tata Projects Limited
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.tataprojects.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_tata_consulting_engineers_tce
+  name: Tata Consulting Engineers (TCE) Regional Openings
+  type: oracle_hcm
+  company: Tata Consulting Engineers (TCE)
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.tce.co.in/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: mumbai_target_sterling_and_wilson
+  name: Sterling and Wilson Regional Openings
+  type: public_html
+  company: Sterling and Wilson
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.sterlingandwilson.com/careers.php
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_thyssenkrupp_industrial_solutions_india_uhde_india
+  name: Thyssenkrupp Industrial Solutions India (Uhde India) Regional Openings
+  type: public_html
+  company: Thyssenkrupp Industrial Solutions India (Uhde India)
+  enabled: false
+  profile_filter: true
+  careers_url: https://jobs.thyssenkrupp.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_toyo_engineering_india_private_limited
+  name: Toyo Engineering India Private Limited Regional Openings
+  type: public_html
+  company: Toyo Engineering India Private Limited
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.toyo-eng.com/in/en/careers/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_mott_macdonald_india
+  name: Mott MacDonald India Regional Openings
+  type: workday
+  company: Mott MacDonald India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.mottmac.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: mumbai_target_technip_energies_nv
+  name: Technip Energies N.V. Regional Openings
+  type: public_html
+  company: Technip Energies N.V.
+  enabled: false
+  profile_filter: true
+  careers_url: https://careers.technipenergies.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_simon_carves_engineering_india
+  name: Simon Carves Engineering India Regional Openings
+  type: public_html
+  company: Simon Carves Engineering India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.simoncarves.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_mecon_limited_govt_of_india
+  name: Mecon Limited (Govt of India) Regional Openings
+  type: public_html
+  company: Mecon Limited (Govt of India)
+  enabled: false
+  profile_filter: true
+  careers_url: http://www.meconlimited.co.in/jobs.aspx
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_rites_limited_govt_of_india
+  name: RITES Limited (Govt of India) Regional Openings
+  type: public_html
+  company: RITES Limited (Govt of India)
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.rites.com/Career
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_bridge_and_roof_co_india_ltd
+  name: Bridge and Roof Co. (India) Ltd. Regional Openings
+  type: public_html
+  company: Bridge and Roof Co. (India) Ltd.
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.bridgeroof.co.in/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_mrpl_mangalore_refinery_and_petrochemicals_ltd
+  name: MRPL (Mangalore Refinery and Petrochemicals Ltd) Regional Openings
+  type: public_html
+  company: MRPL (Mangalore Refinery and Petrochemicals Ltd)
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.mrpl.co.in/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_jerry_varghese_international
+  name: Jerry Varghese International Regional Openings
+  type: public_html
+  company: Jerry Varghese International
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.jerryvarghese.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_reliance_industries_limited_jamnagar_refinery
+  name: Reliance Industries Limited (Jamnagar Refinery) Regional Openings
+  type: sitemap
+  company: Reliance Industries Limited (Jamnagar Refinery)
+  enabled: false
+  profile_filter: true
+  careers_url: https://careers.ril.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_aker_solutions_india_private_limited
+  name: Aker Solutions India Private Limited Regional Openings
+  type: workday
+  company: Aker Solutions India Private Limited
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: mumbai_target_technip_energies_india
+  name: Technip Energies India Regional Openings
+  type: public_html
+  company: Technip Energies India
+  enabled: false
+  profile_filter: true
+  careers_url: https://careers.technipenergies.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_john_wood_group_plc_india
+  name: John Wood Group PLC India Regional Openings
+  type: oracle_hcm
+  company: John Wood Group PLC India
+  enabled: false
+  profile_filter: true
+  careers_url: https://careers.woodplc.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: mumbai_target_petrofac_india
+  name: Petrofac India Regional Openings
+  type: public_html
+  company: Petrofac India
+  enabled: false
+  profile_filter: true
+  careers_url: https://petrofac.referrals.selectminds.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_worley_india
+  name: Worley India Regional Openings
+  type: public_html
+  company: Worley India
+  enabled: false
+  profile_filter: true
+  careers_url: https://worley.eightfold.ai/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_dynamic_staffing_services
+  name: Dynamic Staffing Services Regional Openings
+  type: public_html
+  company: Dynamic Staffing Services
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.dss-hr.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_f_gheewala_human_resources
+  name: F. Gheewala Human Resources Regional Openings
+  type: public_html
+  company: F. Gheewala Human Resources
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.gheewala.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_seagull_international
+  name: Seagull International Regional Openings
+  type: public_html
+  company: Seagull International
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.seagullindia.net/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_soundlines_group
+  name: Soundlines Group Regional Openings
+  type: public_html
+  company: Soundlines Group
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.soundlinesgroup.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_aarvi_encon_limited
+  name: Aarvi Encon Limited Regional Openings
+  type: public_html
+  company: Aarvi Encon Limited
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.aarviencon.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_rcad_consulting_engineers
+  name: RCAD Consulting Engineers Regional Openings
+  type: public_html
+  company: RCAD Consulting Engineers
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.rcad.in/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_spec_technical_services
+  name: SPEC Technical Services Regional Openings
+  type: public_html
+  company: SPEC Technical Services
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.spectechnical.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_matrix_engineering_consultant
+  name: Matrix Engineering Consultant Regional Openings
+  type: public_html
+  company: Matrix Engineering Consultant
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.matrixeng.in/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_privij_consultants_engineering
+  name: Privij Consultants Engineering Regional Openings
+  type: public_html
+  company: Privij Consultants Engineering
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.privij.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_career_choice_solution
+  name: Career Choice Solution Regional Openings
+  type: public_html
+  company: Career Choice Solution
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.careerchoicesolution.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_shella_consultants
+  name: Shella Consultants Regional Openings
+  type: public_html
+  company: Shella Consultants
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.shellaconsultants.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_ajeets_management_consultancy
+  name: AJEETS Management Consultancy Regional Openings
+  type: public_html
+  company: AJEETS Management Consultancy
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.ajeets.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_namo_namokar_engineering
+  name: Namo Namokar Engineering Regional Openings
+  type: public_html
+  company: Namo Namokar Engineering
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.namokareng.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_aspiree_techtree_llp
+  name: Aspiree Techtree LLP Regional Openings
+  type: public_html
+  company: Aspiree Techtree LLP
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.aspireetechtree.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_wts_energy
+  name: WTS Energy Regional Openings
+  type: public_html
+  company: WTS Energy
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.wtsenergy.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_al_deseo_human_resources
+  name: Al Deseo Human Resources Regional Openings
+  type: public_html
+  company: Al Deseo Human Resources
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.aldeseo.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_m_n_dastur_&_company
+  name: M. N. Dastur & Company Regional Openings
+  type: public_html
+  company: M. N. Dastur & Company
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.dastur.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_trans_asia_integrators
+  name: Trans Asia Integrators Regional Openings
+  type: public_html
+  company: Trans Asia Integrators
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.transasia.info/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_jesseena_human_resources
+  name: Jesseena Human Resources Regional Openings
+  type: public_html
+  company: Jesseena Human Resources
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.jesseena.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: mumbai_target_beta_consultancy_services
+  name: Beta Consultancy Services Regional Openings
+  type: public_html
+  company: Beta Consultancy Services
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.betaconsultancy.com/jobs
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d

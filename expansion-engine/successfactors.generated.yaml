@@ -1,0 +1,278 @@
+sources:
+- id: successfactors_exxonmobil_belgium
+  name: ExxonMobil Belgium SuccessFactors Openings
+  type: sitemap
+  company: ExxonMobil Belgium
+  enabled: false
+  profile_filter: true
+  url: https://jobs.exxonmobil.com
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_saipem_spa
+  name: Saipem S.p.A. SuccessFactors Openings
+  type: sitemap
+  company: Saipem S.p.A.
+  enabled: false
+  profile_filter: true
+  url: https://careers.saipem.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_exxonmobil_nigeria
+  name: ExxonMobil Nigeria SuccessFactors Openings
+  type: sitemap
+  company: ExxonMobil Nigeria
+  enabled: false
+  profile_filter: true
+  url: https://jobs.exxonmobil.com
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_exxonmobil_singapore
+  name: ExxonMobil Singapore SuccessFactors Openings
+  type: sitemap
+  company: ExxonMobil Singapore
+  enabled: false
+  profile_filter: true
+  url: https://jobs.exxonmobil.com
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_exxonmobil
+  name: ExxonMobil SuccessFactors Openings
+  type: sitemap
+  company: ExxonMobil
+  enabled: false
+  profile_filter: true
+  url: https://jobs.exxonmobil.com
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_reliance_industries_limited_ril_-_jamnagar/hazira
+  name: Reliance Industries Limited (RIL - Jamnagar/Hazira) SuccessFactors Openings
+  type: sitemap
+  company: Reliance Industries Limited (RIL - Jamnagar/Hazira)
+  enabled: false
+  profile_filter: true
+  url: https://careers.ril.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_tata_projects_limited
+  name: Tata Projects Limited SuccessFactors Openings
+  type: sitemap
+  company: Tata Projects Limited
+  enabled: false
+  profile_filter: true
+  url: https://www.tataprojects.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_sabic_saudi_basic_industries_corporation
+  name: SABIC (Saudi Basic Industries Corporation) SuccessFactors Openings
+  type: sitemap
+  company: SABIC (Saudi Basic Industries Corporation)
+  enabled: false
+  profile_filter: true
+  url: https://www.sabic.com/en/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_sadara_chemical_company
+  name: Sadara Chemical Company SuccessFactors Openings
+  type: sitemap
+  company: Sadara Chemical Company
+  enabled: false
+  profile_filter: true
+  url: https://www.sadara.com/en/Careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_oq_oman_energy_group
+  name: OQ (Oman Energy Group) SuccessFactors Openings
+  type: sitemap
+  company: OQ (Oman Energy Group)
+  enabled: false
+  profile_filter: true
+  url: https://oq.com/en/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_borouge
+  name: Borouge SuccessFactors Openings
+  type: sitemap
+  company: Borouge
+  enabled: false
+  profile_filter: true
+  url: https://www.borouge.com/en/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_ineos_oil_&_gas
+  name: INEOS Oil & Gas SuccessFactors Openings
+  type: sitemap
+  company: INEOS Oil & Gas
+  enabled: false
+  profile_filter: true
+  url: https://www.ineos.com/careers/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_bilfinger_se
+  name: Bilfinger SE SuccessFactors Openings
+  type: sitemap
+  company: Bilfinger SE
+  enabled: false
+  profile_filter: true
+  url: https://jobs.bilfinger.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_linde_engineering
+  name: Linde Engineering SuccessFactors Openings
+  type: sitemap
+  company: Linde Engineering
+  enabled: false
+  profile_filter: true
+  url: https://www.linde-engineering.com/en/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_cowi_a/s
+  name: COWI A/S SuccessFactors Openings
+  type: sitemap
+  company: COWI A/S
+  enabled: false
+  profile_filter: true
+  url: https://www.cowi.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_canadian_natural_resources_limited_cnrl
+  name: Canadian Natural Resources Limited (CNRL) SuccessFactors Openings
+  type: sitemap
+  company: Canadian Natural Resources Limited (CNRL)
+  enabled: false
+  profile_filter: true
+  url: https://www.cnrl.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_reliance_industries_limited_jamnagar_refinery
+  name: Reliance Industries Limited (Jamnagar Refinery) SuccessFactors Openings
+  type: sitemap
+  company: Reliance Industries Limited (Jamnagar Refinery)
+  enabled: false
+  profile_filter: true
+  url: https://careers.ril.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_satorp_saudi_aramco_total_refining_and_petrochemical_company
+  name: SATORP (Saudi Aramco Total Refining and Petrochemical Company) SuccessFactors
+    Openings
+  type: sitemap
+  company: SATORP (Saudi Aramco Total Refining and Petrochemical Company)
+  enabled: false
+  profile_filter: true
+  url: https://www.satorp.com/Careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_saipem_india_projects
+  name: Saipem India Projects SuccessFactors Openings
+  type: sitemap
+  company: Saipem India Projects
+  enabled: false
+  profile_filter: true
+  url: https://careers.saipem.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_petro_rabigh
+  name: Petro Rabigh SuccessFactors Openings
+  type: sitemap
+  company: Petro Rabigh
+  enabled: false
+  profile_filter: true
+  url: https://www.petrorabigh.com/en/Careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_maire_tecnimont_spa
+  name: MAIRE Tecnimont S.p.A. SuccessFactors Openings
+  type: sitemap
+  company: MAIRE Tecnimont S.p.A.
+  enabled: false
+  profile_filter: true
+  url: https://www.mairetecnimont.com/en/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_petronas
+  name: Petronas SuccessFactors Openings
+  type: sitemap
+  company: Petronas
+  enabled: false
+  profile_filter: true
+  url: https://www.petronas.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+- id: successfactors_pttep
+  name: PTTEP SuccessFactors Openings
+  type: sitemap
+  company: PTTEP
+  enabled: false
+  profile_filter: true
+  url: https://www.pttep.com/en/Careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d

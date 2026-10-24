@@ -1,0 +1,5317 @@
+sources:
+- id: workday_hatch
+  name: Hatch Workday Job Openings
+  type: workday
+  company: Hatch
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.hatch.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_kbr_inc_kellogg_brown_&_root
+  name: KBR, Inc. (Kellogg Brown & Root) Workday Job Openings
+  type: workday
+  company: KBR, Inc. (Kellogg Brown & Root)
+  enabled: false
+  profile_filter: true
+  careers_url: https://kbr.wb.myworkdayjobs.com/KBR_Careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_atkinsréalis_formerly_snc-lavalin_/_ws_atkins
+  name: AtkinsRéalis (formerly SNC-Lavalin / WS Atkins) Workday Job Openings
+  type: workday
+  company: AtkinsRéalis (formerly SNC-Lavalin / WS Atkins)
+  enabled: false
+  profile_filter: true
+  careers_url: https://atkinsrealis.wd3.myworkdayjobs.com/AtkinsRealis
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_maersk_drilling
+  name: Maersk Drilling Workday Job Openings
+  type: workday
+  company: Maersk Drilling
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.maerskdrilling.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_maersk_drilling_hq
+  name: Maersk Drilling HQ Workday Job Openings
+  type: workday
+  company: Maersk Drilling HQ
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.maerskdrillinghq.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_ørsted
+  name: Ørsted Workday Job Openings
+  type: workday
+  company: Ørsted
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.rsted.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_aker_solutions_india
+  name: Aker Solutions India Workday Job Openings
+  type: workday
+  company: Aker Solutions India
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_baker_hughes_india
+  name: Baker Hughes India Workday Job Openings
+  type: workday
+  company: Baker Hughes India
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_halliburton_india
+  name: Halliburton India Workday Job Openings
+  type: workday
+  company: Halliburton India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.halliburtonindia.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_jacobs_solutions_inc
+  name: Jacobs Solutions Inc. Workday Job Openings
+  type: workday
+  company: Jacobs Solutions Inc.
+  enabled: false
+  profile_filter: true
+  careers_url: https://jacobs.wd1.myworkdayjobs.com/Jacobs
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_schlumberger_india
+  name: Schlumberger India Workday Job Openings
+  type: workday
+  company: Schlumberger India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.schlumbergerindia.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_ryanair
+  name: Ryanair Workday Job Openings
+  type: workday
+  company: Ryanair
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.ryanair.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_shell_malaysia
+  name: Shell Malaysia Workday Job Openings
+  type: workday
+  company: Shell Malaysia
+  enabled: false
+  profile_filter: true
+  careers_url: https://shell.wd3.myworkdayjobs.com/ShellCareers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_shell_hq
+  name: Shell HQ Workday Job Openings
+  type: workday
+  company: Shell HQ
+  enabled: false
+  profile_filter: true
+  careers_url: https://shell.wd3.myworkdayjobs.com/ShellCareers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_chevron_nigeria
+  name: Chevron Nigeria Workday Job Openings
+  type: workday
+  company: Chevron Nigeria
+  enabled: false
+  profile_filter: true
+  careers_url: https://chevron.wd5.myworkdayjobs.com/jobs
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_shell_nigeria
+  name: Shell Nigeria Workday Job Openings
+  type: workday
+  company: Shell Nigeria
+  enabled: false
+  profile_filter: true
+  careers_url: https://shell.wd3.myworkdayjobs.com/ShellCareers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_aker_bp
+  name: Aker BP Workday Job Openings
+  type: workday
+  company: Aker BP
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_aker_solutions
+  name: Aker Solutions Workday Job Openings
+  type: workday
+  company: Aker Solutions
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_aker_solutions_hq
+  name: Aker Solutions HQ Workday Job Openings
+  type: workday
+  company: Aker Solutions HQ
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_shell_singapore
+  name: Shell Singapore Workday Job Openings
+  type: workday
+  company: Shell Singapore
+  enabled: false
+  profile_filter: true
+  careers_url: https://shell.wd3.myworkdayjobs.com/ShellCareers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_afry
+  name: AFRY Workday Job Openings
+  type: workday
+  company: AFRY
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.afry.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_aker_solutions_uk
+  name: Aker Solutions UK Workday Job Openings
+  type: workday
+  company: Aker Solutions UK
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_amec
+  name: AMEC Workday Job Openings
+  type: workday
+  company: AMEC
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.amec.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_bp
+  name: BP Workday Job Openings
+  type: workday
+  company: BP
+  enabled: false
+  profile_filter: true
+  careers_url: https://bp.wd3.myworkdayjobs.com/bp_careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_harbour_energy
+  name: Harbour Energy Workday Job Openings
+  type: workday
+  company: Harbour Energy
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.harbourenergy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_ramboll_uk
+  name: Ramboll UK Workday Job Openings
+  type: workday
+  company: Ramboll UK
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.rambolluk.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_shell_uk
+  name: Shell UK Workday Job Openings
+  type: workday
+  company: Shell UK
+  enabled: false
+  profile_filter: true
+  careers_url: https://shell.wd3.myworkdayjobs.com/ShellCareers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_subsea_7
+  name: Subsea 7 Workday Job Openings
+  type: workday
+  company: Subsea 7
+  enabled: false
+  profile_filter: true
+  careers_url: https://subsea7.wd3.myworkdayjobs.com/Subsea7
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_air_products
+  name: Air Products Workday Job Openings
+  type: workday
+  company: Air Products
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.airproducts.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_baker_hughes
+  name: Baker Hughes Workday Job Openings
+  type: workday
+  company: Baker Hughes
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_baker_hughes_hq
+  name: Baker Hughes HQ Workday Job Openings
+  type: workday
+  company: Baker Hughes HQ
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_black_&_veatch
+  name: Black & Veatch Workday Job Openings
+  type: workday
+  company: Black & Veatch
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.blackveatch.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_bloom_energy
+  name: Bloom Energy Workday Job Openings
+  type: workday
+  company: Bloom Energy
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.bloomenergy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_burns_&_mcdonnell
+  name: Burns & McDonnell Workday Job Openings
+  type: workday
+  company: Burns & McDonnell
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.burnsmcdonnell.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_cameron_slb
+  name: Cameron SLB Workday Job Openings
+  type: workday
+  company: Cameron SLB
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.cameronslb.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_caterpillar_energy
+  name: Caterpillar Energy Workday Job Openings
+  type: workday
+  company: Caterpillar Energy
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.caterpillarenergy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_cheniere_energy
+  name: Cheniere Energy Workday Job Openings
+  type: workday
+  company: Cheniere Energy
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.cheniereenergy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_chevron
+  name: Chevron Workday Job Openings
+  type: workday
+  company: Chevron
+  enabled: false
+  profile_filter: true
+  careers_url: https://chevron.wd5.myworkdayjobs.com/jobs
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_conocophillips
+  name: ConocoPhillips Workday Job Openings
+  type: workday
+  company: ConocoPhillips
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.conocophillips.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_eog_resources
+  name: EOG Resources Workday Job Openings
+  type: workday
+  company: EOG Resources
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.eogresources.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_ge_oil&gas
+  name: GE Oil&Gas Workday Job Openings
+  type: workday
+  company: GE Oil&Gas
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.geoilgas.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_halliburton
+  name: Halliburton Workday Job Openings
+  type: workday
+  company: Halliburton
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.halliburton.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_halliburton_hq
+  name: Halliburton HQ Workday Job Openings
+  type: workday
+  company: Halliburton HQ
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.halliburtonhq.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_hatch_usa
+  name: Hatch USA Workday Job Openings
+  type: workday
+  company: Hatch USA
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.hatchusa.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_kinder_morgan
+  name: Kinder Morgan Workday Job Openings
+  type: workday
+  company: Kinder Morgan
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.kindermorgan.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_nextera_energy
+  name: NextEra Energy Workday Job Openings
+  type: workday
+  company: NextEra Energy
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.nexteraenergy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_occidental_petroleum
+  name: Occidental Petroleum Workday Job Openings
+  type: workday
+  company: Occidental Petroleum
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.occidentalpetroleum.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_pioneer_natural_resources
+  name: Pioneer Natural Resources Workday Job Openings
+  type: workday
+  company: Pioneer Natural Resources
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.pioneernaturalresources.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_plug_power
+  name: Plug Power Workday Job Openings
+  type: workday
+  company: Plug Power
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.plugpower.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_rockwell_automation
+  name: Rockwell Automation Workday Job Openings
+  type: workday
+  company: Rockwell Automation
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.rockwellautomation.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_schlumberger
+  name: Schlumberger Workday Job Openings
+  type: workday
+  company: Schlumberger
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.schlumberger.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_schlumberger_hq
+  name: Schlumberger HQ Workday Job Openings
+  type: workday
+  company: Schlumberger HQ
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.schlumbergerhq.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_slb
+  name: SLB Workday Job Openings
+  type: workday
+  company: SLB
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.slb.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_tellurian
+  name: Tellurian Workday Job Openings
+  type: workday
+  company: Tellurian
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.tellurian.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_weatherford
+  name: Weatherford Workday Job Openings
+  type: workday
+  company: Weatherford
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.weatherford.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_shell
+  name: Shell Workday Job Openings
+  type: workday
+  company: Shell
+  enabled: false
+  profile_filter: true
+  careers_url: https://shell.wd3.myworkdayjobs.com/ShellCareers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_mott_macdonald_india
+  name: Mott MacDonald India Workday Job Openings
+  type: workday
+  company: Mott MacDonald India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.mottmac.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_lamprell_energy_limited
+  name: Lamprell Energy Limited Workday Job Openings
+  type: workday
+  company: Lamprell Energy Limited
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.lamprell.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_vår_energi
+  name: Vår Energi Workday Job Openings
+  type: workday
+  company: Vår Energi
+  enabled: false
+  profile_filter: true
+  careers_url: https://varenergi.no/en/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_spirit_energy
+  name: Spirit Energy Workday Job Openings
+  type: workday
+  company: Spirit Energy
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.spirit-energy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_air_liquide_engineering_&_construction
+  name: Air Liquide Engineering & Construction Workday Job Openings
+  type: workday
+  company: Air Liquide Engineering & Construction
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.airliquide.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_ramboll_group
+  name: Ramboll Group Workday Job Openings
+  type: workday
+  company: Ramboll Group
+  enabled: false
+  profile_filter: true
+  careers_url: https://ramboll.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_fugro_nv
+  name: Fugro N.V. Workday Job Openings
+  type: workday
+  company: Fugro N.V.
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.fugro.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_occidental_petroleum_oxy
+  name: Occidental Petroleum (Oxy) Workday Job Openings
+  type: workday
+  company: Occidental Petroleum (Oxy)
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.oxy.com/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_parsons_corporation
+  name: Parsons Corporation Workday Job Openings
+  type: workday
+  company: Parsons Corporation
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.parsons.com/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_clough_group_webuild_group
+  name: Clough Group (Webuild Group) Workday Job Openings
+  type: workday
+  company: Clough Group (Webuild Group)
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.cloughgroup.com/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_aker_solutions_india_private_limited
+  name: Aker Solutions India Private Limited Workday Job Openings
+  type: workday
+  company: Aker Solutions India Private Limited
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_aibel_as
+  name: Aibel AS Workday Job Openings
+  type: workday
+  company: Aibel AS
+  enabled: false
+  profile_filter: true
+  careers_url: https://aibel.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_oceaneering_international_norway
+  name: Oceaneering International Norway Workday Job Openings
+  type: workday
+  company: Oceaneering International Norway
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.oceaneering.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_kbr_india
+  name: KBR India Workday Job Openings
+  type: workday
+  company: KBR India
+  enabled: false
+  profile_filter: true
+  careers_url: https://kbr.wb.myworkdayjobs.com/KBR_Careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_axens_ifp_group_technologies
+  name: Axens IFP Group Technologies Workday Job Openings
+  type: workday
+  company: Axens IFP Group Technologies
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.axens.net/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_framatome_gmbh/sas
+  name: Framatome GmbH/SAS Workday Job Openings
+  type: workday
+  company: Framatome GmbH/SAS
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.framatome.com/en/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_royal_boskalis_westminster_nv
+  name: Royal Boskalis Westminster N.V. Workday Job Openings
+  type: workday
+  company: Royal Boskalis Westminster N.V.
+  enabled: false
+  profile_filter: true
+  careers_url: https://careers.boskalis.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_van_oord_dredging_&_marine_contractors
+  name: Van Oord Dredging & Marine Contractors Workday Job Openings
+  type: workday
+  company: Van Oord Dredging & Marine Contractors
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.vanoord.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_pioneer_natural_resources_company
+  name: Pioneer Natural Resources Company Workday Job Openings
+  type: workday
+  company: Pioneer Natural Resources Company
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.pxd.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_marathon_oil_corporation
+  name: Marathon Oil Corporation Workday Job Openings
+  type: workday
+  company: Marathon Oil Corporation
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.marathonoil.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_valero_energy_corporation
+  name: Valero Energy Corporation Workday Job Openings
+  type: workday
+  company: Valero Energy Corporation
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.valero.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_phillips_66_company
+  name: Phillips 66 Company Workday Job Openings
+  type: workday
+  company: Phillips 66 Company
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.phillips66.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_tc_energy_corporation
+  name: TC Energy Corporation Workday Job Openings
+  type: workday
+  company: TC Energy Corporation
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.tcenergy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_enbridge_inc
+  name: Enbridge Inc. Workday Job Openings
+  type: workday
+  company: Enbridge Inc.
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.enbridge.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_modec_inc
+  name: MODEC, Inc. Workday Job Openings
+  type: workday
+  company: MODEC, Inc.
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.modec.com/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_bw_offshore_limited
+  name: BW Offshore Limited Workday Job Openings
+  type: workday
+  company: BW Offshore Limited
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.bwoffshore.com/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_yinson_production
+  name: Yinson Production Workday Job Openings
+  type: workday
+  company: Yinson Production
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.yinson.com/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_altrad_group
+  name: Altrad Group Workday Job Openings
+  type: workday
+  company: Altrad Group
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.altrad.com/en/careers.html
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_cheniere_energy_inc
+  name: Cheniere Energy, Inc. Workday Job Openings
+  type: workday
+  company: Cheniere Energy, Inc.
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.cheniere.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: workday_venture_global_lng
+  name: Venture Global LNG Workday Job Openings
+  type: workday
+  company: Venture Global LNG
+  enabled: false
+  profile_filter: true
+  careers_url: https://venturegloballng.com/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: workday
+- id: sap_sonatrach
+  name: Sonatrach SAP Portal Openings
+  type: public_html
+  company: Sonatrach
+  enabled: false
+  profile_filter: true
+  url: https://www.sonatrach.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_sonangol
+  name: Sonangol SAP Portal Openings
+  type: public_html
+  company: Sonangol
+  enabled: false
+  profile_filter: true
+  url: https://www.sonangol.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_ypf
+  name: YPF SAP Portal Openings
+  type: public_html
+  company: YPF
+  enabled: false
+  profile_filter: true
+  url: https://www.ypf.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_monadelphous
+  name: Monadelphous SAP Portal Openings
+  type: public_html
+  company: Monadelphous
+  enabled: false
+  profile_filter: true
+  url: https://www.monadelphous.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_santos
+  name: Santos SAP Portal Openings
+  type: public_html
+  company: Santos
+  enabled: false
+  profile_filter: true
+  url: https://www.santos.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_borealis
+  name: Borealis SAP Portal Openings
+  type: public_html
+  company: Borealis
+  enabled: false
+  profile_filter: true
+  url: https://www.borealis.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_omv
+  name: OMV SAP Portal Openings
+  type: public_html
+  company: OMV
+  enabled: false
+  profile_filter: true
+  url: https://www.omv.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_socar
+  name: SOCAR SAP Portal Openings
+  type: public_html
+  company: SOCAR
+  enabled: false
+  profile_filter: true
+  url: https://www.socar.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_bapco
+  name: BAPCO SAP Portal Openings
+  type: public_html
+  company: BAPCO
+  enabled: false
+  profile_filter: true
+  url: https://www.bapco.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_bapco_bahrain
+  name: Bapco Bahrain SAP Portal Openings
+  type: public_html
+  company: Bapco Bahrain
+  enabled: false
+  profile_filter: true
+  url: https://www.bapcobahrain.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_basf_antwerp
+  name: BASF Antwerp SAP Portal Openings
+  type: public_html
+  company: BASF Antwerp
+  enabled: false
+  profile_filter: true
+  url: https://www.basfantwerp.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_deme
+  name: DEME SAP Portal Openings
+  type: public_html
+  company: DEME
+  enabled: false
+  profile_filter: true
+  url: https://www.deme.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_jan_de_nul
+  name: Jan De Nul SAP Portal Openings
+  type: public_html
+  company: Jan De Nul
+  enabled: false
+  profile_filter: true
+  url: https://www.jandenul.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_tractebel
+  name: Tractebel SAP Portal Openings
+  type: public_html
+  company: Tractebel
+  enabled: false
+  profile_filter: true
+  url: https://www.tractebel.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_modec_brazil
+  name: MODEC Brazil SAP Portal Openings
+  type: public_html
+  company: MODEC Brazil
+  enabled: false
+  profile_filter: true
+  url: https://www.modecbrazil.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_ogx
+  name: OGX SAP Portal Openings
+  type: public_html
+  company: OGX
+  enabled: false
+  profile_filter: true
+  url: https://www.ogx.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_petrobras
+  name: Petrobras SAP Portal Openings
+  type: public_html
+  company: Petrobras
+  enabled: false
+  profile_filter: true
+  url: https://www.petrobras.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_sbm_brazil
+  name: SBM Brazil SAP Portal Openings
+  type: public_html
+  company: SBM Brazil
+  enabled: false
+  profile_filter: true
+  url: https://www.sbmbrazil.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_lukoil_neftochim_burgas
+  name: Lukoil Neftochim Burgas SAP Portal Openings
+  type: public_html
+  company: Lukoil Neftochim Burgas
+  enabled: false
+  profile_filter: true
+  url: https://www.lukoilneftochimburgas.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_arc_resources
+  name: ARC Resources SAP Portal Openings
+  type: public_html
+  company: ARC Resources
+  enabled: false
+  profile_filter: true
+  url: https://www.arcresources.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_ballard_power
+  name: Ballard Power SAP Portal Openings
+  type: public_html
+  company: Ballard Power
+  enabled: false
+  profile_filter: true
+  url: https://www.ballardpower.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_canadian_natural_resources
+  name: Canadian Natural Resources SAP Portal Openings
+  type: public_html
+  company: Canadian Natural Resources
+  enabled: false
+  profile_filter: true
+  url: https://www.canadiannaturalresources.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_cenovus_energy
+  name: Cenovus Energy SAP Portal Openings
+  type: public_html
+  company: Cenovus Energy
+  enabled: false
+  profile_filter: true
+  url: https://www.cenovusenergy.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_enbridge
+  name: Enbridge SAP Portal Openings
+  type: public_html
+  company: Enbridge
+  enabled: false
+  profile_filter: true
+  url: https://www.enbridge.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_husky_energy
+  name: Husky Energy SAP Portal Openings
+  type: public_html
+  company: Husky Energy
+  enabled: false
+  profile_filter: true
+  url: https://www.huskyenergy.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_imperial_oil
+  name: Imperial Oil SAP Portal Openings
+  type: public_html
+  company: Imperial Oil
+  enabled: false
+  profile_filter: true
+  url: https://www.imperialoil.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_ovintiv
+  name: Ovintiv SAP Portal Openings
+  type: public_html
+  company: Ovintiv
+  enabled: false
+  profile_filter: true
+  url: https://www.ovintiv.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_suncor
+  name: Suncor SAP Portal Openings
+  type: public_html
+  company: Suncor
+  enabled: false
+  profile_filter: true
+  url: https://www.suncor.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_teekay
+  name: Teekay SAP Portal Openings
+  type: public_html
+  company: Teekay
+  enabled: false
+  profile_filter: true
+  url: https://www.teekay.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_teekay_lng
+  name: Teekay LNG SAP Portal Openings
+  type: public_html
+  company: Teekay LNG
+  enabled: false
+  profile_filter: true
+  url: https://www.teekaylng.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_tourmaline_oil
+  name: Tourmaline Oil SAP Portal Openings
+  type: public_html
+  company: Tourmaline Oil
+  enabled: false
+  profile_filter: true
+  url: https://www.tourmalineoil.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_cnooc
+  name: CNOOC SAP Portal Openings
+  type: public_html
+  company: CNOOC
+  enabled: false
+  profile_filter: true
+  url: https://www.cnooc.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_cnooc_hq
+  name: CNOOC HQ SAP Portal Openings
+  type: public_html
+  company: CNOOC HQ
+  enabled: false
+  profile_filter: true
+  url: https://www.cnoochq.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_cosl
+  name: COSL SAP Portal Openings
+  type: public_html
+  company: COSL
+  enabled: false
+  profile_filter: true
+  url: https://www.cosl.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_sinopec
+  name: Sinopec SAP Portal Openings
+  type: public_html
+  company: Sinopec
+  enabled: false
+  profile_filter: true
+  url: https://www.sinopec.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_wison_engineering
+  name: Wison Engineering SAP Portal Openings
+  type: public_html
+  company: Wison Engineering
+  enabled: false
+  profile_filter: true
+  url: https://www.wisonengineering.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_ecopetrol
+  name: Ecopetrol SAP Portal Openings
+  type: public_html
+  company: Ecopetrol
+  enabled: false
+  profile_filter: true
+  url: https://www.ecopetrol.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_eni_congo
+  name: ENI Congo SAP Portal Openings
+  type: public_html
+  company: ENI Congo
+  enabled: false
+  profile_filter: true
+  url: https://www.enicongo.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_ina
+  name: INA SAP Portal Openings
+  type: public_html
+  company: INA
+  enabled: false
+  profile_filter: true
+  url: https://www.ina.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_cez
+  name: CEZ SAP Portal Openings
+  type: public_html
+  company: CEZ
+  enabled: false
+  profile_filter: true
+  url: https://www.cez.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_unipetrol
+  name: Unipetrol SAP Portal Openings
+  type: public_html
+  company: Unipetrol
+  enabled: false
+  profile_filter: true
+  url: https://www.unipetrol.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_maersk
+  name: Maersk SAP Portal Openings
+  type: public_html
+  company: Maersk
+  enabled: false
+  profile_filter: true
+  url: https://www.maersk.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_orsted
+  name: Orsted SAP Portal Openings
+  type: public_html
+  company: Orsted
+  enabled: false
+  profile_filter: true
+  url: https://www.orsted.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_vestas
+  name: Vestas SAP Portal Openings
+  type: public_html
+  company: Vestas
+  enabled: false
+  profile_filter: true
+  url: https://www.vestas.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_petroecuador
+  name: PetroEcuador SAP Portal Openings
+  type: public_html
+  company: PetroEcuador
+  enabled: false
+  profile_filter: true
+  url: https://www.petroecuador.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_egpc
+  name: EGPC SAP Portal Openings
+  type: public_html
+  company: EGPC
+  enabled: false
+  profile_filter: true
+  url: https://www.egpc.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_eni_egypt
+  name: ENI Egypt SAP Portal Openings
+  type: public_html
+  company: ENI Egypt
+  enabled: false
+  profile_filter: true
+  url: https://www.eniegypt.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_trident_energy
+  name: Trident Energy SAP Portal Openings
+  type: public_html
+  company: Trident Energy
+  enabled: false
+  profile_filter: true
+  url: https://www.tridentenergy.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_metso
+  name: Metso SAP Portal Openings
+  type: public_html
+  company: Metso
+  enabled: false
+  profile_filter: true
+  url: https://www.metso.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_neste
+  name: Neste SAP Portal Openings
+  type: public_html
+  company: Neste
+  enabled: false
+  profile_filter: true
+  url: https://www.neste.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_valmet
+  name: Valmet SAP Portal Openings
+  type: public_html
+  company: Valmet
+  enabled: false
+  profile_filter: true
+  url: https://www.valmet.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_wartsila
+  name: Wartsila SAP Portal Openings
+  type: public_html
+  company: Wartsila
+  enabled: false
+  profile_filter: true
+  url: https://www.wartsila.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_bureau_veritas
+  name: Bureau Veritas SAP Portal Openings
+  type: public_html
+  company: Bureau Veritas
+  enabled: false
+  profile_filter: true
+  url: https://www.bureauveritas.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_schneider_electric
+  name: Schneider Electric SAP Portal Openings
+  type: public_html
+  company: Schneider Electric
+  enabled: false
+  profile_filter: true
+  url: https://www.schneiderelectric.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_totalenergies
+  name: TotalEnergies SAP Portal Openings
+  type: public_html
+  company: TotalEnergies
+  enabled: false
+  profile_filter: true
+  url: https://www.totalenergies.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_vallourec
+  name: Vallourec SAP Portal Openings
+  type: public_html
+  company: Vallourec
+  enabled: false
+  profile_filter: true
+  url: https://www.vallourec.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_vinci
+  name: Vinci SAP Portal Openings
+  type: public_html
+  company: Vinci
+  enabled: false
+  profile_filter: true
+  url: https://www.vinci.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_perenco
+  name: Perenco SAP Portal Openings
+  type: public_html
+  company: Perenco
+  enabled: false
+  profile_filter: true
+  url: https://www.perenco.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_vaalco
+  name: Vaalco SAP Portal Openings
+  type: public_html
+  company: Vaalco
+  enabled: false
+  profile_filter: true
+  url: https://www.vaalco.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_basf
+  name: BASF SAP Portal Openings
+  type: public_html
+  company: BASF
+  enabled: false
+  profile_filter: true
+  url: https://www.basf.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_bilfinger
+  name: Bilfinger SAP Portal Openings
+  type: public_html
+  company: Bilfinger
+  enabled: false
+  profile_filter: true
+  url: https://www.bilfinger.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_evonik
+  name: Evonik SAP Portal Openings
+  type: public_html
+  company: Evonik
+  enabled: false
+  profile_filter: true
+  url: https://www.evonik.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_linde
+  name: Linde SAP Portal Openings
+  type: public_html
+  company: Linde
+  enabled: false
+  profile_filter: true
+  url: https://www.linde.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_siemens_energy
+  name: Siemens Energy SAP Portal Openings
+  type: public_html
+  company: Siemens Energy
+  enabled: false
+  profile_filter: true
+  url: https://www.siemensenergy.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_siemens_energy_oil&gas
+  name: Siemens Energy Oil&Gas SAP Portal Openings
+  type: public_html
+  company: Siemens Energy Oil&Gas
+  enabled: false
+  profile_filter: true
+  url: https://www.siemensenergyoilgas.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_thyssenkrupp_industrial_solutions
+  name: ThyssenKrupp Industrial Solutions SAP Portal Openings
+  type: public_html
+  company: ThyssenKrupp Industrial Solutions
+  enabled: false
+  profile_filter: true
+  url: https://www.thyssenkruppindustrialsolutions.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_wintershall_dea
+  name: Wintershall Dea SAP Portal Openings
+  type: public_html
+  company: Wintershall Dea
+  enabled: false
+  profile_filter: true
+  url: https://www.wintershalldea.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_tullow_oil
+  name: Tullow Oil SAP Portal Openings
+  type: public_html
+  company: Tullow Oil
+  enabled: false
+  profile_filter: true
+  url: https://www.tullowoil.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_depa
+  name: DEPA SAP Portal Openings
+  type: public_html
+  company: DEPA
+  enabled: false
+  profile_filter: true
+  url: https://www.depa.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_hellenic_petroleum
+  name: Hellenic Petroleum SAP Portal Openings
+  type: public_html
+  company: Hellenic Petroleum
+  enabled: false
+  profile_filter: true
+  url: https://www.hellenicpetroleum.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_motor_oil_hellas
+  name: Motor Oil Hellas SAP Portal Openings
+  type: public_html
+  company: Motor Oil Hellas
+  enabled: false
+  profile_filter: true
+  url: https://www.motoroilhellas.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_mol_group
+  name: MOL Group SAP Portal Openings
+  type: public_html
+  company: MOL Group
+  enabled: false
+  profile_filter: true
+  url: https://www.molgroup.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_adani_total_gas
+  name: Adani Total Gas SAP Portal Openings
+  type: public_html
+  company: Adani Total Gas
+  enabled: false
+  profile_filter: true
+  url: https://www.adanitotalgas.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_mrpl
+  name: MRPL SAP Portal Openings
+  type: public_html
+  company: MRPL
+  enabled: false
+  profile_filter: true
+  url: https://www.mrpl.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_numaligarh_refinery
+  name: Numaligarh Refinery SAP Portal Openings
+  type: public_html
+  company: Numaligarh Refinery
+  enabled: false
+  profile_filter: true
+  url: https://www.numaligarhrefinery.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_reliance_industries
+  name: Reliance Industries SAP Portal Openings
+  type: public_html
+  company: Reliance Industries
+  enabled: false
+  profile_filter: true
+  url: https://www.relianceindustries.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_reliance_industries_hq
+  name: Reliance Industries HQ SAP Portal Openings
+  type: public_html
+  company: Reliance Industries HQ
+  enabled: false
+  profile_filter: true
+  url: https://www.relianceindustrieshq.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_tata_projects
+  name: Tata Projects SAP Portal Openings
+  type: public_html
+  company: Tata Projects
+  enabled: false
+  profile_filter: true
+  url: https://www.tataprojects.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_pertamina
+  name: Pertamina SAP Portal Openings
+  type: public_html
+  company: Pertamina
+  enabled: false
+  profile_filter: true
+  url: https://www.pertamina.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_bonatti
+  name: Bonatti SAP Portal Openings
+  type: public_html
+  company: Bonatti
+  enabled: false
+  profile_filter: true
+  url: https://www.bonatti.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_enel
+  name: Enel SAP Portal Openings
+  type: public_html
+  company: Enel
+  enabled: false
+  profile_filter: true
+  url: https://www.enel.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_eni
+  name: Eni SAP Portal Openings
+  type: public_html
+  company: Eni
+  enabled: false
+  profile_filter: true
+  url: https://www.eni.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_eni_hq
+  name: ENI HQ SAP Portal Openings
+  type: public_html
+  company: ENI HQ
+  enabled: false
+  profile_filter: true
+  url: https://www.enihq.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_maire_tecnimont
+  name: MAIRE Tecnimont SAP Portal Openings
+  type: public_html
+  company: MAIRE Tecnimont
+  enabled: false
+  profile_filter: true
+  url: https://www.mairetecnimont.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_renco
+  name: Renco SAP Portal Openings
+  type: public_html
+  company: Renco
+  enabled: false
+  profile_filter: true
+  url: https://www.renco.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_chiyoda_corp
+  name: Chiyoda Corp SAP Portal Openings
+  type: public_html
+  company: Chiyoda Corp
+  enabled: false
+  profile_filter: true
+  url: https://www.chiyodacorp.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_chiyoda_corporation
+  name: Chiyoda Corporation SAP Portal Openings
+  type: public_html
+  company: Chiyoda Corporation
+  enabled: false
+  profile_filter: true
+  url: https://www.chiyodacorporation.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_chiyoda_japan
+  name: Chiyoda Japan SAP Portal Openings
+  type: public_html
+  company: Chiyoda Japan
+  enabled: false
+  profile_filter: true
+  url: https://www.chiyodajapan.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_jgc
+  name: JGC SAP Portal Openings
+  type: public_html
+  company: JGC
+  enabled: false
+  profile_filter: true
+  url: https://www.jgc.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_jgc_holdings
+  name: JGC Holdings SAP Portal Openings
+  type: public_html
+  company: JGC Holdings
+  enabled: false
+  profile_filter: true
+  url: https://www.jgcholdings.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_jgc_japan
+  name: JGC Japan SAP Portal Openings
+  type: public_html
+  company: JGC Japan
+  enabled: false
+  profile_filter: true
+  url: https://www.jgcjapan.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_mitsubishi_heavy_industries
+  name: Mitsubishi Heavy Industries SAP Portal Openings
+  type: public_html
+  company: Mitsubishi Heavy Industries
+  enabled: false
+  profile_filter: true
+  url: https://www.mitsubishiheavyindustries.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_kazmunaygas
+  name: KazMunayGas SAP Portal Openings
+  type: public_html
+  company: KazMunayGas
+  enabled: false
+  profile_filter: true
+  url: https://www.kazmunaygas.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_tengizchevroil
+  name: Tengizchevroil SAP Portal Openings
+  type: public_html
+  company: Tengizchevroil
+  enabled: false
+  profile_filter: true
+  url: https://www.tengizchevroil.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_koc
+  name: KOC SAP Portal Openings
+  type: public_html
+  company: KOC
+  enabled: false
+  profile_filter: true
+  url: https://www.koc.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_koc_-_kuwait_oil_company
+  name: KOC - Kuwait Oil Company SAP Portal Openings
+  type: public_html
+  company: KOC - Kuwait Oil Company
+  enabled: false
+  profile_filter: true
+  url: https://www.kockuwaitoilcompany.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_kufpec
+  name: KUFPEC SAP Portal Openings
+  type: public_html
+  company: KUFPEC
+  enabled: false
+  profile_filter: true
+  url: https://www.kufpec.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_pic
+  name: PIC SAP Portal Openings
+  type: public_html
+  company: PIC
+  enabled: false
+  profile_filter: true
+  url: https://www.pic.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_mmhe
+  name: MMHE SAP Portal Openings
+  type: public_html
+  company: MMHE
+  enabled: false
+  profile_filter: true
+  url: https://www.mmhe.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_petronas_chemicals
+  name: Petronas Chemicals SAP Portal Openings
+  type: public_html
+  company: Petronas Chemicals
+  enabled: false
+  profile_filter: true
+  url: https://www.petronaschemicals.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_petronas_hq
+  name: Petronas HQ SAP Portal Openings
+  type: public_html
+  company: Petronas HQ
+  enabled: false
+  profile_filter: true
+  url: https://www.petronashq.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_sapura_energy
+  name: Sapura Energy SAP Portal Openings
+  type: public_html
+  company: Sapura Energy
+  enabled: false
+  profile_filter: true
+  url: https://www.sapuraenergy.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_pemex
+  name: Pemex SAP Portal Openings
+  type: public_html
+  company: Pemex
+  enabled: false
+  profile_filter: true
+  url: https://www.pemex.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_anadarko_mozambique
+  name: Anadarko Mozambique SAP Portal Openings
+  type: public_html
+  company: Anadarko Mozambique
+  enabled: false
+  profile_filter: true
+  url: https://www.anadarkomozambique.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_enh_mozambique
+  name: ENH Mozambique SAP Portal Openings
+  type: public_html
+  company: ENH Mozambique
+  enabled: false
+  profile_filter: true
+  url: https://www.enhmozambique.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_boskalis
+  name: Boskalis SAP Portal Openings
+  type: public_html
+  company: Boskalis
+  enabled: false
+  profile_filter: true
+  url: https://www.boskalis.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_fugro
+  name: Fugro SAP Portal Openings
+  type: public_html
+  company: Fugro
+  enabled: false
+  profile_filter: true
+  url: https://www.fugro.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_heerema
+  name: Heerema SAP Portal Openings
+  type: public_html
+  company: Heerema
+  enabled: false
+  profile_filter: true
+  url: https://www.heerema.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_royal_ihc
+  name: Royal IHC SAP Portal Openings
+  type: public_html
+  company: Royal IHC
+  enabled: false
+  profile_filter: true
+  url: https://www.royalihc.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_van_oord
+  name: Van Oord SAP Portal Openings
+  type: public_html
+  company: Van Oord
+  enabled: false
+  profile_filter: true
+  url: https://www.vanoord.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_totalenergies_nigeria
+  name: TotalEnergies Nigeria SAP Portal Openings
+  type: public_html
+  company: TotalEnergies Nigeria
+  enabled: false
+  profile_filter: true
+  url: https://www.totalenergiesnigeria.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_archer
+  name: Archer SAP Portal Openings
+  type: public_html
+  company: Archer
+  enabled: false
+  profile_filter: true
+  url: https://www.archer.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_dnv
+  name: DNV SAP Portal Openings
+  type: public_html
+  company: DNV
+  enabled: false
+  profile_filter: true
+  url: https://www.dnv.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_dof_group
+  name: DOF Group SAP Portal Openings
+  type: public_html
+  company: DOF Group
+  enabled: false
+  profile_filter: true
+  url: https://www.dofgroup.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_equinor
+  name: Equinor SAP Portal Openings
+  type: public_html
+  company: Equinor
+  enabled: false
+  profile_filter: true
+  url: https://www.equinor.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_flex_lng
+  name: Flex LNG SAP Portal Openings
+  type: public_html
+  company: Flex LNG
+  enabled: false
+  profile_filter: true
+  url: https://www.flexlng.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_frontline
+  name: Frontline SAP Portal Openings
+  type: public_html
+  company: Frontline
+  enabled: false
+  profile_filter: true
+  url: https://www.frontline.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_golar_lng
+  name: Golar LNG SAP Portal Openings
+  type: public_html
+  company: Golar LNG
+  enabled: false
+  profile_filter: true
+  url: https://www.golarlng.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_hoegh_lng
+  name: Hoegh LNG SAP Portal Openings
+  type: public_html
+  company: Hoegh LNG
+  enabled: false
+  profile_filter: true
+  url: https://www.hoeghlng.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_kvaerner
+  name: Kvaerner SAP Portal Openings
+  type: public_html
+  company: Kvaerner
+  enabled: false
+  profile_filter: true
+  url: https://www.kvaerner.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_nel_asa
+  name: Nel ASA SAP Portal Openings
+  type: public_html
+  company: Nel ASA
+  enabled: false
+  profile_filter: true
+  url: https://www.nelasa.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_odfjell_drilling
+  name: Odfjell Drilling SAP Portal Openings
+  type: public_html
+  company: Odfjell Drilling
+  enabled: false
+  profile_filter: true
+  url: https://www.odfjelldrilling.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_seadrill
+  name: Seadrill SAP Portal Openings
+  type: public_html
+  company: Seadrill
+  enabled: false
+  profile_filter: true
+  url: https://www.seadrill.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_subsea7_norway
+  name: Subsea7 Norway SAP Portal Openings
+  type: public_html
+  company: Subsea7 Norway
+  enabled: false
+  profile_filter: true
+  url: https://www.subsea7norway.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_var_energi
+  name: Var Energi SAP Portal Openings
+  type: public_html
+  company: Var Energi
+  enabled: false
+  profile_filter: true
+  url: https://www.varenergi.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_oq
+  name: OQ SAP Portal Openings
+  type: public_html
+  company: OQ
+  enabled: false
+  profile_filter: true
+  url: https://www.oq.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_pdo
+  name: PDO SAP Portal Openings
+  type: public_html
+  company: PDO
+  enabled: false
+  profile_filter: true
+  url: https://www.pdo.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_pdo_-_petroleum_development_oman
+  name: PDO - Petroleum Development Oman SAP Portal Openings
+  type: public_html
+  company: PDO - Petroleum Development Oman
+  enabled: false
+  profile_filter: true
+  url: https://www.pdopetroleumdevelopmentoman.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_pdo_oman
+  name: PDO Oman SAP Portal Openings
+  type: public_html
+  company: PDO Oman
+  enabled: false
+  profile_filter: true
+  url: https://www.pdooman.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_petroperu
+  name: PetroPeru SAP Portal Openings
+  type: public_html
+  company: PetroPeru
+  enabled: false
+  profile_filter: true
+  url: https://www.petroperu.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_grupa_lotos
+  name: Grupa Lotos SAP Portal Openings
+  type: public_html
+  company: Grupa Lotos
+  enabled: false
+  profile_filter: true
+  url: https://www.grupalotos.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_pgnig
+  name: PGNiG SAP Portal Openings
+  type: public_html
+  company: PGNiG
+  enabled: false
+  profile_filter: true
+  url: https://www.pgnig.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_pkn_orlen
+  name: PKN Orlen SAP Portal Openings
+  type: public_html
+  company: PKN Orlen
+  enabled: false
+  profile_filter: true
+  url: https://www.pknorlen.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_polimex_mostostal
+  name: Polimex Mostostal SAP Portal Openings
+  type: public_html
+  company: Polimex Mostostal
+  enabled: false
+  profile_filter: true
+  url: https://www.polimexmostostal.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_mota-engil
+  name: Mota-Engil SAP Portal Openings
+  type: public_html
+  company: Mota-Engil
+  enabled: false
+  profile_filter: true
+  url: https://www.motaengil.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_chiyoda_qatar
+  name: Chiyoda Qatar SAP Portal Openings
+  type: public_html
+  company: Chiyoda Qatar
+  enabled: false
+  profile_filter: true
+  url: https://www.chiyodaqatar.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_kmgi
+  name: KMGI SAP Portal Openings
+  type: public_html
+  company: KMGI
+  enabled: false
+  profile_filter: true
+  url: https://www.kmgi.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_petrom
+  name: Petrom SAP Portal Openings
+  type: public_html
+  company: Petrom
+  enabled: false
+  profile_filter: true
+  url: https://www.petrom.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_romgaz
+  name: Romgaz SAP Portal Openings
+  type: public_html
+  company: Romgaz
+  enabled: false
+  profile_filter: true
+  url: https://www.romgaz.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_gazprom
+  name: Gazprom SAP Portal Openings
+  type: public_html
+  company: Gazprom
+  enabled: false
+  profile_filter: true
+  url: https://www.gazprom.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_gazprom_neft
+  name: Gazprom Neft SAP Portal Openings
+  type: public_html
+  company: Gazprom Neft
+  enabled: false
+  profile_filter: true
+  url: https://www.gazpromneft.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_lukoil
+  name: Lukoil SAP Portal Openings
+  type: public_html
+  company: Lukoil
+  enabled: false
+  profile_filter: true
+  url: https://www.lukoil.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_rosneft
+  name: Rosneft SAP Portal Openings
+  type: public_html
+  company: Rosneft
+  enabled: false
+  profile_filter: true
+  url: https://www.rosneft.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_surgutneftegas
+  name: Surgutneftegas SAP Portal Openings
+  type: public_html
+  company: Surgutneftegas
+  enabled: false
+  profile_filter: true
+  url: https://www.surgutneftegas.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_tatneft
+  name: Tatneft SAP Portal Openings
+  type: public_html
+  company: Tatneft
+  enabled: false
+  profile_filter: true
+  url: https://www.tatneft.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_ma'aden
+  name: Ma'aden SAP Portal Openings
+  type: public_html
+  company: Ma'aden
+  enabled: false
+  profile_filter: true
+  url: https://www.maaden.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_sabic
+  name: SABIC SAP Portal Openings
+  type: public_html
+  company: SABIC
+  enabled: false
+  profile_filter: true
+  url: https://www.sabic.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_zamil
+  name: Zamil SAP Portal Openings
+  type: public_html
+  company: Zamil
+  enabled: false
+  profile_filter: true
+  url: https://www.zamil.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_nis
+  name: NIS SAP Portal Openings
+  type: public_html
+  company: NIS
+  enabled: false
+  profile_filter: true
+  url: https://www.nis.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_bw_lng
+  name: BW LNG SAP Portal Openings
+  type: public_html
+  company: BW LNG
+  enabled: false
+  profile_filter: true
+  url: https://www.bwlng.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_keppel
+  name: Keppel SAP Portal Openings
+  type: public_html
+  company: Keppel
+  enabled: false
+  profile_filter: true
+  url: https://www.keppel.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_keppel_offshore
+  name: Keppel Offshore SAP Portal Openings
+  type: public_html
+  company: Keppel Offshore
+  enabled: false
+  profile_filter: true
+  url: https://www.keppeloffshore.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_seatrium
+  name: Seatrium SAP Portal Openings
+  type: public_html
+  company: Seatrium
+  enabled: false
+  profile_filter: true
+  url: https://www.seatrium.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_sembcorp_marine
+  name: Sembcorp Marine SAP Portal Openings
+  type: public_html
+  company: Sembcorp Marine
+  enabled: false
+  profile_filter: true
+  url: https://www.sembcorpmarine.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_slovnaft
+  name: Slovnaft SAP Portal Openings
+  type: public_html
+  company: Slovnaft
+  enabled: false
+  profile_filter: true
+  url: https://www.slovnaft.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_cairn_india_africa
+  name: Cairn India Africa SAP Portal Openings
+  type: public_html
+  company: Cairn India Africa
+  enabled: false
+  profile_filter: true
+  url: https://www.cairnindiaafrica.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_sasol
+  name: Sasol SAP Portal Openings
+  type: public_html
+  company: Sasol
+  enabled: false
+  profile_filter: true
+  url: https://www.sasol.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_daewoo_e&c
+  name: Daewoo E&C SAP Portal Openings
+  type: public_html
+  company: Daewoo E&C
+  enabled: false
+  profile_filter: true
+  url: https://www.daewooec.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_gs_e&c
+  name: GS E&C SAP Portal Openings
+  type: public_html
+  company: GS E&C
+  enabled: false
+  profile_filter: true
+  url: https://www.gsec.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_hyundai_engineering
+  name: Hyundai Engineering SAP Portal Openings
+  type: public_html
+  company: Hyundai Engineering
+  enabled: false
+  profile_filter: true
+  url: https://www.hyundaiengineering.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_hyundai_heavy_industries
+  name: Hyundai Heavy Industries SAP Portal Openings
+  type: public_html
+  company: Hyundai Heavy Industries
+  enabled: false
+  profile_filter: true
+  url: https://www.hyundaiheavyindustries.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_samsung_e&a
+  name: Samsung E&A SAP Portal Openings
+  type: public_html
+  company: Samsung E&A
+  enabled: false
+  profile_filter: true
+  url: https://www.samsungea.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_samsung_heavy_industries
+  name: Samsung Heavy Industries SAP Portal Openings
+  type: public_html
+  company: Samsung Heavy Industries
+  enabled: false
+  profile_filter: true
+  url: https://www.samsungheavyindustries.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_sk_e&s
+  name: SK E&S SAP Portal Openings
+  type: public_html
+  company: SK E&S
+  enabled: false
+  profile_filter: true
+  url: https://www.skes.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_repsol
+  name: Repsol SAP Portal Openings
+  type: public_html
+  company: Repsol
+  enabled: false
+  profile_filter: true
+  url: https://www.repsol.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_tecnicas_reunidas
+  name: Tecnicas Reunidas SAP Portal Openings
+  type: public_html
+  company: Tecnicas Reunidas
+  enabled: false
+  profile_filter: true
+  url: https://www.tecnicasreunidas.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_alfa_laval
+  name: Alfa Laval SAP Portal Openings
+  type: public_html
+  company: Alfa Laval
+  enabled: false
+  profile_filter: true
+  url: https://www.alfalaval.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_atlas_copco
+  name: Atlas Copco SAP Portal Openings
+  type: public_html
+  company: Atlas Copco
+  enabled: false
+  profile_filter: true
+  url: https://www.atlascopco.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_sandvik
+  name: Sandvik SAP Portal Openings
+  type: public_html
+  company: Sandvik
+  enabled: false
+  profile_filter: true
+  url: https://www.sandvik.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_trelleborg
+  name: Trelleborg SAP Portal Openings
+  type: public_html
+  company: Trelleborg
+  enabled: false
+  profile_filter: true
+  url: https://www.trelleborg.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_abb
+  name: ABB SAP Portal Openings
+  type: public_html
+  company: ABB
+  enabled: false
+  profile_filter: true
+  url: https://www.abb.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_clariant
+  name: Clariant SAP Portal Openings
+  type: public_html
+  company: Clariant
+  enabled: false
+  profile_filter: true
+  url: https://www.clariant.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_ptt
+  name: PTT SAP Portal Openings
+  type: public_html
+  company: PTT
+  enabled: false
+  profile_filter: true
+  url: https://www.ptt.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_botas
+  name: BOTAS SAP Portal Openings
+  type: public_html
+  company: BOTAS
+  enabled: false
+  profile_filter: true
+  url: https://www.botas.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_enka
+  name: ENKA SAP Portal Openings
+  type: public_html
+  company: ENKA
+  enabled: false
+  profile_filter: true
+  url: https://www.enka.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_ronesans_holding
+  name: Ronesans Holding SAP Portal Openings
+  type: public_html
+  company: Ronesans Holding
+  enabled: false
+  profile_filter: true
+  url: https://www.ronesansholding.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_tekfen
+  name: Tekfen SAP Portal Openings
+  type: public_html
+  company: Tekfen
+  enabled: false
+  profile_filter: true
+  url: https://www.tekfen.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_tpao
+  name: TPAO SAP Portal Openings
+  type: public_html
+  company: TPAO
+  enabled: false
+  profile_filter: true
+  url: https://www.tpao.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_dodsal
+  name: Dodsal SAP Portal Openings
+  type: public_html
+  company: Dodsal
+  enabled: false
+  profile_filter: true
+  url: https://www.dodsal.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_dodsal_uae
+  name: Dodsal UAE SAP Portal Openings
+  type: public_html
+  company: Dodsal UAE
+  enabled: false
+  profile_filter: true
+  url: https://www.dodsaluae.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_bibby_marine
+  name: Bibby Marine SAP Portal Openings
+  type: public_html
+  company: Bibby Marine
+  enabled: false
+  profile_filter: true
+  url: https://www.bibbymarine.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_bilfinger_uk
+  name: Bilfinger UK SAP Portal Openings
+  type: public_html
+  company: Bilfinger UK
+  enabled: false
+  profile_filter: true
+  url: https://www.bilfingeruk.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_enquest
+  name: EnQuest SAP Portal Openings
+  type: public_html
+  company: EnQuest
+  enabled: false
+  profile_filter: true
+  url: https://www.enquest.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_ithaca_energy
+  name: Ithaca Energy SAP Portal Openings
+  type: public_html
+  company: Ithaca Energy
+  enabled: false
+  profile_filter: true
+  url: https://www.ithacaenergy.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_itm_power
+  name: ITM Power SAP Portal Openings
+  type: public_html
+  company: ITM Power
+  enabled: false
+  profile_filter: true
+  url: https://www.itmpower.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_kent
+  name: Kent SAP Portal Openings
+  type: public_html
+  company: Kent
+  enabled: false
+  profile_filter: true
+  url: https://www.kent.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_northern_offshore
+  name: Northern Offshore SAP Portal Openings
+  type: public_html
+  company: Northern Offshore
+  enabled: false
+  profile_filter: true
+  url: https://www.northernoffshore.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_serica_energy
+  name: Serica Energy SAP Portal Openings
+  type: public_html
+  company: Serica Energy
+  enabled: false
+  profile_filter: true
+  url: https://www.sericaenergy.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_apa_corporation
+  name: APA Corporation SAP Portal Openings
+  type: public_html
+  company: APA Corporation
+  enabled: false
+  profile_filter: true
+  url: https://www.apacorporation.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_cameron
+  name: Cameron SAP Portal Openings
+  type: public_html
+  company: Cameron
+  enabled: false
+  profile_filter: true
+  url: https://www.cameron.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_continental_resources
+  name: Continental Resources SAP Portal Openings
+  type: public_html
+  company: Continental Resources
+  enabled: false
+  profile_filter: true
+  url: https://www.continentalresources.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_coterra_energy
+  name: Coterra Energy SAP Portal Openings
+  type: public_html
+  company: Coterra Energy
+  enabled: false
+  profile_filter: true
+  url: https://www.coterraenergy.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_devon_energy
+  name: Devon Energy SAP Portal Openings
+  type: public_html
+  company: Devon Energy
+  enabled: false
+  profile_filter: true
+  url: https://www.devonenergy.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_diamondback_energy
+  name: Diamondback Energy SAP Portal Openings
+  type: public_html
+  company: Diamondback Energy
+  enabled: false
+  profile_filter: true
+  url: https://www.diamondbackenergy.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_dow
+  name: Dow SAP Portal Openings
+  type: public_html
+  company: Dow
+  enabled: false
+  profile_filter: true
+  url: https://www.dow.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_dril-quip
+  name: Dril-Quip SAP Portal Openings
+  type: public_html
+  company: Dril-Quip
+  enabled: false
+  profile_filter: true
+  url: https://www.drilquip.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_emerson
+  name: Emerson SAP Portal Openings
+  type: public_html
+  company: Emerson
+  enabled: false
+  profile_filter: true
+  url: https://www.emerson.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_energy_transfer
+  name: Energy Transfer SAP Portal Openings
+  type: public_html
+  company: Energy Transfer
+  enabled: false
+  profile_filter: true
+  url: https://www.energytransfer.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_enterprise_products
+  name: Enterprise Products SAP Portal Openings
+  type: public_html
+  company: Enterprise Products
+  enabled: false
+  profile_filter: true
+  url: https://www.enterpriseproducts.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_fmc_technologies
+  name: FMC Technologies SAP Portal Openings
+  type: public_html
+  company: FMC Technologies
+  enabled: false
+  profile_filter: true
+  url: https://www.fmctechnologies.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_helix_energy_solutions
+  name: Helix Energy Solutions SAP Portal Openings
+  type: public_html
+  company: Helix Energy Solutions
+  enabled: false
+  profile_filter: true
+  url: https://www.helixenergysolutions.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_hess_corporation
+  name: Hess Corporation SAP Portal Openings
+  type: public_html
+  company: Hess Corporation
+  enabled: false
+  profile_filter: true
+  url: https://www.hesscorporation.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_honeywell_uop
+  name: Honeywell UOP SAP Portal Openings
+  type: public_html
+  company: Honeywell UOP
+  enabled: false
+  profile_filter: true
+  url: https://www.honeywelluop.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_lyondellbasell
+  name: LyondellBasell SAP Portal Openings
+  type: public_html
+  company: LyondellBasell
+  enabled: false
+  profile_filter: true
+  url: https://www.lyondellbasell.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_marathon_oil
+  name: Marathon Oil SAP Portal Openings
+  type: public_html
+  company: Marathon Oil
+  enabled: false
+  profile_filter: true
+  url: https://www.marathonoil.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_nov
+  name: NOV SAP Portal Openings
+  type: public_html
+  company: NOV
+  enabled: false
+  profile_filter: true
+  url: https://www.nov.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_nov_-_national_oilwell_varco
+  name: NOV - National Oilwell Varco SAP Portal Openings
+  type: public_html
+  company: NOV - National Oilwell Varco
+  enabled: false
+  profile_filter: true
+  url: https://www.novnationaloilwellvarco.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_oceaneering
+  name: Oceaneering SAP Portal Openings
+  type: public_html
+  company: Oceaneering
+  enabled: false
+  profile_filter: true
+  url: https://www.oceaneering.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_oneok
+  name: ONEOK SAP Portal Openings
+  type: public_html
+  company: ONEOK
+  enabled: false
+  profile_filter: true
+  url: https://www.oneok.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_plains_all_american
+  name: Plains All American SAP Portal Openings
+  type: public_html
+  company: Plains All American
+  enabled: false
+  profile_filter: true
+  url: https://www.plainsallamerican.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_transocean
+  name: Transocean SAP Portal Openings
+  type: public_html
+  company: Transocean
+  enabled: false
+  profile_filter: true
+  url: https://www.transocean.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_williams_companies
+  name: Williams Companies SAP Portal Openings
+  type: public_html
+  company: Williams Companies
+  enabled: false
+  profile_filter: true
+  url: https://www.williamscompanies.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_totalenergies_uganda
+  name: TotalEnergies Uganda SAP Portal Openings
+  type: public_html
+  company: TotalEnergies Uganda
+  enabled: false
+  profile_filter: true
+  url: https://www.totalenergiesuganda.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_uzbekneftegaz
+  name: Uzbekneftegaz SAP Portal Openings
+  type: public_html
+  company: Uzbekneftegaz
+  enabled: false
+  profile_filter: true
+  url: https://www.uzbekneftegaz.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_pdvsa
+  name: PDVSA SAP Portal Openings
+  type: public_html
+  company: PDVSA
+  enabled: false
+  profile_filter: true
+  url: https://www.pdvsa.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_nayara_energy_vadinar_refinery
+  name: Nayara Energy (Vadinar Refinery) SAP Portal Openings
+  type: public_html
+  company: Nayara Energy (Vadinar Refinery)
+  enabled: false
+  profile_filter: true
+  url: https://www.nayaraenergy.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_sterling_and_wilson
+  name: Sterling and Wilson SAP Portal Openings
+  type: public_html
+  company: Sterling and Wilson
+  enabled: false
+  profile_filter: true
+  url: https://www.sterlingandwilson.com/careers.php
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_thyssenkrupp_industrial_solutions_india_uhde_india
+  name: Thyssenkrupp Industrial Solutions India (Uhde India) SAP Portal Openings
+  type: public_html
+  company: Thyssenkrupp Industrial Solutions India (Uhde India)
+  enabled: false
+  profile_filter: true
+  url: https://jobs.thyssenkrupp.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_simon_carves_engineering_india
+  name: Simon Carves Engineering India SAP Portal Openings
+  type: public_html
+  company: Simon Carves Engineering India
+  enabled: false
+  profile_filter: true
+  url: https://www.simoncarves.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_kipic_kuwait_integrated_petroleum_industries_company
+  name: KIPIC (Kuwait Integrated Petroleum Industries Company) SAP Portal Openings
+  type: public_html
+  company: KIPIC (Kuwait Integrated Petroleum Industries Company)
+  enabled: false
+  profile_filter: true
+  url: https://www.kipic.com.kw/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: sap_qapco
+  name: QAPCO SAP Portal Openings
+  type: public_html
+  company: QAPCO
+  enabled: false
+  profile_filter: true
+  url: https://www.qapco.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: sap
+- id: oracle_john_wood_group_plc_wood
+  name: John Wood Group PLC (Wood) Oracle HCM Careers
+  type: oracle_hcm
+  company: John Wood Group PLC (Wood)
+  enabled: false
+  profile_filter: true
+  base_url: https://careers.woodplc.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_woodside
+  name: Woodside Oracle HCM Careers
+  type: oracle_hcm
+  company: Woodside
+  enabled: false
+  profile_filter: true
+  base_url: https://careers.woodplc.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_woodside_energy
+  name: Woodside Energy Oracle HCM Careers
+  type: oracle_hcm
+  company: Woodside Energy
+  enabled: false
+  profile_filter: true
+  base_url: https://careers.woodplc.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_nmdc_energy_formerly_national_petroleum_construction_company_-_npcc
+  name: NMDC Energy (formerly National Petroleum Construction Company - NPCC) Oracle
+    HCM Careers
+  type: oracle_hcm
+  company: NMDC Energy (formerly National Petroleum Construction Company - NPCC)
+  enabled: false
+  profile_filter: true
+  base_url: https://www.nmdc-energy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_mcdermott_international_ltd
+  name: McDermott International, Ltd Oracle HCM Careers
+  type: oracle_hcm
+  company: McDermott International, Ltd
+  enabled: false
+  profile_filter: true
+  base_url: https://mcdermott.oraclecloud.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_technipfmc_india
+  name: TechnipFMC India Oracle HCM Careers
+  type: oracle_hcm
+  company: TechnipFMC India
+  enabled: false
+  profile_filter: true
+  base_url: https://www.technipfmcindia.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_heerema_marine_contractors
+  name: Heerema Marine Contractors Oracle HCM Careers
+  type: oracle_hcm
+  company: Heerema Marine Contractors
+  enabled: false
+  profile_filter: true
+  base_url: https://www.heeremamarinecontractors.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_technipfmc_norway
+  name: TechnipFMC Norway Oracle HCM Careers
+  type: oracle_hcm
+  company: TechnipFMC Norway
+  enabled: false
+  profile_filter: true
+  base_url: https://www.technipfmcnorway.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_technipfmc_uk
+  name: TechnipFMC UK Oracle HCM Careers
+  type: oracle_hcm
+  company: TechnipFMC UK
+  enabled: false
+  profile_filter: true
+  base_url: https://www.technipfmcuk.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_technipfmc_usa
+  name: TechnipFMC USA Oracle HCM Careers
+  type: oracle_hcm
+  company: TechnipFMC USA
+  enabled: false
+  profile_filter: true
+  base_url: https://www.technipfmcusa.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_valaris
+  name: Valaris Oracle HCM Careers
+  type: oracle_hcm
+  company: Valaris
+  enabled: false
+  profile_filter: true
+  base_url: https://efqq.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1008
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_tata_consulting_engineers_tce
+  name: Tata Consulting Engineers (TCE) Oracle HCM Careers
+  type: oracle_hcm
+  company: Tata Consulting Engineers (TCE)
+  enabled: false
+  profile_filter: true
+  base_url: https://www.tce.co.in/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_nesma_&_partners
+  name: Nesma & Partners Oracle HCM Careers
+  type: oracle_hcm
+  company: Nesma & Partners
+  enabled: false
+  profile_filter: true
+  base_url: https://www.nesmapartners.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_kca_deutag_norge_as
+  name: KCA Deutag Norge AS Oracle HCM Careers
+  type: oracle_hcm
+  company: KCA Deutag Norge AS
+  enabled: false
+  profile_filter: true
+  base_url: https://www.kcadeutag.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_john_wood_group_plc_india
+  name: John Wood Group PLC India Oracle HCM Careers
+  type: oracle_hcm
+  company: John Wood Group PLC India
+  enabled: false
+  profile_filter: true
+  base_url: https://careers.woodplc.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: oracle_rawabi_holding
+  name: Rawabi Holding Oracle HCM Careers
+  type: oracle_hcm
+  company: Rawabi Holding
+  enabled: false
+  profile_filter: true
+  base_url: https://www.rawabiholding.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+  ats_family: oracle
+- id: successfactors_exxonmobil_belgium
+  name: ExxonMobil Belgium SuccessFactors Openings
+  type: sitemap
+  company: ExxonMobil Belgium
+  enabled: false
+  profile_filter: true
+  url: https://jobs.exxonmobil.com
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_saipem_spa
+  name: Saipem S.p.A. SuccessFactors Openings
+  type: sitemap
+  company: Saipem S.p.A.
+  enabled: false
+  profile_filter: true
+  url: https://careers.saipem.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_exxonmobil_nigeria
+  name: ExxonMobil Nigeria SuccessFactors Openings
+  type: sitemap
+  company: ExxonMobil Nigeria
+  enabled: false
+  profile_filter: true
+  url: https://jobs.exxonmobil.com
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_exxonmobil_singapore
+  name: ExxonMobil Singapore SuccessFactors Openings
+  type: sitemap
+  company: ExxonMobil Singapore
+  enabled: false
+  profile_filter: true
+  url: https://jobs.exxonmobil.com
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_exxonmobil
+  name: ExxonMobil SuccessFactors Openings
+  type: sitemap
+  company: ExxonMobil
+  enabled: false
+  profile_filter: true
+  url: https://jobs.exxonmobil.com
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_reliance_industries_limited_ril_-_jamnagar/hazira
+  name: Reliance Industries Limited (RIL - Jamnagar/Hazira) SuccessFactors Openings
+  type: sitemap
+  company: Reliance Industries Limited (RIL - Jamnagar/Hazira)
+  enabled: false
+  profile_filter: true
+  url: https://careers.ril.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_tata_projects_limited
+  name: Tata Projects Limited SuccessFactors Openings
+  type: sitemap
+  company: Tata Projects Limited
+  enabled: false
+  profile_filter: true
+  url: https://www.tataprojects.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_sabic_saudi_basic_industries_corporation
+  name: SABIC (Saudi Basic Industries Corporation) SuccessFactors Openings
+  type: sitemap
+  company: SABIC (Saudi Basic Industries Corporation)
+  enabled: false
+  profile_filter: true
+  url: https://www.sabic.com/en/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_sadara_chemical_company
+  name: Sadara Chemical Company SuccessFactors Openings
+  type: sitemap
+  company: Sadara Chemical Company
+  enabled: false
+  profile_filter: true
+  url: https://www.sadara.com/en/Careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_oq_oman_energy_group
+  name: OQ (Oman Energy Group) SuccessFactors Openings
+  type: sitemap
+  company: OQ (Oman Energy Group)
+  enabled: false
+  profile_filter: true
+  url: https://oq.com/en/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_borouge
+  name: Borouge SuccessFactors Openings
+  type: sitemap
+  company: Borouge
+  enabled: false
+  profile_filter: true
+  url: https://www.borouge.com/en/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_ineos_oil_&_gas
+  name: INEOS Oil & Gas SuccessFactors Openings
+  type: sitemap
+  company: INEOS Oil & Gas
+  enabled: false
+  profile_filter: true
+  url: https://www.ineos.com/careers/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_bilfinger_se
+  name: Bilfinger SE SuccessFactors Openings
+  type: sitemap
+  company: Bilfinger SE
+  enabled: false
+  profile_filter: true
+  url: https://jobs.bilfinger.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_linde_engineering
+  name: Linde Engineering SuccessFactors Openings
+  type: sitemap
+  company: Linde Engineering
+  enabled: false
+  profile_filter: true
+  url: https://www.linde-engineering.com/en/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_cowi_a/s
+  name: COWI A/S SuccessFactors Openings
+  type: sitemap
+  company: COWI A/S
+  enabled: false
+  profile_filter: true
+  url: https://www.cowi.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_canadian_natural_resources_limited_cnrl
+  name: Canadian Natural Resources Limited (CNRL) SuccessFactors Openings
+  type: sitemap
+  company: Canadian Natural Resources Limited (CNRL)
+  enabled: false
+  profile_filter: true
+  url: https://www.cnrl.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_reliance_industries_limited_jamnagar_refinery
+  name: Reliance Industries Limited (Jamnagar Refinery) SuccessFactors Openings
+  type: sitemap
+  company: Reliance Industries Limited (Jamnagar Refinery)
+  enabled: false
+  profile_filter: true
+  url: https://careers.ril.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_satorp_saudi_aramco_total_refining_and_petrochemical_company
+  name: SATORP (Saudi Aramco Total Refining and Petrochemical Company) SuccessFactors
+    Openings
+  type: sitemap
+  company: SATORP (Saudi Aramco Total Refining and Petrochemical Company)
+  enabled: false
+  profile_filter: true
+  url: https://www.satorp.com/Careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_saipem_india_projects
+  name: Saipem India Projects SuccessFactors Openings
+  type: sitemap
+  company: Saipem India Projects
+  enabled: false
+  profile_filter: true
+  url: https://careers.saipem.com/
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_petro_rabigh
+  name: Petro Rabigh SuccessFactors Openings
+  type: sitemap
+  company: Petro Rabigh
+  enabled: false
+  profile_filter: true
+  url: https://www.petrorabigh.com/en/Careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_maire_tecnimont_spa
+  name: MAIRE Tecnimont S.p.A. SuccessFactors Openings
+  type: sitemap
+  company: MAIRE Tecnimont S.p.A.
+  enabled: false
+  profile_filter: true
+  url: https://www.mairetecnimont.com/en/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_petronas
+  name: Petronas SuccessFactors Openings
+  type: sitemap
+  company: Petronas
+  enabled: false
+  profile_filter: true
+  url: https://www.petronas.com/careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors
+- id: successfactors_pttep
+  name: PTTEP SuccessFactors Openings
+  type: sitemap
+  company: PTTEP
+  enabled: false
+  profile_filter: true
+  url: https://www.pttep.com/en/Careers
+  anchor_text_patterns:
+  - piping
+  - e3d
+  - pdms
+  - sp3d
+  ats_family: successfactors

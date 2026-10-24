@@ -1,0 +1,1721 @@
+sources:
+- id: workday_hatch
+  name: Hatch Workday Job Openings
+  type: workday
+  company: Hatch
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.hatch.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_kbr_inc_kellogg_brown_&_root
+  name: KBR, Inc. (Kellogg Brown & Root) Workday Job Openings
+  type: workday
+  company: KBR, Inc. (Kellogg Brown & Root)
+  enabled: false
+  profile_filter: true
+  careers_url: https://kbr.wb.myworkdayjobs.com/KBR_Careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_atkinsréalis_formerly_snc-lavalin_/_ws_atkins
+  name: AtkinsRéalis (formerly SNC-Lavalin / WS Atkins) Workday Job Openings
+  type: workday
+  company: AtkinsRéalis (formerly SNC-Lavalin / WS Atkins)
+  enabled: false
+  profile_filter: true
+  careers_url: https://atkinsrealis.wd3.myworkdayjobs.com/AtkinsRealis
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_maersk_drilling
+  name: Maersk Drilling Workday Job Openings
+  type: workday
+  company: Maersk Drilling
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.maerskdrilling.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_maersk_drilling_hq
+  name: Maersk Drilling HQ Workday Job Openings
+  type: workday
+  company: Maersk Drilling HQ
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.maerskdrillinghq.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_ørsted
+  name: Ørsted Workday Job Openings
+  type: workday
+  company: Ørsted
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.rsted.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_aker_solutions_india
+  name: Aker Solutions India Workday Job Openings
+  type: workday
+  company: Aker Solutions India
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_baker_hughes_india
+  name: Baker Hughes India Workday Job Openings
+  type: workday
+  company: Baker Hughes India
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_halliburton_india
+  name: Halliburton India Workday Job Openings
+  type: workday
+  company: Halliburton India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.halliburtonindia.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_jacobs_solutions_inc
+  name: Jacobs Solutions Inc. Workday Job Openings
+  type: workday
+  company: Jacobs Solutions Inc.
+  enabled: false
+  profile_filter: true
+  careers_url: https://jacobs.wd1.myworkdayjobs.com/Jacobs
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_schlumberger_india
+  name: Schlumberger India Workday Job Openings
+  type: workday
+  company: Schlumberger India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.schlumbergerindia.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_ryanair
+  name: Ryanair Workday Job Openings
+  type: workday
+  company: Ryanair
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.ryanair.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_shell_malaysia
+  name: Shell Malaysia Workday Job Openings
+  type: workday
+  company: Shell Malaysia
+  enabled: false
+  profile_filter: true
+  careers_url: https://shell.wd3.myworkdayjobs.com/ShellCareers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_shell_hq
+  name: Shell HQ Workday Job Openings
+  type: workday
+  company: Shell HQ
+  enabled: false
+  profile_filter: true
+  careers_url: https://shell.wd3.myworkdayjobs.com/ShellCareers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_chevron_nigeria
+  name: Chevron Nigeria Workday Job Openings
+  type: workday
+  company: Chevron Nigeria
+  enabled: false
+  profile_filter: true
+  careers_url: https://chevron.wd5.myworkdayjobs.com/jobs
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_shell_nigeria
+  name: Shell Nigeria Workday Job Openings
+  type: workday
+  company: Shell Nigeria
+  enabled: false
+  profile_filter: true
+  careers_url: https://shell.wd3.myworkdayjobs.com/ShellCareers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_aker_bp
+  name: Aker BP Workday Job Openings
+  type: workday
+  company: Aker BP
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_aker_solutions
+  name: Aker Solutions Workday Job Openings
+  type: workday
+  company: Aker Solutions
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_aker_solutions_hq
+  name: Aker Solutions HQ Workday Job Openings
+  type: workday
+  company: Aker Solutions HQ
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_shell_singapore
+  name: Shell Singapore Workday Job Openings
+  type: workday
+  company: Shell Singapore
+  enabled: false
+  profile_filter: true
+  careers_url: https://shell.wd3.myworkdayjobs.com/ShellCareers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_afry
+  name: AFRY Workday Job Openings
+  type: workday
+  company: AFRY
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.afry.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_aker_solutions_uk
+  name: Aker Solutions UK Workday Job Openings
+  type: workday
+  company: Aker Solutions UK
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_amec
+  name: AMEC Workday Job Openings
+  type: workday
+  company: AMEC
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.amec.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_bp
+  name: BP Workday Job Openings
+  type: workday
+  company: BP
+  enabled: false
+  profile_filter: true
+  careers_url: https://bp.wd3.myworkdayjobs.com/bp_careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_harbour_energy
+  name: Harbour Energy Workday Job Openings
+  type: workday
+  company: Harbour Energy
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.harbourenergy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_ramboll_uk
+  name: Ramboll UK Workday Job Openings
+  type: workday
+  company: Ramboll UK
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.rambolluk.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_shell_uk
+  name: Shell UK Workday Job Openings
+  type: workday
+  company: Shell UK
+  enabled: false
+  profile_filter: true
+  careers_url: https://shell.wd3.myworkdayjobs.com/ShellCareers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_subsea_7
+  name: Subsea 7 Workday Job Openings
+  type: workday
+  company: Subsea 7
+  enabled: false
+  profile_filter: true
+  careers_url: https://subsea7.wd3.myworkdayjobs.com/Subsea7
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_air_products
+  name: Air Products Workday Job Openings
+  type: workday
+  company: Air Products
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.airproducts.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_baker_hughes
+  name: Baker Hughes Workday Job Openings
+  type: workday
+  company: Baker Hughes
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_baker_hughes_hq
+  name: Baker Hughes HQ Workday Job Openings
+  type: workday
+  company: Baker Hughes HQ
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_black_&_veatch
+  name: Black & Veatch Workday Job Openings
+  type: workday
+  company: Black & Veatch
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.blackveatch.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_bloom_energy
+  name: Bloom Energy Workday Job Openings
+  type: workday
+  company: Bloom Energy
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.bloomenergy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_burns_&_mcdonnell
+  name: Burns & McDonnell Workday Job Openings
+  type: workday
+  company: Burns & McDonnell
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.burnsmcdonnell.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_cameron_slb
+  name: Cameron SLB Workday Job Openings
+  type: workday
+  company: Cameron SLB
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.cameronslb.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_caterpillar_energy
+  name: Caterpillar Energy Workday Job Openings
+  type: workday
+  company: Caterpillar Energy
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.caterpillarenergy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_cheniere_energy
+  name: Cheniere Energy Workday Job Openings
+  type: workday
+  company: Cheniere Energy
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.cheniereenergy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_chevron
+  name: Chevron Workday Job Openings
+  type: workday
+  company: Chevron
+  enabled: false
+  profile_filter: true
+  careers_url: https://chevron.wd5.myworkdayjobs.com/jobs
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_conocophillips
+  name: ConocoPhillips Workday Job Openings
+  type: workday
+  company: ConocoPhillips
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.conocophillips.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_eog_resources
+  name: EOG Resources Workday Job Openings
+  type: workday
+  company: EOG Resources
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.eogresources.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_ge_oil&gas
+  name: GE Oil&Gas Workday Job Openings
+  type: workday
+  company: GE Oil&Gas
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.geoilgas.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_halliburton
+  name: Halliburton Workday Job Openings
+  type: workday
+  company: Halliburton
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.halliburton.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_halliburton_hq
+  name: Halliburton HQ Workday Job Openings
+  type: workday
+  company: Halliburton HQ
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.halliburtonhq.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_hatch_usa
+  name: Hatch USA Workday Job Openings
+  type: workday
+  company: Hatch USA
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.hatchusa.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_kinder_morgan
+  name: Kinder Morgan Workday Job Openings
+  type: workday
+  company: Kinder Morgan
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.kindermorgan.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_nextera_energy
+  name: NextEra Energy Workday Job Openings
+  type: workday
+  company: NextEra Energy
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.nexteraenergy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_occidental_petroleum
+  name: Occidental Petroleum Workday Job Openings
+  type: workday
+  company: Occidental Petroleum
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.occidentalpetroleum.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_pioneer_natural_resources
+  name: Pioneer Natural Resources Workday Job Openings
+  type: workday
+  company: Pioneer Natural Resources
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.pioneernaturalresources.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_plug_power
+  name: Plug Power Workday Job Openings
+  type: workday
+  company: Plug Power
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.plugpower.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_rockwell_automation
+  name: Rockwell Automation Workday Job Openings
+  type: workday
+  company: Rockwell Automation
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.rockwellautomation.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_schlumberger
+  name: Schlumberger Workday Job Openings
+  type: workday
+  company: Schlumberger
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.schlumberger.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_schlumberger_hq
+  name: Schlumberger HQ Workday Job Openings
+  type: workday
+  company: Schlumberger HQ
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.schlumbergerhq.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_slb
+  name: SLB Workday Job Openings
+  type: workday
+  company: SLB
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.slb.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_tellurian
+  name: Tellurian Workday Job Openings
+  type: workday
+  company: Tellurian
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.tellurian.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_weatherford
+  name: Weatherford Workday Job Openings
+  type: workday
+  company: Weatherford
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.weatherford.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_shell
+  name: Shell Workday Job Openings
+  type: workday
+  company: Shell
+  enabled: false
+  profile_filter: true
+  careers_url: https://shell.wd3.myworkdayjobs.com/ShellCareers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_mott_macdonald_india
+  name: Mott MacDonald India Workday Job Openings
+  type: workday
+  company: Mott MacDonald India
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.mottmac.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_lamprell_energy_limited
+  name: Lamprell Energy Limited Workday Job Openings
+  type: workday
+  company: Lamprell Energy Limited
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.lamprell.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_vår_energi
+  name: Vår Energi Workday Job Openings
+  type: workday
+  company: Vår Energi
+  enabled: false
+  profile_filter: true
+  careers_url: https://varenergi.no/en/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_spirit_energy
+  name: Spirit Energy Workday Job Openings
+  type: workday
+  company: Spirit Energy
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.spirit-energy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_air_liquide_engineering_&_construction
+  name: Air Liquide Engineering & Construction Workday Job Openings
+  type: workday
+  company: Air Liquide Engineering & Construction
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.airliquide.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_ramboll_group
+  name: Ramboll Group Workday Job Openings
+  type: workday
+  company: Ramboll Group
+  enabled: false
+  profile_filter: true
+  careers_url: https://ramboll.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_fugro_nv
+  name: Fugro N.V. Workday Job Openings
+  type: workday
+  company: Fugro N.V.
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.fugro.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_occidental_petroleum_oxy
+  name: Occidental Petroleum (Oxy) Workday Job Openings
+  type: workday
+  company: Occidental Petroleum (Oxy)
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.oxy.com/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_parsons_corporation
+  name: Parsons Corporation Workday Job Openings
+  type: workday
+  company: Parsons Corporation
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.parsons.com/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_clough_group_webuild_group
+  name: Clough Group (Webuild Group) Workday Job Openings
+  type: workday
+  company: Clough Group (Webuild Group)
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.cloughgroup.com/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_aker_solutions_india_private_limited
+  name: Aker Solutions India Private Limited Workday Job Openings
+  type: workday
+  company: Aker Solutions India Private Limited
+  enabled: false
+  profile_filter: true
+  careers_url: https://akersolutions.wd3.myworkdayjobs.com/AkerSolutions
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_aibel_as
+  name: Aibel AS Workday Job Openings
+  type: workday
+  company: Aibel AS
+  enabled: false
+  profile_filter: true
+  careers_url: https://aibel.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_oceaneering_international_norway
+  name: Oceaneering International Norway Workday Job Openings
+  type: workday
+  company: Oceaneering International Norway
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.oceaneering.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_kbr_india
+  name: KBR India Workday Job Openings
+  type: workday
+  company: KBR India
+  enabled: false
+  profile_filter: true
+  careers_url: https://kbr.wb.myworkdayjobs.com/KBR_Careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_axens_ifp_group_technologies
+  name: Axens IFP Group Technologies Workday Job Openings
+  type: workday
+  company: Axens IFP Group Technologies
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.axens.net/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_framatome_gmbh/sas
+  name: Framatome GmbH/SAS Workday Job Openings
+  type: workday
+  company: Framatome GmbH/SAS
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.framatome.com/en/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_royal_boskalis_westminster_nv
+  name: Royal Boskalis Westminster N.V. Workday Job Openings
+  type: workday
+  company: Royal Boskalis Westminster N.V.
+  enabled: false
+  profile_filter: true
+  careers_url: https://careers.boskalis.com/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_van_oord_dredging_&_marine_contractors
+  name: Van Oord Dredging & Marine Contractors Workday Job Openings
+  type: workday
+  company: Van Oord Dredging & Marine Contractors
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.vanoord.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_pioneer_natural_resources_company
+  name: Pioneer Natural Resources Company Workday Job Openings
+  type: workday
+  company: Pioneer Natural Resources Company
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.pxd.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_marathon_oil_corporation
+  name: Marathon Oil Corporation Workday Job Openings
+  type: workday
+  company: Marathon Oil Corporation
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.marathonoil.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_valero_energy_corporation
+  name: Valero Energy Corporation Workday Job Openings
+  type: workday
+  company: Valero Energy Corporation
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.valero.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_phillips_66_company
+  name: Phillips 66 Company Workday Job Openings
+  type: workday
+  company: Phillips 66 Company
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.phillips66.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_tc_energy_corporation
+  name: TC Energy Corporation Workday Job Openings
+  type: workday
+  company: TC Energy Corporation
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.tcenergy.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_enbridge_inc
+  name: Enbridge Inc. Workday Job Openings
+  type: workday
+  company: Enbridge Inc.
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.enbridge.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_modec_inc
+  name: MODEC, Inc. Workday Job Openings
+  type: workday
+  company: MODEC, Inc.
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.modec.com/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_bw_offshore_limited
+  name: BW Offshore Limited Workday Job Openings
+  type: workday
+  company: BW Offshore Limited
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.bwoffshore.com/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_yinson_production
+  name: Yinson Production Workday Job Openings
+  type: workday
+  company: Yinson Production
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.yinson.com/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_altrad_group
+  name: Altrad Group Workday Job Openings
+  type: workday
+  company: Altrad Group
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.altrad.com/en/careers.html
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_cheniere_energy_inc
+  name: Cheniere Energy, Inc. Workday Job Openings
+  type: workday
+  company: Cheniere Energy, Inc.
+  enabled: false
+  profile_filter: true
+  careers_url: https://www.cheniere.com/careers
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
+- id: workday_venture_global_lng
+  name: Venture Global LNG Workday Job Openings
+  type: workday
+  company: Venture Global LNG
+  enabled: false
+  profile_filter: true
+  careers_url: https://venturegloballng.com/careers/
+  include_terms:
+  - piping
+  - pipe layout
+  - plant layout
+  - plant design
+  - e3d
+  - aveva e3d
+  - pdms
+  - sp3d
+  - smart 3d
+  - smartplant 3d
+  - pipe support
+  - piping stress
