@@ -105,14 +105,14 @@ jobs:
         with:
           name: global-source-discovery-${{ github.run_id }}-${{ github.run_attempt }}
           path: .
-      - name: Create six-source shards
+      - name: Create smaller bounded source shards
         id: plan
         run: |
           set -euo pipefail
           python scripts/runtime_source_shards.py \
             --input output/source-discovery/runtime-sources.yaml \
             --output-dir output/source-shards \
-            --max-sources 6
+            --max-sources 3
           matrix="$(python -c 'import json; print(json.dumps([x["id"] for x in json.load(open("output/source-shards/plan.json"))["shards"]]))')"
           echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
           cat output/source-shards/plan.json
